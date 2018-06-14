@@ -62,6 +62,8 @@ typedef enum IRQn
 #include "core_cm3.h"
 #include "system_ARMCM3.h"
 #include <stdint.h>
+#include <string.h>
+#include <stdio.h>
 
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus, ResetStatus;
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
@@ -428,7 +430,17 @@ typedef struct
                                 ((clock) == IPCORE_SC) || ((clock) == DDR_SC))
 
 /*<! Cortex M3 Control */
-#define CM3_SC              ((CM3SYS_TypeDef *) ACU_M3SC_BASE)
+#define CM3_SC                  ((CM3SYS_TypeDef *) ACU_M3SC_BASE)
+
+/* ================================================================================ */
+/* ================           Application_memory_map               ================ */
+/* ================================================================================ */
+#define ACU_ROM_SIZE            0x8000
+#define ACU_RAM_SIZE            0x28000
+
+#define ACU_GLOBAL_BUF_SIZE     0x1000
+#define ACU_GLOBAL_BUF_ADDR     (ACU_RAM_BASE + ACU_RAM_SIZE - ACU_GLOBAL_BUF_SIZE)
+
 
 /* ================================================================================ */
 /* ================               Includes Headfile                ================ */

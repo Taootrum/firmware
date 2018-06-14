@@ -67,6 +67,32 @@ void sFLASH_EraseSector(uint32_t SectorAddr)
 }
 
 /****************************************************************
+  * 函数      : sFLASH_EraseBlock()
+  * 参数      : SectorAddr: address of the block to erase.
+  * 返回值     : None
+  * 描述      : Initializes Flash_SPI
+ ***************************************************************/
+void sFLASH_EraseBlock(uint32_t SectorAddr)
+{
+    /*!< Send write enable instruction */
+    sFLASH_WriteEnable();
+
+    sFLASH_CS_LOW();
+    /*!< Send Sector Erase instruction */
+    sFLASH_SendByte(sFLASH_CMD_SE);
+    /*!< Send SectorAddr high nibble address byte */
+    sFLASH_SendByte((SectorAddr & 0xFF0000) >> 16);
+    /*!< Send SectorAddr medium nibble address byte */
+    sFLASH_SendByte((SectorAddr & 0xFF00) >> 8);
+    /*!< Send SectorAddr low nibble address byte */
+    sFLASH_SendByte(SectorAddr & 0xFF);
+    sFLASH_CS_HIGH();
+    
+    /*!< Wait the end of Flash writing */
+    sFLASH_WaitForWriteEnd();
+}
+
+/****************************************************************
   * 函数      : sFLASH_EraseBulk()
   * 参数      : SectorAddr: Erases the entire FLASH.
   * 返回值     : None

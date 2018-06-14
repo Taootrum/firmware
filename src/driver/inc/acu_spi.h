@@ -92,8 +92,7 @@ typedef struct {
                                         ((CPHA) == SPI_CPHA_2Edge))
 
 /** @defgroup SPI_BaudRate_Prescaler */
-#define SPI_BAUDRATE                    ((uint16_t)0x1000)
-#define SPI_BAUDRATE_MIX                ((uint16_t)0x0000)
+#define SPI_BAUDRATE                    ((uint16_t)0x0000)
 #define SPI_BAUDRATE_MAX                ((uint16_t)0xFF00)
 #define IS_SPI_BAUDRATE(PRESCALER)      ((PRESCALER) <= SPI_BAUDRATE_MAX)
                                         

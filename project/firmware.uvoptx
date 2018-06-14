@@ -137,6 +137,13 @@
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
+      <WatchWindow1>
+        <Ww>
+          <count>0</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>pSuiteAllCase[Count]</ItemText>
+        </Ww>
+      </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -405,6 +412,102 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\src\user\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>18</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user\src\test_cru.c</PathWithFileName>
+      <FilenameWithoutPath>test_cru.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>19</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user\src\test_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>test_gpio.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>20</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user\src\test_i2c.c</PathWithFileName>
+      <FilenameWithoutPath>test_i2c.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>21</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user\src\test_spi.c</PathWithFileName>
+      <FilenameWithoutPath>test_spi.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>22</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user\src\test_spi_flash.c</PathWithFileName>
+      <FilenameWithoutPath>test_spi_flash.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>23</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user\src\test_timer.c</PathWithFileName>
+      <FilenameWithoutPath>test_timer.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>24</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user\src\test_uart.c</PathWithFileName>
+      <FilenameWithoutPath>test_uart.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>3</GroupNumber>
+      <FileNumber>25</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user\src\test_wdg.c</PathWithFileName>
+      <FilenameWithoutPath>test_wdg.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

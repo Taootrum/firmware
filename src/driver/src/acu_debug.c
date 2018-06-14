@@ -126,7 +126,7 @@ void Debug_FunctionTest(void)
     uint8_t BufSize = COUNT_OF(TxBuf) - 1;
     volatile TestStatus Status = FAILED;
 
-    DEBUG_MSG("debug uart test LoopBack_Mode start!\n");
+    DEBUG_MSG("debug uart test LoopBack_Mode start!\n");
 
     while (TxCounter < BufSize)
     {   
@@ -149,7 +149,7 @@ void Debug_FunctionTest(void)
     Status = Buffercmp(TxBuf, RxBuf, BufSize);
     if (Status == FAILED)
     {
-        DEBUG_MSG("debug uart TX->RX fail.\n");
+        DEBUG_MSG("debug uart TX->RX fail.\n");
     }
     else 
     {
@@ -170,7 +170,7 @@ void Debug_FunctionTest1(void)
     uint8_t TestChar = 0;
     uint32_t Tick = 0, CurTick = 0;
 
-    DEBUG_MSG("debug uart test Normal_Mode start!\n");
+    DEBUG_MSG("debug uart test Normal_Mode start!\n");
     TIMER_ResetSysTick();
 
     do
@@ -196,7 +196,7 @@ void Debug_FunctionTest1(void)
         }
     } 
     while (TIMER_GetSysTick() < GET_CHAR_TIMEOUT_MSEC * 1000 * 10); /* 50s */
-    DEBUG_MSG("debug uart test Normal_Mode end!\n");
+    DEBUG_MSG("debug uart test Normal_Mode end!\n");
 }
 
 /****************************************************************

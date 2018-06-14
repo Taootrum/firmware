@@ -8,64 +8,50 @@
 #ifndef __TEST_H
 #define __TEST_H
 
-#include "acu.h"
+#include "test_cru.h"
+#include "test_gpio.h"
+#include "test_i2c.h"
+#include "test_spi.h"
+#include "test_spi_flash.h"
+#include "test_timer.h"
+#include "test_uart.h"
+#include "test_wdg.h"
 
-extern int acu_run;
-extern int acu_assert;
-extern int acu_fail;
-extern int acu_status;
-extern int acu_all_fail;
+extern uint32_t g_SuiteCaseCount;
+extern uint32_t g_SuiteSuccessCount;
+extern uint32_t g_SuiteFailCount;
+extern uint32_t g_AllCaseCount;
+extern uint32_t g_AllSuccessCount;
+extern uint32_t g_AllFailCount;
 
-/* Maximum length of last message */
-#define ACU_MESSAGE_LEN 1024
+#define ACU_SUITE_TEST(SuiteCases)\
+        do  \
+        {   \
+            DEBUG_MSG("%s: Functional Testing Start...\r\n", #SuiteCases); \
+            g_SuiteCaseCount = sizeof(SuiteCases) / sizeof(SuiteCases[0]);  \
+            g_SuiteSuccessCount = 0;  \
+            g_SuiteFailCount = 0;  \
+            ACU_SuiteTest(SuiteCases);  \
+            g_AllCaseCount += g_SuiteCaseCount; \
+            g_AllSuccessCount += g_SuiteSuccessCount;   \
+            g_AllFailCount += g_SuiteFailCount; \
+            DEBUG_MSG("%s: Total:%d, Success:%d, Fail:%d\r\n\r\n",  \
+                        #SuiteCases, g_SuiteCaseCount, g_SuiteSuccessCount, g_SuiteFailCount);  \
+        } while (0);
 
+#define ACU_ALL_TEST_REPORT()\
+        do  \
+        {   \
+            DEBUG_MSG("ACU REPORT:All Cases, Total:%d, Success:%d, Fail:%d\r\n", \
+                        g_AllCaseCount, g_AllSuccessCount, g_AllFailCount); \
+        } while (0);
 
-/* Definitions */
-#define ACU_SAFE_BLOCK(block) do {\
-        block\
-    } while(0)
+typedef struct AllCase {
+    char *FunName;
+    TestStatus (*pFun)(void);
+}ALLCASE, *PALLCASE;
 
-/* Test suite */
-#define ACU_RUN_SUITE(suite_name) \
-    ACU_SAFE_BLOCK(\
-                    acu_run = 0;\
-                    acu_assert = 0;\
-                    acu_fail = 0;\
-                    acu_status = 0;  \
-                    suite_name();\
-                    acu_all_fail += acu_fail;\
-                    DEBUG_MSG("[ACU REPORT] %d tests, %d failures out of %d checks\n\n",\
-                          acu_run, acu_fail, acu_assert);\
-                  )
-
-/* Test runner */
-#define ACU_RUN_TEST(test) \
-    ACU_SAFE_BLOCK(\
-                    acu_status = 0;\
-                    test();\
-                    acu_run++;\
-                    if (acu_status) {\
-                        acu_fail++;\
-                        DEBUG_MSG(" Fail\n");\
-                    }\
-                  )
-
-/* Assertions */
-#define ACU_CHECK(test) \
-    ACU_SAFE_BLOCK(\
-                    acu_assert++;\
-                    if (!(test)) {\
-                        DEBUG_MSG("%s failed:\n%s: %d: %s\n",   \
-                           __func__, __FILE__, __LINE__, #test);\
-                        acu_status = 1;\
-                        ASSERT(FALSE);\
-                        return;\
-                    } else {\
-                        DEBUG_MSG(".");\
-                    }\
-                  )
-
-
-void ACU_FirmWareTest(void);
+void ACU_HalFuncTest(void);
 
 #endif
+

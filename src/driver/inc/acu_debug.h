@@ -10,7 +10,6 @@
 #define __ACU_DEBUG_H__
 
 #include "acu.h"
-#include <stdio.h>
 
 #define DEBUG_UART UART
 
@@ -36,7 +35,11 @@ typedef struct {
 #if defined(SIM_DEBUG) || defined(UART_DEBUG)
 #define DEBUG_MSG(fmt,args...)      printf(fmt, ##args)
 #define DEBUG_ERROR(fmt,args...)    printf("[%s|%d]ERROR: "fmt, __func__, __LINE__, ##args)
+#if defined(SIM_DEBUG)
+#define DEBUG_PRINT_REG(r)          printf("%s = %#x\n", #r, (uint32_t)r)
+#else
 #define DEBUG_PRINT_REG(r)          printf("%s = %#x\r\n", #r, (uint32_t)r)
+#endif
 #else
 #define DEBUG_MSG(fmt,args...)      ((void)0)
 #define DEBUG_ERROR(fmt,args...)    ((void)0)

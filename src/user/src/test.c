@@ -7,11 +7,46 @@
  ******************************************************************************/
 #include "test.h"
 
-int acu_run = 0;
-int acu_assert = 0;
-int acu_fail = 0;
-int acu_status = 0;
-int acu_all_fail = 0;
+uint32_t g_SuiteCaseCount = 0;
+uint32_t g_SuiteSuccessCount = 0;
+uint32_t g_SuiteFailCount = 0;
+uint32_t g_AllCaseCount = 0;
+uint32_t g_AllSuccessCount = 0;
+uint32_t g_AllFailCount = 0;
+
+static ALLCASE CRU_AllCases[] = {
+    {"CRU_FunctionTest1", CRU_FunctionTest1},
+    {"CRU_FunctionTest2", CRU_FunctionTest2},
+    {"CRU_FunctionTest3", CRU_FunctionTest3}
+};
+
+static ALLCASE SPI_AllCases[] = {
+    {"SPI_FunctionTest1", SPI_FunctionTest1},
+    {"SPI_FunctionTest2", SPI_FunctionTest2},
+    {"SPI_FunctionTest3", SPI_FunctionTest3},
+    {"SPI_FunctionTest4", SPI_FunctionTest4},
+};
+
+static ALLCASE GPIO_AllCases[] = {
+    {"GPIO_FunctionTest1", GPIO_FunctionTest1},
+    {"GPIO_FunctionTest2", GPIO_FunctionTest2},
+    {"GPIO_FunctionTest3", GPIO_FunctionTest3},
+    {"GPIO_FunctionTest4", GPIO_FunctionTest4},
+};
+
+static ALLCASE UART_AllCases[] = {
+    {"UART_FunctionTest1", UART_FunctionTest1},
+    {"UART_FunctionTest2", UART_FunctionTest2},
+    {"UART_FunctionTest3", UART_FunctionTest3},
+    {"UART_FunctionTest4", UART_FunctionTest4},
+};
+
+static ALLCASE FLASH_AllCases[] = {
+    {"FLASH_FunctionTest1", FLASH_FunctionTest1},
+    {"FLASH_FunctionTest2", FLASH_FunctionTest2},
+    {"FLASH_FunctionTest3", FLASH_FunctionTest3},
+    {"FLASH_FunctionTest4", FLASH_FunctionTest4},
+};
 
 /****************************************************************
   * 函数      : ACU_BootRomTest()
@@ -19,207 +54,42 @@ int acu_all_fail = 0;
   * 返回值     : None
   * 描述      : BootRom Test All
  ***************************************************************/
-static void CRU_FunctionTest1(void)
+static void ACU_SuiteTest(PALLCASE pSuiteAllCase)
 {
-    ;
-}
+    TestStatus CaseStatus = FAILED;
+    uint32_t Count = 0;
 
-static void CRU_FunctionTest2(void)
-{
-    ;
-}
-
-static void CRU_FunctionTest3(void)
-{
-    ;
-}
-
-/****************************************************************
-  * 函数      : ACU_BootRomTest()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-static void SUITE_CRUTest(void)
-{
-    ACU_RUN_TEST(CRU_FunctionTest1);
-    ACU_RUN_TEST(CRU_FunctionTest2);
-    ACU_RUN_TEST(CRU_FunctionTest3);
+    for (Count = 0; Count < g_SuiteCaseCount; Count++)
+    {
+        CaseStatus = pSuiteAllCase[Count].pFun();
+        if (CaseStatus == FAILED)
+        {
+            g_SuiteFailCount++;
+            DEBUG_MSG("%s is FAILED.  (%d/%d)\r\n", 
+                        pSuiteAllCase[Count].FunName, Count + 1, g_SuiteCaseCount);
+        }
+        else
+        {
+            g_SuiteSuccessCount++;
+            DEBUG_MSG("%s is SUCCESS. (%d/%d)\r\n", 
+                        pSuiteAllCase[Count].FunName, Count + 1, g_SuiteCaseCount);
+        }
+    }                
 }
 
 /****************************************************************
-  * 函数      : ACU_BootRomTest()
+  * 函数      : ACU_HalFuncTest()
   * 参数      : None
   * 返回值     : None
-  * 描述      : BootRom Test All
+  * 描述      : Hal Test All
  ***************************************************************/
-static void SPI_FunctionTest1(void)
+void ACU_HalFuncTest(void)
 {
-   ;
-}
-
-static void SPI_FunctionTest2(void)
-{
-   ;
-}
-
-static void SPI_FunctionTest3(void)
-{
-   ;
-}
-
-static void SPI_FunctionTest4(void)
-{
-   ;
-}
-
-
-/****************************************************************
-  * 函数      : ACU_BootRomTest()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-static void SUITE_SPITest(void)
-{
-    ACU_RUN_TEST(SPI_FunctionTest1);
-    ACU_RUN_TEST(SPI_FunctionTest2);
-    ACU_RUN_TEST(SPI_FunctionTest3);
-    ACU_RUN_TEST(SPI_FunctionTest4);
-}
-
-/****************************************************************
-  * 函数      : GPIO_FunctionTest1()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-static void GPIO_FunctionTest1(void)
-{
-   ;
-}
-
-static void GPIO_FunctionTest2(void)
-{
-   ;
-}
-
-static void GPIO_FunctionTest3(void)
-{
-   ;
-}
-
-static void GPIO_FunctionTest4(void)
-{
-   ;
-}
-
-/****************************************************************
-  * 函数      : ACU_BootRomTest()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-static void SUITE_GPIOTest(void)
-{
-    ACU_RUN_TEST(GPIO_FunctionTest1);
-    ACU_RUN_TEST(GPIO_FunctionTest2);
-    ACU_RUN_TEST(GPIO_FunctionTest3);
-    ACU_RUN_TEST(GPIO_FunctionTest4);
-}
-
-/****************************************************************
-  * 函数      : UART_FunctionTest1()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-static void UART_FunctionTest1(void)
-{
-   ;
-}
-
-static void UART_FunctionTest2(void)
-{
-   ;
-}
-
-static void UART_FunctionTest3(void)
-{
-   ;
-}
-
-static void UART_FunctionTest4(void)
-{
-   ;
-}
-
-/****************************************************************
-  * 函数      : ACU_BootRomTest()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-static void SUITE_UARTTest(void)
-{
-    ACU_RUN_TEST(UART_FunctionTest1);
-    ACU_RUN_TEST(UART_FunctionTest2);
-    ACU_RUN_TEST(UART_FunctionTest3);
-    ACU_RUN_TEST(UART_FunctionTest4);
-}
-
-/****************************************************************
-  * 函数      : SFLASH_FunctionTest1()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-static void SFLASH_FunctionTest1(void)
-{
-   ;
-}
-
-static void SFLASH_FunctionTest2(void)
-{
-   ;
-}
-
-static void SFLASH_FunctionTest3(void)
-{
-   ;
-}
-
-static void SFLASH_FunctionTest4(void)
-{
-   ;
-}
-
-/****************************************************************
-  * 函数      : ACU_BootRomTest()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-static void SUITE_SFLASHTest(void)
-{
-    ACU_RUN_TEST(SFLASH_FunctionTest1);
-    ACU_RUN_TEST(SFLASH_FunctionTest2);
-    ACU_RUN_TEST(SFLASH_FunctionTest3);
-    ACU_RUN_TEST(SFLASH_FunctionTest4);
-}
-
-/****************************************************************
-  * 函数      : ACU_BootRomTest()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : BootRom Test All
- ***************************************************************/
-void ACU_FirmWareTest(void)
-{
-    ACU_RUN_SUITE(SUITE_CRUTest);
-    ACU_RUN_SUITE(SUITE_SPITest);
-    ACU_RUN_SUITE(SUITE_GPIOTest);
-    ACU_RUN_SUITE(SUITE_UARTTest);
-    ACU_RUN_SUITE(SUITE_SFLASHTest);
+    ACU_SUITE_TEST(CRU_AllCases);
+    ACU_SUITE_TEST(SPI_AllCases);
+    ACU_SUITE_TEST(GPIO_AllCases);
+    ACU_SUITE_TEST(UART_AllCases);
+    ACU_SUITE_TEST(FLASH_AllCases);
+    ACU_ALL_TEST_REPORT();
 }
 

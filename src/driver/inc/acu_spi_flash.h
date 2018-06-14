@@ -40,6 +40,7 @@
 #define sFLASH_DUMMY_BYTE         0xA5
 #define sFLASH_SPI_PAGESIZE       0x100
 #define sFLASH_N25Q128_ID         0x20BA18
+#define sFLASH_W25Q128FV_ID       0xEF4018
 
 /**@brief sFLASH: Chip Select pin */
 #define sFLASH_CS_LOW()       GPIO_SetOutput(sFLASH_CS_GPIO, GPIO_RESET)
