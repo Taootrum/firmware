@@ -14,11 +14,12 @@
   * 返回值     : None
   * 描述      : 复位串口
  ***************************************************************/
-void UART_DeInit(APBSYS_TypeDef *UARTx)
+void UART_DeInit(UART_TypeDef *UARTx)
 {
     /* Check the parameters */
-    assert_param(IS_RCC_APB_PERIPH(UARTx));
-    RCC_APBPeriphResetCmd(UARTx, SET);
+    assert_param(IS_UART_ALL_PERIPH(UARTx));
+    RCC_APBPeriphResetCmd(UART_SC, 0, SET);
+    RCC_APBPeriphResetCmd(UART_SC, 0, RESET);
 }
 
 /****************************************************************

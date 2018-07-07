@@ -16,11 +16,11 @@
 #include "acu_spi.h"
 
 /**@brief  M25P FLASH SPI Interface pins */  
-#define sFLASH_SPI                SPI                    
-#define sFLASH_CS_GPIO            GPIO_SSP_CSN        
-#define sFLASH_CLK_GPIO           GPIO_SSP_CLK
-#define sFLASH_MOSI_GPIO          GPIO_SSP_TXD
-#define sFLASH_MISO_GPIO          GPIO_SSP_RXD
+#define sFLASH_SPI                SPI0                    
+#define sFLASH_CS_GPIO            GPIO_SSP0_CSN        
+#define sFLASH_CLK_GPIO           GPIO_SSP0_CLK
+#define sFLASH_MOSI_GPIO          GPIO_SSP0_TXD
+#define sFLASH_MISO_GPIO          GPIO_SSP0_RXD
 
 /**@brief  M25P SPI Flash supported commands */  
 #define sFLASH_CMD_WRITE          0x02  /*!< Write to Memory instruction */
@@ -50,6 +50,7 @@
 void sFLASH_DeInit(void);
 void sFLASH_Init(void);
 void sFLASH_EraseSector(uint32_t SectorAddr);
+void sFLASH_EraseBlock(uint32_t BlockAddr);
 void sFLASH_EraseBulk(void);
 void sFLASH_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite);
 void sFLASH_WriteBuffer(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite);
@@ -64,8 +65,6 @@ uint16_t sFLASH_SendHalfWord(uint16_t HalfWord);
 void sFLASH_WriteEnable(void);
 void sFLASH_WaitForWriteEnd(void);
 
-void sFLASH_LowLevel_DeInit(void);
-void sFLASH_LowLevel_Init(void);
 void Flash_PrintReg(void);
 
 #ifdef __cplusplus

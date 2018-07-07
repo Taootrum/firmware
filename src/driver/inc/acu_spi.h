@@ -30,7 +30,7 @@ typedef struct {
     uint16_t SPI_FIFO;
 }SPI_InitTypeDef;
 
-#define IS_SPI_ALL_PERIPH(PERIPH) ((PERIPH) == SPI)
+#define IS_SPI_ALL_PERIPH(PERIPH)       (((PERIPH) == SPI0) || ((PERIPH) == SPI1))
 
 /* @defgroup SPI_LBM */
 #define SPI_MODE_NORMAL                 ((uint16_t)0x0000)
@@ -38,7 +38,7 @@ typedef struct {
 #define IS_SPI_LBM(MODE)                (((MODE) == SPI_MODE_LOOPBACK) || \
                                         ((MODE) == SPI_MODE_NORMAL))
 
-#define SPI_EN                          ((uint16_t)0x0002)
+#define SPI_ENABLE                      ((uint16_t)0x0002)
                                     
 /* @defgroup SPI_mode */
 #define SPI_MODE_MASTER                 ((uint16_t)0x0000)
@@ -152,24 +152,18 @@ typedef struct {
 #define SPI_FIFO_TH_MAX                 ((uint8_t)0x7F)
 #define IS_SPI_FIFO_TH(TH)              (((TH) >= SPI_FIFO_TH_MIX) || ((TH) <= SPI_FIFO_TH_MAX))
 
-#define SPI_TH_MIX                      ((uint8_t)0x01)
-#define SPI_TH_MAX                      ((uint8_t)0x7F)
-#define IS_SPI_TH(TH)                   (((TH) >= SPI_TH_MIX) || ((TH) <= SPI_TH_MAX))
-
 /** @defgroup SPI_Exported_Functions */
-void SPI_DeInit(APBSYS_TypeDef* SPIx);
+void SPI_DeInit(SPI_TypeDef* SPIx);
 void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct);
 void SPI_StructInit(SPI_InitTypeDef* SPI_InitStruct);
 void SPI_Cmd(SPI_TypeDef* SPIx, FunctionalState NewState);
 void SPI_SendData(SPI_TypeDef* SPIx, uint16_t Data);
 uint16_t SPI_ReceiveData(SPI_TypeDef* SPIx);
-void SPI_DataSizeConfig(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct);
 FlagStatus SPI_GetStatus(SPI_TypeDef* SPIx, uint16_t SPI_FLAG);
 void SPI_ITConfig(SPI_TypeDef* SPIx, uint8_t SPI_IT, FunctionalState NewState);
 ITStatus SPI_GetRawITStatus(SPI_TypeDef* SPIx, uint8_t SPI_RIT);
 ITStatus SPI_GetMaskITStatus(SPI_TypeDef* SPIx, uint8_t SPI_MIT);
 void SPI_ClearIT(SPI_TypeDef* SPIx, uint16_t SPI_ITClear);
-void SPI_DMACmd(SPI_TypeDef* SPIx, uint16_t SPI_DMA, FunctionalState NewState);
 void SPI_PrintReg(SPI_TypeDef* SPIx);
 
 #ifdef __cplusplus

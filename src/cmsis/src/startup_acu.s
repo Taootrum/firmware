@@ -32,7 +32,7 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size      EQU     0x00000400
+Stack_Size      EQU     0x000001000
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
@@ -82,20 +82,20 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 ; External Interrupts
                 DCD     IIC0_IRQHandler           ; 16:  IIC0
                 DCD     IIC1_IRQHandler           ; 17:  IIC1
-                DCD     UART_IRQHandler           ; 18:  UART
-                DCD     GPIO_IRQHandler           ; 19:  GPIO
-                DCD     SSP_IRQHandler            ; 20:  SSP
-                DCD     TMR0_IRQHandler           ; 21:  Timer 0
-                DCD     TMR1_IRQHandler           ; 22:  Timer 1
-                DCD     WDT_IRQHandler            ; 23:  Watch dog
-                DCD     0                         ; 24:  Reserved
-                DCD     0                         ; 25:  Reserved
-                DCD     0                         ; 26:  Reserved
-                DCD     0                         ; 27:  Reserved
-                DCD     0                         ; 28:  Reserved
-                DCD     0                         ; 29:  Reserved
-                DCD     0                         ; 30:  Reserved
-                DCD     0                         ; 31:  Reserved
+                DCD     IIC2_IRQHandler           ; 18:  IIC2
+                DCD     INT_IRQHandler            ; 19:  INT
+                DCD     GPIO_IRQHandler           ; 20:  GPIO
+                DCD     UART_IRQHandler           ; 21:  UART
+                DCD     SSP0_IRQHandler           ; 22:  SSP0
+                DCD     SSP1_IRQHandler           ; 23:  SSP1
+                DCD     TMR0_IRQHandler           ; 24:  Timer 0
+                DCD     TMR1_IRQHandler           ; 25:  Timer 1
+                DCD     WDT_IRQHandler            ; 26:  Watch dog
+                DCD     PVT_IRQHandler            ; 27:  PVT
+                DCD     DDR0_IRQHandler           ; 28:  DDR0
+                DCD     DDR1_IRQHandler           ; 29:  DDR1
+                DCD     DDR2_IRQHandler           ; 30:  DDR2
+                DCD     CU_IRQHandler             ; 31:  CU
 __Vectors_End
 
 __Vectors_Size  EQU     __Vectors_End - __Vectors
@@ -163,20 +163,36 @@ SysTick_Handler PROC
 Default_Handler PROC
                 EXPORT  IIC0_IRQHandler           [WEAK]
                 EXPORT  IIC1_IRQHandler           [WEAK]
+                EXPORT  IIC2_IRQHandler           [WEAK]
+                EXPORT  INT_IRQHandler            [WEAK]
                 EXPORT  GPIO_IRQHandler           [WEAK]
                 EXPORT  UART_IRQHandler           [WEAK]
-                EXPORT  SSP_IRQHandler            [WEAK]
+                EXPORT  SSP0_IRQHandler           [WEAK]
+                EXPORT  SSP1_IRQHandler           [WEAK]
                 EXPORT  TMR0_IRQHandler           [WEAK]
                 EXPORT  TMR1_IRQHandler           [WEAK]
                 EXPORT  WDT_IRQHandler            [WEAK]
+                EXPORT  PVT_IRQHandler            [WEAK]
+                EXPORT  DDR0_IRQHandler           [WEAK]
+                EXPORT  DDR1_IRQHandler           [WEAK]
+                EXPORT  DDR2_IRQHandler           [WEAK]
+                EXPORT  CU_IRQHandler             [WEAK]                
 IIC0_IRQHandler
 IIC1_IRQHandler
+IIC2_IRQHandler
+INT_IRQHandler
 GPIO_IRQHandler
 UART_IRQHandler
-SSP_IRQHandler
+SSP0_IRQHandler
+SSP1_IRQHandler
 TMR0_IRQHandler
 TMR1_IRQHandler
 WDT_IRQHandler
+PVT_IRQHandler
+DDR0_IRQHandler
+DDR1_IRQHandler
+DDR2_IRQHandler
+CU_IRQHandler
                 B       .
 
                 ENDP

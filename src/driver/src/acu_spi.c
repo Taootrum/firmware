@@ -14,11 +14,20 @@
   * 返回值     : None
   * 描述      : SPI清除初始化
  ***************************************************************/
-void SPI_DeInit(APBSYS_TypeDef* SPIx)
+void SPI_DeInit(SPI_TypeDef* SPIx)
 {
     /* Check the parameters */
-    assert_param(IS_RCC_APB_PERIPH(SPIx));
-    RCC_APBPeriphResetCmd(SPIx, SET);
+    assert_param(IS_SPI_ALL_PERIPH(SPIx));
+    if (SPIx == SPI0)
+    {
+        RCC_APBPeriphResetCmd(SPI_SC, 0, SET);
+        RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
+    }
+    else
+    {
+        RCC_APBPeriphResetCmd(SPI_SC, 1, SET);
+        RCC_APBPeriphResetCmd(SPI_SC, 1, RESET);
+    }
 }
   
 /****************************************************************
@@ -45,12 +54,14 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
     assert_param(IS_SPI_CPSDVSR(SPI_InitStruct->SPI_CPSR));
     assert_param(IS_SPI_FIFO_TH(SPI_InitStruct->SPI_FIFO));
     
-    /* SPIx CR1 Configuration */
+    /* SPIx CR0 Configuration */
     SPIx->CR0 = (uint16_t)( SPI_InitStruct->SPI_Mode | SPI_InitStruct->SPI_DataSize | 
                             SPI_InitStruct->SPI_CPOL | SPI_InitStruct->SPI_FRAME | 
                             SPI_InitStruct->SPI_CPHA | SPI_InitStruct->SPI_BaudRate);
+    SPIx->CR0 &= ~SPI_DataSize_16b;
+    SPIx->CR0 |= SPI_InitStruct->SPI_DataSize;
 
-    /* SPIx CR2 Configuration */
+    /* SPIx CR1 Configuration */
     SPIx->CR1 = SPI_InitStruct->SPI_LBM;
     /* SPIx CPSR Configuration */
     SPIx->CPSR = SPI_InitStruct->SPI_CPSR;
@@ -101,11 +112,11 @@ void SPI_Cmd(SPI_TypeDef* SPIx, FunctionalState NewState)
     
     if (NewState == ENABLE)
     {
-        SET_BIT(SPIx->CR1, SPI_EN);
+        SET_BIT(SPIx->CR1, SPI_ENABLE);
     }
     else
     {
-        CLEAR_BIT(SPIx->CR1, SPI_EN);
+        CLEAR_BIT(SPIx->CR1, SPI_ENABLE);
     }
 }
 
@@ -138,37 +149,6 @@ uint16_t SPI_ReceiveData(SPI_TypeDef* SPIx)
     assert_param(IS_SPI_ALL_PERIPH(SPIx));
 
     return SPIx->DR;
-}
-
-/****************************************************************
-  * 函数      : SPI_DataSizeConfig()
-  * 参数      : SPIx: SPI peripheral
-              SPI_DataSize: SPI_DataSize_4b
-                            SPI_DataSize_5b
-                            SPI_DataSize_6b
-                            SPI_DataSize_7b
-                            SPI_DataSize_8b
-                            SPI_DataSize_9b
-                            SPI_DataSize_10b 
-                            SPI_DataSize_11b              
-                            SPI_DataSize_12b            
-                            SPI_DataSize_13b             
-                            SPI_DataSize_14b               
-                            SPI_DataSize_15b             
-                            SPI_DataSize_16b           
-  * 返回值     : None
-  * 描述      : 向系统指定寄存器地址写数据
- ***************************************************************/
-void SPI_DataSizeConfig(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
-{
-  /* Check the parameters */
-  assert_param(IS_SPI_ALL_PERIPH(SPIx));
-  assert_param(IS_SPI_DATASIZE(SPI_InitStruct->SPI_DataSize));
-  
-  /* Clear DFF bit */
-  SPIx->CR1 &= ~SPI_DataSize_16b;
-  /* Set new DFF bit value */
-  SPIx->CR1 |= SPI_InitStruct->SPI_DataSize;
 }
   
 /****************************************************************
@@ -283,32 +263,6 @@ void SPI_ClearIT(SPI_TypeDef* SPIx, uint16_t SPI_ITClear)
     assert_param(IS_SPI_CLEAR_IT(SPI_ITClear));
 
     SET_BIT(SPIx->ICR, SPI_ITClear);
-}
-  
-/****************************************************************
-  * 函数      : SPI_DMACmd()
-  * 参数      : SPIx: SPI peripheral
-              SPI_DMA: SPI_DMA_TX
-                       SPI_DMA_RX
-              NewState: ENABLE/DISABLE
-  * 返回值     : None
-  * 描述      : SSP DMA控制寄存器设置
- ***************************************************************/
-void SPI_DMACmd(SPI_TypeDef* SPIx, uint16_t SPI_DMA, FunctionalState NewState)
-{    
-    /* Check the parameters */
-    assert_param(IS_SPI_ALL_PERIPH(SPIx));
-    assert_param(IS_SPI_DMA(SPI_DMA));
-    assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
-    if (NewState == ENABLE)
-    {
-        SET_BIT(SPIx->DMACR, SPI_DMA);
-    }
-    else
-    {
-        CLEAR_BIT(SPIx->DMACR, SPI_DMA);
-    }
 }
 
 /****************************************************************

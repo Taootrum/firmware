@@ -141,17 +141,17 @@ typedef struct
                                         ((TX) == UART_FIFO_LEVEL_TX7_8))
 
 /** @defgroup UART_Interrupt_Mask_definition */
-#define UART_IT_OE                      ((uint16_t)0x0028)
-#define UART_IT_BE                      ((uint16_t)0x0727)
-#define UART_IT_PE                      ((uint16_t)0x0626)
-#define UART_IT_FE                      ((uint16_t)0x0525)
-#define UART_IT_RT                      ((uint16_t)0x0424)
-#define UART_IT_TX                      ((uint16_t)0x0846)
-#define UART_IT_RX                      ((uint16_t)0x096A)
-#define UART_IT_DSR                     ((uint16_t)0x0060)
-#define UART_IT_DCD                     ((uint16_t)0x0360)
-#define UART_IT_CTS                     ((uint16_t)0x0260)
-#define UART_IT_RIM                     ((uint16_t)0x0160)
+#define UART_IT_OE                      ((uint16_t)0x0400)
+#define UART_IT_BE                      ((uint16_t)0x0200)
+#define UART_IT_PE                      ((uint16_t)0x0100)
+#define UART_IT_FE                      ((uint16_t)0x0080)
+#define UART_IT_RT                      ((uint16_t)0x0040)
+#define UART_IT_TX                      ((uint16_t)0x0020)
+#define UART_IT_RX                      ((uint16_t)0x0010)
+#define UART_IT_DSR                     ((uint16_t)0x0008)
+#define UART_IT_DCD                     ((uint16_t)0x0004)
+#define UART_IT_CTS                     ((uint16_t)0x0002)
+#define UART_IT_RIM                     ((uint16_t)0x0001)
 #define IS_UART_CONFIG_IT(IT)           (((IT) == UART_IT_OE) || ((IT) == UART_IT_BE) || \
                                         ((IT) == UART_IT_PE) || ((IT) == UART_IT_FE) || \
                                         ((IT) == UART_IT_RT) || ((IT) == UART_IT_TX) || \
@@ -207,10 +207,9 @@ typedef struct
 #define IS_UART_BAUDRATE(BAUDRATE)      (((BAUDRATE) > 0) && ((BAUDRATE) < 0x0044AA21))
 #define IS_UART_DATA(DATA)              ((DATA) <= 0x1FF)
 
-void UART_DeInit(APBSYS_TypeDef* UARTx);
+void UART_DeInit(UART_TypeDef* UARTx);
 void UART_Init(UART_TypeDef* UARTx, UART_InitTypeDef* UART_InitStruct);
 void UART_StructInit(UART_InitTypeDef* UART_InitStruct);
-void UART_ClockStructInit(UART_ClockInitTypeDef* UART_ClockInitStruct);
 void UART_Cmd(UART_TypeDef* UARTx, FunctionalState NewState);
 void UART_ITConfig(UART_TypeDef* UARTx, uint16_t UART_IT, FunctionalState NewState);
 void UART_DMACmd(UART_TypeDef* UARTx, uint16_t UART_DMAReq, FunctionalState NewState);

@@ -15,7 +15,7 @@
  ***************************************************************/
 void Debug_DeInit(void)
 {
-    UART_DeInit(UART_SC);
+    UART_DeInit(UART);
 }
 
 /****************************************************************
@@ -28,9 +28,8 @@ void Debug_Init(void)
 {
     UART_InitTypeDef UART_InitStructure;
 
-    /*!< UART clk enable*/
-    RCC_APBPeriphResetCmd(UART_SC, RESET);
-    RCC_APBPeriphClockCmd(UART_SC, ENABLE);
+    /*!< UART clk enable & iso disable */
+    RCC_APBPeriphClockCmd(UART_SC, 0, ENABLE);
     RCC_APBPeriphIsoEnCmd(UART_SC, ENABLE);
         
     /*!< Uart configuration */
@@ -111,93 +110,6 @@ void assert_failed(uint8_t* file, uint32_t line)
     }
 }
 #endif
-
-/****************************************************************
-  * 函数      : Debug_FunctionTest()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : UART功能测试 TX->RX
- ***************************************************************/
-void Debug_FunctionTest(void)
-{
-    uint8_t TxCounter = 0, RxCounter = 0;
-    uint8_t TxBuf[] = "ACU UART Test: communication with LoopBack.";
-    uint8_t RxBuf[COUNT_OF(TxBuf) - 1] = {0};
-    uint8_t BufSize = COUNT_OF(TxBuf) - 1;
-    volatile TestStatus Status = FAILED;
-
-    DEBUG_MSG("debug uart test LoopBack_Mode start!\n");
-
-    while (TxCounter < BufSize)
-    {   
-        /* Send one byte from USARTy to USARTz */
-        PutChar(TxBuf[TxCounter++]);
-
-        TIMER_ResetSysTick();
-        do
-        {
-            if (GetChar(&RxBuf[RxCounter]))
-            {
-                break;
-            }
-        }
-        while (TIMER_GetSysTick() < GET_CHAR_TIMEOUT_MSEC);
-        RxCounter++;
-    } 
-    
-    /* Check the correctness of written dada */
-    Status = Buffercmp(TxBuf, RxBuf, BufSize);
-    if (Status == FAILED)
-    {
-        DEBUG_MSG("debug uart TX->RX fail.\n");
-    }
-    else 
-    {
-        DEBUG_MSG("debug uart TX->RX OK.\n");
-    }
-    
-    DEBUG_MSG("debug uart test LoopBack_Mode end!\n");
-}
-
-/****************************************************************
-  * 函数      : Debug_FunctionTest1()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : UART功能测试 RX->TX
- ***************************************************************/
-void Debug_FunctionTest1(void)
-{
-    uint8_t TestChar = 0;
-    uint32_t Tick = 0, CurTick = 0;
-
-    DEBUG_MSG("debug uart test Normal_Mode start!\n");
-    TIMER_ResetSysTick();
-
-    do
-    {   
-        Tick = TIMER_GetSysTick();
-        do
-        {
-            if (GetChar(&TestChar))
-            {
-                break;
-            }
-            CurTick = TIMER_GetSysTick();
-        }
-        while (CurTick - Tick < GET_CHAR_TIMEOUT_MSEC);
-
-        if (CurTick - Tick < GET_CHAR_TIMEOUT_MSEC)
-        {
-            PutChar(TestChar);
-        }
-        else
-        {
-            DEBUG_MSG("uart GetChar timeout!\n");
-        }
-    } 
-    while (TIMER_GetSysTick() < GET_CHAR_TIMEOUT_MSEC * 1000 * 10); /* 50s */
-    DEBUG_MSG("debug uart test Normal_Mode end!\n");
-}
 
 /****************************************************************
   * 函数      : Debug_PrintReg()

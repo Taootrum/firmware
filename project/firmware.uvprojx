@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>UART_DEBUG,USE_FULL_ASSERT,ACU_TEST,ACU_UPDATE</Define>
+              <Define>UART_DEBUG,USE_FULL_ASSERT,ACU_TEST</Define>
               <Undefine></Undefine>
-              <IncludePath>../src/include;../src/cmsis/inc;../src/driver/inc;../src/user/inc</IncludePath>
+              <IncludePath>../src/include;../src/cmsis/inc;../src/driver/inc;../src/user/inc;../src/test/inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -475,50 +475,55 @@
               <FileType>1</FileType>
               <FilePath>..\src\user\main.c</FilePath>
             </File>
-            <File>
-              <FileName>test_cru.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\user\src\test_cru.c</FilePath>
-            </File>
-            <File>
-              <FileName>test_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\user\src\test_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>test_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\user\src\test_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>test_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\user\src\test_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>test_spi_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\user\src\test_spi_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>test_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\user\src\test_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>test_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\user\src\test_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>test_wdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\user\src\test_wdg.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>doc</GroupName>
+        </Group>
+        <Group>
+          <GroupName>test</GroupName>
+          <Files>
+            <File>
+              <FileName>test_cru.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_cru.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_spi_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_spi_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_wdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_wdg.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>

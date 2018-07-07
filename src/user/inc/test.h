@@ -37,14 +37,14 @@ extern uint32_t g_AllFailCount;
             g_AllFailCount += g_SuiteFailCount; \
             DEBUG_MSG("%s: Total:%d, Success:%d, Fail:%d\r\n\r\n",  \
                         #SuiteCases, g_SuiteCaseCount, g_SuiteSuccessCount, g_SuiteFailCount);  \
-        } while (0);
+        } while (0)
 
 #define ACU_ALL_TEST_REPORT()\
         do  \
         {   \
             DEBUG_MSG("ACU REPORT:All Cases, Total:%d, Success:%d, Fail:%d\r\n", \
                         g_AllCaseCount, g_AllSuccessCount, g_AllFailCount); \
-        } while (0);
+        } while (0)
 
 typedef struct AllCase {
     char *FunName;

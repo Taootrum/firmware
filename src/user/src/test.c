@@ -15,44 +15,74 @@ uint32_t g_AllSuccessCount = 0;
 uint32_t g_AllFailCount = 0;
 
 static ALLCASE CRU_AllCases[] = {
-    {"CRU_FunctionTest1", CRU_FunctionTest1},
-    {"CRU_FunctionTest2", CRU_FunctionTest2},
-    {"CRU_FunctionTest3", CRU_FunctionTest3}
+    {"CRU_InterfaceTest1", CRU_InterfaceTest1},
+    {"CRU_InterfaceTest2", CRU_InterfaceTest2},
+    {"CRU_InterfaceTest3", CRU_InterfaceTest3},
+    {"CRU_InterfaceTest4", CRU_InterfaceTest4},
+    {"CRU_InterfaceTest5", CRU_InterfaceTest5},
+    {"CRU_InterfaceTest6", CRU_InterfaceTest6},
+    {"CRU_InterfaceTest7", CRU_InterfaceTest7},
+    {"CRU_InterfaceTest8", CRU_InterfaceTest8},
+    {"CRU_InterfaceTest9", CRU_InterfaceTest9},
+    {"CRU_InterfaceTest10", CRU_InterfaceTest10},
+    {"CRU_InterfaceTest11", CRU_InterfaceTest11},
+    {"CRU_InterfaceTest12", CRU_InterfaceTest12},
+    {"CRU_InterfaceTest13", CRU_InterfaceTest13},
+    {"CRU_InterfaceTest14", CRU_InterfaceTest14},
+    {"CRU_InterfaceTest15", CRU_InterfaceTest15},
+    {"CRU_InterfaceTest16", CRU_InterfaceTest16},
+    {"CRU_InterfaceTest17", CRU_InterfaceTest17},
+    {"CRU_InterfaceTest18", CRU_InterfaceTest18},
+    {"CRU_InterfaceTest19", CRU_InterfaceTest19}
 };
 
 static ALLCASE SPI_AllCases[] = {
-    {"SPI_FunctionTest1", SPI_FunctionTest1},
-    {"SPI_FunctionTest2", SPI_FunctionTest2},
-    {"SPI_FunctionTest3", SPI_FunctionTest3},
-    {"SPI_FunctionTest4", SPI_FunctionTest4},
+    {"SPI_InterfaceTest1", SPI_InterfaceTest1},
+    {"SPI_InterfaceTest2", SPI_InterfaceTest2},
+    {"SPI_InterfaceTest3", SPI_InterfaceTest3},
+    {"SPI_InterfaceTest4", SPI_InterfaceTest4},
+    {"SPI_InterfaceTest5", SPI_InterfaceTest5},
+    {"SPI_InterfaceTest6", SPI_InterfaceTest6},
+    {"SPI_InterfaceTest7", SPI_InterfaceTest7},
+    {"SPI_InterfaceTest8", SPI_InterfaceTest8}
 };
 
 static ALLCASE GPIO_AllCases[] = {
-    {"GPIO_FunctionTest1", GPIO_FunctionTest1},
-    {"GPIO_FunctionTest2", GPIO_FunctionTest2},
-    {"GPIO_FunctionTest3", GPIO_FunctionTest3},
-    {"GPIO_FunctionTest4", GPIO_FunctionTest4},
+    {"GPIO_InterfaceTest1", GPIO_InterfaceTest1},
+    {"GPIO_InterfaceTest2", GPIO_InterfaceTest2},
+    {"GPIO_InterfaceTest3", GPIO_InterfaceTest3},
+    {"GPIO_InterfaceTest4", GPIO_InterfaceTest4},
+    {"GPIO_InterfaceTest3", GPIO_InterfaceTest5},
+    {"GPIO_InterfaceTest4", GPIO_InterfaceTest6}
 };
 
 static ALLCASE UART_AllCases[] = {
-    {"UART_FunctionTest1", UART_FunctionTest1},
-    {"UART_FunctionTest2", UART_FunctionTest2},
-    {"UART_FunctionTest3", UART_FunctionTest3},
-    {"UART_FunctionTest4", UART_FunctionTest4},
+    {"UART_InterfaceTest1", UART_InterfaceTest1},
+    {"UART_InterfaceTest2", UART_InterfaceTest2},
+    {"UART_InterfaceTest3", UART_InterfaceTest3},
+    {"UART_InterfaceTest4", UART_InterfaceTest4},
+    {"UART_InterfaceTest5", UART_InterfaceTest5},
+    {"UART_InterfaceTest6", UART_InterfaceTest6},
+    {"UART_InterfaceTest7", UART_InterfaceTest7},
+    {"UART_InterfaceTest8", UART_InterfaceTest8}
 };
 
 static ALLCASE FLASH_AllCases[] = {
-    {"FLASH_FunctionTest1", FLASH_FunctionTest1},
-    {"FLASH_FunctionTest2", FLASH_FunctionTest2},
-    {"FLASH_FunctionTest3", FLASH_FunctionTest3},
-    {"FLASH_FunctionTest4", FLASH_FunctionTest4},
+    {"FLASH_InterfaceTest1", FLASH_InterfaceTest1},
+    {"FLASH_InterfaceTest2", FLASH_InterfaceTest2},
+    {"FLASH_InterfaceTest3", FLASH_InterfaceTest3},
+    {"FLASH_InterfaceTest4", FLASH_InterfaceTest4},
+//    {"FLASH_InterfaceTest5", FLASH_InterfaceTest5},
+    {"FLASH_InterfaceTest6", FLASH_InterfaceTest6},
+    {"FLASH_InterfaceTest7", FLASH_InterfaceTest7},
+    {"FLASH_InterfaceTest8", FLASH_InterfaceTest8}
 };
 
 /****************************************************************
-  * 函数      : ACU_BootRomTest()
+  * 函数      : ACU_SuiteTest()
   * 参数      : None
   * 返回值     : None
-  * 描述      : BootRom Test All
+  * 描述      : 单元测试
  ***************************************************************/
 static void ACU_SuiteTest(PALLCASE pSuiteAllCase)
 {
@@ -90,6 +120,7 @@ void ACU_HalFuncTest(void)
     ACU_SUITE_TEST(GPIO_AllCases);
     ACU_SUITE_TEST(UART_AllCases);
     ACU_SUITE_TEST(FLASH_AllCases);
+    //ACU_SUITE_TEST(I2C_AllCases);
     ACU_ALL_TEST_REPORT();
 }
 

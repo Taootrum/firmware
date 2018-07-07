@@ -14,11 +14,10 @@
   * 返回值     : None
   * 描述      : GPIOx清除初始化
  ***************************************************************/
-void GPIO_DeInit(APBSYS_TypeDef*    GPIO)
+void GPIO_DeInit(void)
 {
-    /* Check the parameters */
-    assert_param(IS_RCC_APB_PERIPH(GPIO));
-    RCC_APBPeriphResetCmd(GPIO, SET);
+    RCC_APBPeriphResetCmd(GPIO_SC, 0, SET);
+    RCC_APBPeriphResetCmd(GPIO_SC, 0, RESET);
 }
 
 /****************************************************************
@@ -80,26 +79,21 @@ void GPIO_StructInit(GPIO_InitTypeDef* GPIO_InitStruct)
 void GPIO_IOPADMode(GPIO_TypeDef* GPIOx, uint32_t IoPadMode)
 {    
     uint8_t GpioPinNum = 0;
-    uint32_t GpioOffset = 0;
-    GPIO_TypeDef* pGPIOx = GPIO_0;
+    uint8_t GpioOffset = 0;
     
     assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
     assert_param(IS_GPIO_IOPAD_MODE(IoPadMode));
 
-    for (pGPIOx = GPIO0; pGPIOx <= GPIO26; pGPIOx++)
-    {
-        if (GPIOx == pGPIOx)
-        {
-            break;
-        }
-        GpioPinNum++;
-    }
-
+    GpioPinNum = ((uint32_t)GPIOx - (uint32_t)GPIO0) / sizeof(GPIO_TypeDef);
     GpioOffset = GpioPinNum % 8;
     GpioOffset = GPIO_IOPAD_GPIO << GpioOffset;
     if (IoPadMode == GPIO_IOPAD_GPIO)
     {
-        if (GpioPinNum >= 24)
+        if (GpioPinNum >= 32)
+        {
+            SET_BIT(IOPAD_SC->FCR4, GpioOffset);
+        }
+        else if (GpioPinNum >= 24)
         {
             SET_BIT(IOPAD_SC->FCR3, GpioOffset);
         }
@@ -118,7 +112,11 @@ void GPIO_IOPADMode(GPIO_TypeDef* GPIOx, uint32_t IoPadMode)
     }
     else
     {
-        if (GpioPinNum >= 24)
+        if (GpioPinNum >= 32)
+        {
+            CLEAR_BIT(IOPAD_SC->FCR4, GpioOffset);
+        }
+        else if (GpioPinNum >= 24)
         {
             CLEAR_BIT(IOPAD_SC->FCR3, GpioOffset);
         }
@@ -230,5 +228,6 @@ void GPIO_IOPADPrintReg(IOPAD_TypeDef* IOPad)
     DEBUG_PRINT_REG(IOPad->FCR1);
     DEBUG_PRINT_REG(IOPad->FCR2);
     DEBUG_PRINT_REG(IOPad->FCR3);
+    DEBUG_PRINT_REG(IOPad->FCR4);
 }
 

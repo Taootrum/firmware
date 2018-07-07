@@ -9,17 +9,13 @@
 #ifndef __ACU_DEBUG_H__
 #define __ACU_DEBUG_H__
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 #include "acu.h"
 
 #define DEBUG_UART UART
-
-typedef enum {
-    STATUS_NO_ERROR = 0,
-    STATUS_XMODEM_ERROR_1,
-    STATUS_XMODEM_ERROR_2,
-    STATUS_XMODEM_ERROR_3,
-    STATUS_XMODEM_ERROR_4,
-} tERROR;
 
 /* Acu Simulation */
 #if defined(SIM_DEBUG)
@@ -34,11 +30,12 @@ typedef struct {
 /* System Debug Msg */
 #if defined(SIM_DEBUG) || defined(UART_DEBUG)
 #define DEBUG_MSG(fmt,args...)      printf(fmt, ##args)
-#define DEBUG_ERROR(fmt,args...)    printf("[%s|%d]ERROR: "fmt, __func__, __LINE__, ##args)
 #if defined(SIM_DEBUG)
 #define DEBUG_PRINT_REG(r)          printf("%s = %#x\n", #r, (uint32_t)r)
+#define DEBUG_ERROR(fmt,args...)    printf("[%s|%d]ERROR: "fmt"\n", __func__, __LINE__, ##args)
 #else
 #define DEBUG_PRINT_REG(r)          printf("%s = %#x\r\n", #r, (uint32_t)r)
+#define DEBUG_ERROR(fmt,args...)    printf("[%s|%d]ERROR: "fmt"\r\n", __func__, __LINE__, ##args)
 #endif
 #else
 #define DEBUG_MSG(fmt,args...)      ((void)0)
@@ -60,10 +57,12 @@ void Debug_DeInit(void);
 void Debug_Init(void);
 void PutChar(uint8_t Putchar);
 BoolStatus GetChar(uint8_t *InChar);
-void Debug_FunctionTest(void);
-void Debug_FunctionTest1(void);
 
 void Debug_PrintReg(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

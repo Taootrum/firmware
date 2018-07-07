@@ -73,12 +73,13 @@ typedef struct
 #define RCC_AXI_MPDEN       ((uint32_t)0x00000001)
 #define RCC_AXI_SCREN       ((uint32_t)0x00000080)
 
-void RCC_SoftReset(FunctionalState NewState);
-void RCC_PCIEReset(FunctionalState NewState);
-void RCC_IPCoreReset(FunctionalState NewState);
-void RCC_ClkManageReset(FunctionalState NewState);
-void RCC_FabricBusReset(FunctionalState NewState);
-void RCC_DDRReset(FunctionalState NewState);
+void RCC_SoftReset(void);
+void RCC_PCIEReset(void);
+void RCC_IPCoreReset(void);
+void RCC_ClkManageReset(void);
+void RCC_FabricBusReset(void);
+void RCC_DDRReset(void);
+void RCC_IOPADReset(void);
 uint32_t RCC_GetGlobalResetFlag(void);
 void RCC_DDRReadSelectCmd(uint32_t DDR_Channels);
 void RCC_DDRWriteSelectCmd(uint32_t DDR_Channels);
@@ -88,8 +89,8 @@ void RCC_SYSCLKSetDiv(CLK_TypeDef *RCC_SYSCLK, uint32_t RCC_SYSCLKDIV);
 uint32_t RCC_SYSCLKGetDiv(CLK_TypeDef *RCC_SYSCLK);
 void RCC_SYSCLKGetFreq(RCC_ClocksTypeDef *RCC_Clocks);
 void RCC_SYSCLKCmd(CLK_TypeDef *RCC_SYSCLK, FunctionalState NewState);
-void RCC_APBPeriphResetCmd(APBSYS_TypeDef *RCC_APBPeriph, ResetStatus NewState);
-void RCC_APBPeriphClockCmd(APBSYS_TypeDef *RCC_APBPeriph, FunctionalState NewState);
+void RCC_APBPeriphResetCmd(APBSYS_TypeDef *RCC_APBPeriph, uint8_t ModuleNum, ResetStatus NewState);
+void RCC_APBPeriphClockCmd(APBSYS_TypeDef *RCC_APBPeriph, uint8_t ModuleNum, FunctionalState NewState);
 void RCC_APBPeriphIsoEnCmd(APBSYS_TypeDef *RCC_APBPeriph, FunctionalState NewState);
 
 /* Debug print */

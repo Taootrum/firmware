@@ -7,94 +7,64 @@
  ******************************************************************************/
 #include "acu_rcc.h"
 
-void RCC_SoftReset(FunctionalState NewState)
+void RCC_SoftReset(void)
 {
-    if (NewState == ENABLE)
-    {
-        RST_SC->SRST_CNT = SYS_RESET_CNT;
-        RST_SC->SRST = SYS_RESET_LOW;
-    }
-    else
-    {
-        RST_SC->SRST = SYS_RESET_HIGH;
-    }
+    WRITE_REG(RST_SC->SRST_CNT, SYS_RESET_CNT);
+    WRITE_REG(RST_SC->SRST, SYS_RESET_LOW);
+    WRITE_REG(RST_SC->SRST, SYS_RESET_HIGH);
 }
 
-void RCC_PCIEReset(FunctionalState NewState)
+void RCC_PCIEReset(void)
 {
-    if (NewState == ENABLE)
-    {
-        RST_SC->PCIE_RST = SYS_RESET_LOW;
-    }
-    else
-    {
-        RST_SC->PCIE_RST = SYS_RESET_HIGH;
-    }
+    WRITE_REG(RST_SC->PCIE_RST, SYS_RESET_LOW);
+    WRITE_REG(RST_SC->PCIE_RST, SYS_RESET_HIGH);
 }
 
-void RCC_IPCoreReset(FunctionalState NewState)
+void RCC_IPCoreReset(void)
 {
-    if (NewState == ENABLE)
-    {
-        RST_SC->IPCORE_RST = SYS_RESET_LOW;
-    }
-    else
-    {
-        RST_SC->IPCORE_RST = SYS_RESET_HIGH;
-    }
+    WRITE_REG(RST_SC->IPCORE_RST, SYS_RESET_LOW);
+    WRITE_REG(RST_SC->IPCORE_RST, SYS_RESET_HIGH);
 }
 
-void RCC_ClkManageReset(FunctionalState NewState)
+void RCC_ClkManageReset(void)
 {
-    if (NewState == ENABLE)
-    {
-        RST_SC->CLKM_RST = SYS_RESET_LOW;
-    }
-    else
-    {
-        RST_SC->CLKM_RST = SYS_RESET_HIGH;
-    }
+    WRITE_REG(RST_SC->CLKM_RST, SYS_RESET_LOW);
+    WRITE_REG(RST_SC->CLKM_RST, SYS_RESET_HIGH);
 }
 
-void RCC_FabricBusReset(FunctionalState NewState)
+void RCC_FabricBusReset(void)
 {
-    if (NewState == ENABLE)
-    {
-        RST_SC->BUS_RST = SYS_RESET_LOW;
-    }
-    else
-    {
-        RST_SC->BUS_RST = SYS_RESET_HIGH;
-    }
+    WRITE_REG(RST_SC->BUS_RST, SYS_RESET_LOW);
+    WRITE_REG(RST_SC->BUS_RST, SYS_RESET_HIGH);
 }
 
-void RCC_DDRReset(FunctionalState NewState)
+void RCC_DDRReset(void)
 {
-    if (NewState == ENABLE)
-    {
-        RST_SC->DDR_RST = SYS_RESET_LOW;
-    }
-    else
-    {
-        RST_SC->DDR_RST = SYS_RESET_HIGH;
-    }
+    WRITE_REG(RST_SC->DDR_RST, SYS_RESET_LOW);
+    WRITE_REG(RST_SC->DDR_RST, SYS_RESET_HIGH);
+}
+
+void RCC_IOPADReset(void)
+{
+    WRITE_REG(RST_SC->IOPAD_RST, SYS_RESET_LOW);
+    WRITE_REG(RST_SC->IOPAD_RST, SYS_RESET_HIGH);
 }
 
 uint32_t RCC_GetGlobalResetFlag(void)
 {
-    return RST_SC->GRF;
+    return READ_REG(RST_SC->GRF);
 }
 
 void RCC_DDRReadSelectCmd(uint32_t DDR_Channels)
 {
     assert_param(IS_DRAM_READ_SEL(DDR_Channels));
-    RST_SC->DDR_RCFG = DDR_Channels;
+    WRITE_REG(RST_SC->DDR_RCFG, DDR_Channels);
 }
 
 void RCC_DDRWriteSelectCmd(uint32_t DDR_Channels)
 {
     assert_param(IS_DRAM_WRITE_SEL(DDR_Channels));
-    RST_SC->DDR_WCFG = DDR_Channels;
+    WRITE_REG(RST_SC->DDR_WCFG, DDR_Channels);
 }
 
 void RCC_SYSCLKSetSource(CLK_TypeDef *RCC_SYSCLK, uint32_t RCC_SYSCLKSource)
@@ -133,17 +103,17 @@ void RCC_SYSCLKGetFreq(RCC_ClocksTypeDef *RCC_Clocks)
     RCC_Clocks->SYSCLK_Frequency = SystemCoreClock;
 
     /* fabric clock */
-    uDiv = RCC_SYSCLKGetDiv(FABRIC_SC);
+    uDiv = RCC_SYSCLKGetDiv(FABRIC_CLK);
     uClkFreq = SystemCoreClock / (uDiv + 1);
     RCC_Clocks->FCLK_Frequency = uClkFreq;
 
     /* ipcore clock */
-    uDiv = RCC_SYSCLKGetDiv(IPCORE_SC);
+    uDiv = RCC_SYSCLKGetDiv(IPCORE_CLK);
     uClkFreq = SystemCoreClock / (uDiv + 1);
     RCC_Clocks->IPCLK_Frequency = uClkFreq;
 
-    /* ipcore clock */
-    uDiv = RCC_SYSCLKGetDiv(DDR_SC);
+    /* ddr clock */
+    uDiv = RCC_SYSCLKGetDiv(DDR_CLK);
     uClkFreq = SystemCoreClock / (uDiv + 1);
     RCC_Clocks->DDRCLK_Frequency = uClkFreq;
 }
@@ -163,35 +133,73 @@ void RCC_SYSCLKCmd(CLK_TypeDef *RCC_SYSCLK, FunctionalState NewState)
     }
 }
 
-void RCC_APBPeriphResetCmd(APBSYS_TypeDef *RCC_APBPeriph, ResetStatus NewState)
+void RCC_APBPeriphResetCmd(APBSYS_TypeDef *RCC_APBPeriph, uint8_t ModuleNum, ResetStatus NewState)
 {
     /* Check the parameters */
     assert_param(IS_RCC_APB_PERIPH(RCC_APBPeriph));
     assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
+
+    if (RCC_APBPeriph == I2C_SC) {
+        assert_param(ModuleNum < I2C_MODULE_MAX);    
+    }
+    else if (RCC_APBPeriph == UART_SC) {
+        assert_param(ModuleNum < UART_MODULE_MAX); 
+    }
+    else if (RCC_APBPeriph == SPI_SC) {
+        assert_param(ModuleNum < SPI_MODULE_MAX);
+    }
+    else if (RCC_APBPeriph == TIM_SC) {
+        assert_param(ModuleNum < TIM_MODULE_MAX);
+    }
+    else if (RCC_APBPeriph == WDT_SC) {
+        assert_param(ModuleNum < WDT_MODULE_MAX);    
+    }
+    else if (RCC_APBPeriph == GPIO_SC) {
+        assert_param(ModuleNum < GPIO_MODULE_MAX);
+    }
+
     if (NewState == SET)
     {
-        SET_BIT(RCC_APBPeriph->SR, RCC_APB_SRESET);
+        SET_BIT(RCC_APBPeriph->SR, RCC_APB_SRESET << ModuleNum);
     }
     else
     {
-        CLEAR_BIT(RCC_APBPeriph->SR, RCC_APB_SRESET);
+        CLEAR_BIT(RCC_APBPeriph->SR, RCC_APB_SRESET << ModuleNum);
     }
 }
 
-void RCC_APBPeriphClockCmd(APBSYS_TypeDef *RCC_APBPeriph, FunctionalState NewState)
+void RCC_APBPeriphClockCmd(APBSYS_TypeDef *RCC_APBPeriph, uint8_t ModuleNum, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param(IS_RCC_APB_PERIPH(RCC_APBPeriph));
     assert_param(IS_FUNCTIONAL_STATE(NewState));
+
+    if (RCC_APBPeriph == I2C_SC) {
+        assert_param(ModuleNum < I2C_MODULE_MAX);    
+    }
+    else if (RCC_APBPeriph == UART_SC) {
+        assert_param(ModuleNum < UART_MODULE_MAX); 
+    }
+    else if (RCC_APBPeriph == SPI_SC) {
+        assert_param(ModuleNum < SPI_MODULE_MAX);
+    }
+    else if (RCC_APBPeriph == TIM_SC) {
+        assert_param(ModuleNum < TIM_MODULE_MAX);
+    }
+    else if (RCC_APBPeriph == WDT_SC) {
+        assert_param(ModuleNum < WDT_MODULE_MAX);    
+    }
+    else if (RCC_APBPeriph == GPIO_SC) {
+        assert_param(ModuleNum < GPIO_MODULE_MAX);
+    }
     
     if (NewState == ENABLE)
     {
-        SET_BIT(RCC_APBPeriph->CGE, RCC_APB_CLKEN);
+        SET_BIT(RCC_APBPeriph->CGE, RCC_APB_CLKEN << ModuleNum);
     }
     else
     {
-        CLEAR_BIT(RCC_APBPeriph->CGE, RCC_APB_CLKEN);
+        CLEAR_BIT(RCC_APBPeriph->CGE, RCC_APB_CLKEN << ModuleNum);
     }
 }
 

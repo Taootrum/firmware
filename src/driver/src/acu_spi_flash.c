@@ -15,7 +15,8 @@
  ***************************************************************/
 void sFLASH_DeInit(void)
 {
-    sFLASH_LowLevel_DeInit();
+    /*!< DeInitializes the sFLASH_SPI */
+    SPI_DeInit(sFLASH_SPI);
 }
 
 /****************************************************************
@@ -27,9 +28,23 @@ void sFLASH_DeInit(void)
 void sFLASH_Init(void)
 {
     SPI_InitTypeDef SPI_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
+    
+    /*!< sFLASH_SPI Periph clock enable */
+    RCC_APBPeriphClockCmd(SPI_SC, 0, ENABLE);
+    /*!< sFLASH_SPI IO enable */
+    RCC_APBPeriphIsoEnCmd(SPI_SC, ENABLE);
 
-    sFLASH_LowLevel_Init();
+    /*!< GPIO Periph clock enable */
+    RCC_APBPeriphClockCmd(GPIO_SC, 0, ENABLE);
+    /*!< GPIO IO enable */
+    RCC_APBPeriphIsoEnCmd(GPIO_SC, ENABLE);
 
+    /*!< GPIO IO as GPIO*/
+    GPIO_IOPADMode(sFLASH_CS_GPIO, GPIO_IOPAD_GPIO);
+    GPIO_InitStructure.GPIO_Direction = GPIO_OUTPUT;
+    GPIO_InitStructure.GPIO_PullStatus = GPIO_PULLUP;
+    GPIO_Init(sFLASH_CS_GPIO, &GPIO_InitStructure);
     sFLASH_CS_HIGH();
     
     /*!< SPI configuration */
@@ -72,7 +87,7 @@ void sFLASH_EraseSector(uint32_t SectorAddr)
   * 返回值     : None
   * 描述      : Initializes Flash_SPI
  ***************************************************************/
-void sFLASH_EraseBlock(uint32_t SectorAddr)
+void sFLASH_EraseBlock(uint32_t BlockAddr)
 {
     /*!< Send write enable instruction */
     sFLASH_WriteEnable();
@@ -81,11 +96,11 @@ void sFLASH_EraseBlock(uint32_t SectorAddr)
     /*!< Send Sector Erase instruction */
     sFLASH_SendByte(sFLASH_CMD_SE);
     /*!< Send SectorAddr high nibble address byte */
-    sFLASH_SendByte((SectorAddr & 0xFF0000) >> 16);
+    sFLASH_SendByte((BlockAddr & 0xFF0000) >> 16);
     /*!< Send SectorAddr medium nibble address byte */
-    sFLASH_SendByte((SectorAddr & 0xFF00) >> 8);
+    sFLASH_SendByte((BlockAddr & 0xFF00) >> 8);
     /*!< Send SectorAddr low nibble address byte */
-    sFLASH_SendByte(SectorAddr & 0xFF);
+    sFLASH_SendByte(BlockAddr & 0xFF);
     sFLASH_CS_HIGH();
     
     /*!< Wait the end of Flash writing */
@@ -404,49 +419,6 @@ void sFLASH_WaitForWriteEnd(void)
 }
 
 /****************************************************************
-  * 函数      : sFLASH_LowLevel_DeInit()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : DeInitializes the peripherals used by the SPI FLASH driver
- ***************************************************************/
-void sFLASH_LowLevel_DeInit(void)
-{
-    /*!< DeInitializes the sFLASH_SPI */
-    SPI_DeInit(SPI_SC);
-}
-
-/****************************************************************
-  * 函数      : sFLASH_LowLevel_Init()
-  * 参数      : None
-  * 返回值     : None
-  * 描述      : Initializes the peripherals used by the SPI FLASH driver
- ***************************************************************/
-void sFLASH_LowLevel_Init(void)
-{
-    GPIO_InitTypeDef GPIO_InitStructure;
-    
-    /*!< sFLASH_SPI reset clk */
-    RCC_APBPeriphResetCmd(SPI_SC, RESET);
-    /*!< sFLASH_SPI Periph clock enable */
-    RCC_APBPeriphClockCmd(SPI_SC, ENABLE);
-    /*!< sFLASH_SPI IO enable */
-    RCC_APBPeriphIsoEnCmd(SPI_SC, ENABLE);
-
-    /*!< GPIO reset clk */
-    RCC_APBPeriphResetCmd(GPIO_SC, RESET);
-    /*!< GPIO Periph clock enable */
-    RCC_APBPeriphClockCmd(GPIO_SC, ENABLE);
-    /*!< GPIO IO enable */
-    RCC_APBPeriphIsoEnCmd(GPIO_SC, ENABLE);
-
-    /*!< GPIO IO as GPIO*/
-    GPIO_IOPADMode(sFLASH_CS_GPIO, GPIO_IOPAD_GPIO);
-    GPIO_InitStructure.GPIO_Direction = GPIO_OUTPUT;
-    GPIO_InitStructure.GPIO_PullStatus = GPIO_PULLUP;
-    GPIO_Init(sFLASH_CS_GPIO, &GPIO_InitStructure);
-}
-
-/****************************************************************
   * 函数      : Flash_PrintReg()
   * 参数      : RCC_IMEM: IRAM/IROM
   * 返回值     : None
@@ -455,9 +427,9 @@ void sFLASH_LowLevel_Init(void)
 void Flash_PrintReg(void)
 {   
     /* RCC */
-    DEBUG_MSG("FABRIC_SC:\n");
-    DEBUG_PRINT_REG(FABRIC_SC);
-    RCC_SYSCLKPrintReg(FABRIC_SC);
+    DEBUG_MSG("FABRIC_CLK:\n");
+    DEBUG_PRINT_REG(FABRIC_CLK);
+    RCC_SYSCLKPrintReg(FABRIC_CLK);
     DEBUG_MSG("SPI_SC:\n");
     DEBUG_PRINT_REG(SPI_SC);
     RCC_APBSYSPrintReg(SPI_SC);

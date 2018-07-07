@@ -47,25 +47,14 @@ void SystemCoreClockUpdate (void)
 
 static void ResetSysModules(void)
 {
-    /* Soft reset the modules system manager */
-    RST_SC->PCIE_RST = (uint32_t)0x0;
-    RST_SC->PCIE_RST = (uint32_t)0x1;
-
-    RST_SC->IPCORE_RST = (uint32_t)0x0;
-    RST_SC->IPCORE_RST = (uint32_t)0x01;
-   
-    RST_SC->CLKM_RST = (uint32_t)0x0;
-    RST_SC->CLKM_RST = (uint32_t)0x1;
-
-    RST_SC->BUS_RST = (uint32_t)0x0;
-    RST_SC->BUS_RST = (uint32_t)0x1;
-
-    RST_SC->DDR_RST = (uint32_t)0x0;
-    RST_SC->DDR_RST = (uint32_t)0x1;
-    RST_SC->DDR_RCFG = (uint32_t)0x0;
-    RST_SC->DDR_WCFG = (uint32_t)0x0;
-
 #if 0
+    /* Soft reset the modules system manager */
+    RCC_PCIEReset();
+    RCC_IPCoreReset();
+    RCC_ClkManageReset();
+    //RCC_FabricBusReset();
+    RCC_DDRReset();
+
     /* IO PAD reset */
     IOPAD_SC->FCR0 = 0x0;
     IOPAD_SC->FCR1 = 0x80;
@@ -74,27 +63,38 @@ static void ResetSysModules(void)
 #endif
 
     /* Soft reset the peripheral modules */
-    I2C_SC->SR  = (uint32_t)0x1;
-    UART_SC->SR = (uint32_t)0x1;
-    GPIO_SC->SR = (uint32_t)0x1;
-    SPI_SC->SR  = (uint32_t)0x1;
-    TIM_SC->SR  = (uint32_t)0x1;
-    WDT_SC->SR  = (uint32_t)0x1;
+    I2C_DeInit(I2C0);
+    I2C_DeInit(I2C1);
+    UART_DeInit(UART);
+    GPIO_DeInit();
+    SPI_DeInit(SPI0);
+    SPI_DeInit(SPI1);
+    //TIM_DeInit(TIM0);
+    //TIM_DeInit(TIM1);
+    //WDT_DeInit(WDT);
 }
 
 static void SetSysClock(void)
 {
-    /* HCLK = SYSCLK */
-    FABRIC_SC->CLKRATIO = (uint32_t)0x1;
+    /* Fabric bus */
+    RCC_SYSCLKSetSource(FABRIC_CLK, SYSCLK_SOURCE_APLL);
+    RCC_SYSCLKSetDiv(FABRIC_CLK, SYSCLK_DIV_MIX);
+    RCC_SYSCLKCmd(FABRIC_CLK, ENABLE);
       
-    /* PCLK2 = HCLK */
-    PCIE_SC->CLKRATIO   = (uint32_t)0x1;
+    /* PCIE bus */
+    RCC_SYSCLKSetSource(PCIE_CLK, SYSCLK_SOURCE_APLL);
+    RCC_SYSCLKSetDiv(PCIE_CLK, SYSCLK_DIV_MIX);
+    RCC_SYSCLKCmd(PCIE_CLK, ENABLE);
 
-    /* HCLK = SYSCLK */
-    IPCORE_SC->CLKRATIO = (uint32_t)0x1;
+    /* IPCORE bus */
+    RCC_SYSCLKSetSource(IPCORE_CLK, SYSCLK_SOURCE_APLL);
+    RCC_SYSCLKSetDiv(IPCORE_CLK, SYSCLK_DIV_MIX);
+    RCC_SYSCLKCmd(IPCORE_CLK, ENABLE);
     
-    /* HCLK = SYSCLK */
-    DDR_SC->CLKRATIO    = (uint32_t)0x1;
+    /* DDR bus */
+    RCC_SYSCLKSetSource(DDR_CLK, SYSCLK_SOURCE_APLL);
+    RCC_SYSCLKSetDiv(DDR_CLK, SYSCLK_DIV_MIX);
+    RCC_SYSCLKCmd(DDR_CLK, ENABLE);
 }
 
 /*----------------------------------------------------------------------------
@@ -110,12 +110,10 @@ void SystemInit (void)
     /* configuration systick*/
     SysTick_Configuration();
 
-#if 0
     /* Rest the System modules */
     ResetSysModules();
     
     /* Configure the System clock frequency */
     SetSysClock();
-#endif
 }
 

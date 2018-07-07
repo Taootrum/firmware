@@ -27,24 +27,22 @@ typedef enum IRQn
     SysTick_IRQn                = -1,     /*!< 15 Cortex-M3 System Tick Interrupt                   */
 
 /* ----------------------  ACU Specific Interrupt Numbers  --------------------- */
-    I2C0_IRQn                   = 0,      /*!< Window WatchDog Interrupt                            */
-    I2C1_IRQn                   = 1,      /*!< PVD through EXTI Line detection Interrupt            */
-    GPIO_IRQn                   = 2,      /*!< Tamper Interrupt                                     */
-    UART_IRQn                   = 3,      /*!< RTC global Interrupt                                 */
-    SSP_IRQn                    = 4,      /*!< FLASH global Interrupt                               */
-    RCC_IRQn                    = 5,      /*!< RCC global Interrupt                                 */
-    TIMER0_IRQn                 = 6,      /*!< EXTI Line0 Interrupt                                 */
-    TIMER1_IRQn                 = 7,      /*!< EXTI Line1 Interrupt                                 */
-    WDT_IRQn                    = 8,      /*!< EXTI Line2 Interrupt                                 */
-    EXTI3_IRQn                  = 9,      /*!< EXTI Line3 Interrupt                                 */
-    RESERVED0_IRQn              = 10,     /*!< EXTI Line4 Interrupt                                 */
-    RESERVED1_IRQn              = 11,     /*!< DMA1 Channel 1 global Interrupt                      */
-    RESERVED2_IRQn              = 12,     /*!< DMA1 Channel 2 global Interrupt                      */
-    RESERVED3_IRQn              = 13,     /*!< DMA1 Channel 3 global Interrupt                      */
-    RESERVED4_IRQn              = 14,     /*!< DMA1 Channel 4 global Interrupt                      */
-    RESERVED5_IRQn              = 15,     /*!< DMA1 Channel 5 global Interrupt                      */
-    RESERVED6_IRQn              = 16,     /*!< DMA1 Channel 6 global Interrupt                      */
-    RESERVED7_IRQn              = 17,     /*!< DMA1 Channel 7 global Interrupt                      */
+    I2C0_IRQn                   = 0,        /*!< I2C0 Interrupt                                   */
+    I2C1_IRQn                   = 1,        /*!< I2C1 Interrupt                                   */
+    I2C2_IRQn                   = 2,        /*!< I2C2 Interrupt                                   */
+    INT_IRQn                    = 3,        /*!< INT Interrupt                                    */
+    GPIO_IRQn                   = 4,        /*!< GPIO Interrupt                                   */
+    UART_IRQn                   = 5,        /*!< UART Interrupt                                   */
+    SSP0_IRQn                   = 6,        /*!< SSP0 Interrupt                                   */
+    SSP1_IRQn                   = 7,        /*!< SSP1 Interrupt                                   */
+    TIMER0_IRQn                 = 8,        /*!< Timer0 Interrupt                                 */
+    TIMER1_IRQn                 = 9,        /*!< Timer1 Interrupt                                 */
+    WDT_IRQn                    = 10,       /*!< Watchdog Timer Interrupt                         */
+    PVT_IRQn                    = 11,       /*!< PVT Sensor Interrupt                             */
+    DDR0_IRQn                   = 12,       /*!< DDR Interrupt0                                   */
+    DDR1_IRQn                   = 13,       /*!< DDR Interrupt1                                   */
+    DDR2_IRQn                   = 14,       /*!< DDR Interrupt2                                   */
+    CU_IRQn                     = 15,       /*!< CU Interrupt                                     */
 } IRQn_Type;
 
 /* -------  Start of section using anonymous unions and disabling warnings  ------- */
@@ -79,8 +77,8 @@ typedef enum {FALSE = 0, TRUE = !FAILED} BoolStatus;
 /* brief Inter Integrated Circuit Interface */
 typedef struct
 {
-    __IO uint32_t CON;                     /*!< Offset: 0x000 Control Register (R/W) */
-    __I  uint32_t TAR;                    /*!< Offset: 0x004 Target Register (R/ ) */
+    __IO uint32_t CR;                     /*!< Offset: 0x000 Control Register (R/W) */
+    __IO uint32_t TAR;                    /*!< Offset: 0x004 Target Register (R/W) */
     __IO uint32_t SAR;                    /*!< Offset: 0x008 Slave Register (R/W) */
     __IO uint32_t HS_MADDR;               /*!< Offset: 0x00C HS Master Mode Code Address Register (R/W) */
     __IO uint32_t DATACMD;                /*!< Offset: 0x010 Rx/Tx Data Bufffer and Command Register (R/W) */
@@ -92,7 +90,7 @@ typedef struct
     __IO uint32_t HS_SCL_LCNT;            /*!< Offset: 0x028 High Speed I2C Clock SCL Low Count Register (R/W) */
     __I  uint32_t INTR_STAT;              /*!< Offset: 0x02C Interrupt Status Register (R/ ) */
     __IO uint32_t INTR_MASK;              /*!< Offset: 0x030 Interrupt Mask Register (R/W) */
-    __I  uint32_t RAW_INTR_MASK;          /*!< Offset: 0x034 Raw Interrupt Status Register (R/ ) */
+    __I  uint32_t RAW_INTR_STAT;          /*!< Offset: 0x034 Raw Interrupt Status Register (R/ ) */
     __IO uint32_t RX_TL;                  /*!< Offset: 0x038 Receive FIFO Threshold Register (R/W) */
     __IO uint32_t TX_TL;                  /*!< Offset: 0x03C Transmit FIFO Threshold Register (R/W) */
     __I  uint32_t CLR_INTR;               /*!< Offset: 0x040 Clear Combined and Individual Interrupt Register (R/ ) */
@@ -125,6 +123,7 @@ typedef struct
     __IO uint32_t FCR1;                   /*!< Offset: 0x004 Function Configuration1 Register (R/W) */
     __IO uint32_t FCR2;                   /*!< Offset: 0x008 Function Configuration2 Register (R/W) */
     __IO uint32_t FCR3;                   /*!< Offset: 0x00C Function Configuration3 Register (R/W) */
+    __IO uint32_t FCR4;                   /*!< Offset: 0x010 Function Configuration4 Register (R/W) */
 } IOPAD_TypeDef;
 
 /* brief General Purpose I/O */
@@ -133,20 +132,22 @@ typedef struct
     __IO uint32_t IR;
     __IO uint32_t OR;
     __IO uint32_t DR;
+    __IO uint32_t PUDE;
     __IO uint32_t GIMR;
     __IO uint32_t GPIMR;
     __IO uint32_t PIR;
     __IO uint32_t ITR;
     __IO uint32_t IFR;
     __IO uint32_t ICR;
-    __IO uint32_t PUDE;
-    uint32_t  RESERVED1[6];
+    uint32_t  RESERVED[6];
 } GPIO_TypeDef;
 
 /* brief General Purpose I/O interrupt status */
 typedef struct
 {
-    __I  uint16_t GPIR;                   /*!< Offset: 0x000 GOIO INT Status Register (R/ ) */
+    __I  uint32_t GP0IR;                  /*!< Offset: 0x000 GPIO group 0 Interrupt Register (R/ ) */
+    __I  uint32_t GP1IR;                  /*!< Offset: 0x004 GPIO group 1 Interrupt Register (R/ ) */
+    __I  uint32_t GP2IR;                  /*!< Offset: 0x008 GPIO group 2 Interrupt Register (R/ ) */
 } GPIO_IRTypeDef;
 
 /* brief Independent WATCHDOG */
@@ -223,6 +224,7 @@ typedef struct
     __IO uint32_t GRF;                      /*!< Offset: 0x01C Global Reset Flag Register (R/W) */
     __IO uint32_t DDR_RCFG;                 /*!< Offset: 0x020 DDR Select Register (R/W) */
     __IO uint32_t DDR_WCFG;                 /*!< Offset: 0x024 DDR Write Configure Register (R/W) */
+    __IO uint32_t IOPAD_RST;                /*!< Offset: 0x028 IOPAD Subsystem Reset Register (R/W) */
 } CHIPRST_TypeDef;
 
 /* Clock System Management */
@@ -281,6 +283,8 @@ typedef struct
        uint8_t  RESERVED1[16];
     __IO uint32_t ISO;                    /*!< Offset: 0x018 Interface ISO Register (R/W) */
     __IO uint32_t SCR;                    /*!< Offset: 0x01C SyncReset Clock Gate Register (R/W) */
+    __IO uint32_t WDT_PAUSE;              /*!< Offset: 0x020 WDT Pause Register (R/W) */
+    __IO uint32_t WDT_SPEEDUP;            /*!< Offset: 0x024 WDT Speedup Register (R/W) */
 } APBSYS_TypeDef;
 
 /* ================================================================================ */
@@ -300,17 +304,18 @@ typedef struct
 /*!< Peripheral memory map */
 #define ACU_I2C0_BASE           (ACU_APB_BASE + 0x00000)
 #define ACU_I2C1_BASE           (ACU_APB_BASE + 0x01000)
+#define ACU_I2C2_BASE           (ACU_APB_BASE + 0x02000)
 #define ACU_UART_BASE           (ACU_APB_BASE + 0x10000)
 #define ACU_GPIO_BASE           (ACU_APB_BASE + 0x20000)
-#define ACU_SSP_BASE            (ACU_APB_BASE + 0x30000)
+#define ACU_SSP0_BASE           (ACU_APB_BASE + 0x30000)
+#define ACU_SSP1_BASE           (ACU_APB_BASE + 0x31000)
 #define ACU_TIM0_BASE           (ACU_APB_BASE + 0x40000)
 #define ACU_TIM1_BASE           (ACU_APB_BASE + 0x40014)
 #define ACU_WDT_BASE            (ACU_APB_BASE + 0x50000)
 #define ACU_SYS_BASE            (ACU_APB_BASE + 0x60000)
 #define ACU_PVT_BASE            (ACU_APB_BASE + 0x70000)
 
-#define ACU_GPIO_IR0_BASE       (ACU_GPIO_BASE + 0x4000)
-#define ACU_GPIO_IR1_BASE       (ACU_GPIO_BASE + 0x4004)
+#define ACU_GPIO_IR_BASE        (ACU_GPIO_BASE + 0x4000)
 
 /*!< System Controller */
 #define ACU_RSTSC_BASE          (ACU_SYS_BASE + 0x00400)
@@ -342,11 +347,20 @@ typedef struct
 /* ================           Peripheral_declaration               ================ */
 /* ================================================================================ */
 
+#define I2C_MODULE_MAX          3
+#define UART_MODULE_MAX         1
+#define SPI_MODULE_MAX          2
+#define TIM_MODULE_MAX          2
+#define WDT_MODULE_MAX          1
+#define GPIO_MODULE_MAX         1
+
 /*<! APB Peripheral module declaration */
 #define I2C0                    ((I2C_TypeDef *) ACU_I2C0_BASE)
 #define I2C1                    ((I2C_TypeDef *) ACU_I2C1_BASE)
+#define I2C2                    ((I2C_TypeDef *) ACU_I2C2_BASE)
 #define UART                    ((UART_TypeDef *) ACU_UART_BASE)
-#define SPI                     ((SPI_TypeDef *) ACU_SSP_BASE)
+#define SPI0                    ((SPI_TypeDef *) ACU_SSP0_BASE)
+#define SPI1                    ((SPI_TypeDef *) ACU_SSP1_BASE)
 #define TIM0                    ((TIM_TypeDef *) ACU_TIM0_BASE)
 #define TIM1                    ((TIM_TypeDef *) ACU_TIM1_BASE)
 #define WDT                     ((WDT_TypeDef *) ACU_WDT_BASE)
@@ -378,22 +392,40 @@ typedef struct
 #define GPIO24                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 24))
 #define GPIO25                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 25))
 #define GPIO26                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 26))
-#define GPIR0                   ((GPIO_IRTypeDef *) ACU_GPIO_IR0_BASE)
-#define GPIR1                   ((GPIO_IRTypeDef *) ACU_GPIO_IR1_BASE)
-#define IS_GPIO_ALL_PERIPH(PERIPH)      (((PERIPH) == GPIO0) || ((PERIPH) == GPIO1) || \
-                                        ((PERIPH) == GPIO2) || ((PERIPH) == GPIO3) || \
-                                        ((PERIPH) == GPIO4) || ((PERIPH) == GPIO5) || \
-                                        ((PERIPH) == GPIO6) || ((PERIPH) == GPIO7) || \
-                                        ((PERIPH) == GPIO8) || ((PERIPH) == GPIO9) || \
-                                        ((PERIPH) == GPIO10) || ((PERIPH) == GPIO11) || \
-                                        ((PERIPH) == GPIO12) || ((PERIPH) == GPIO13) || \
-                                        ((PERIPH) == GPIO14) || ((PERIPH) == GPIO15) || \
-                                        ((PERIPH) == GPIO16) || ((PERIPH) == GPIO17) || \
-                                        ((PERIPH) == GPIO18) || ((PERIPH) == GPIO19) || \
-                                        ((PERIPH) == GPIO20) || ((PERIPH) == GPIO21) || \
-                                        ((PERIPH) == GPIO22) || ((PERIPH) == GPIO23) || \
-                                        ((PERIPH) == GPIO24) || ((PERIPH) == GPIO25) || \
-                                        ((PERIPH) == GPIO26))
+#define GPIO27                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 27))
+#define GPIO28                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 28))
+#define GPIO29                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 29))
+#define GPIO30                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 30))
+#define GPIO31                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 31))
+#define GPIO32                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 32))
+#define GPIO33                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 33))
+#define GPIO34                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 34))
+#define GPIO35                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 35))
+#define GPIO36                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 36))
+#define GPIO37                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 37))
+#define GPIO38                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 38))
+#define GPIO39                  ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 39))
+#define GPIO_IR                 ((GPIO_IRTypeDef *) ACU_GPIO_IR_BASE)
+#define IS_GPIO_ALL_PERIPH(PERIPH)  (((PERIPH) == GPIO0) || ((PERIPH) == GPIO1) || \
+                                    ((PERIPH) == GPIO2) || ((PERIPH) == GPIO3) || \
+                                    ((PERIPH) == GPIO4) || ((PERIPH) == GPIO5) || \
+                                    ((PERIPH) == GPIO6) || ((PERIPH) == GPIO7) || \
+                                    ((PERIPH) == GPIO8) || ((PERIPH) == GPIO9) || \
+                                    ((PERIPH) == GPIO10) || ((PERIPH) == GPIO11) || \
+                                    ((PERIPH) == GPIO12) || ((PERIPH) == GPIO13) || \
+                                    ((PERIPH) == GPIO14) || ((PERIPH) == GPIO15) || \
+                                    ((PERIPH) == GPIO16) || ((PERIPH) == GPIO17) || \
+                                    ((PERIPH) == GPIO18) || ((PERIPH) == GPIO19) || \
+                                    ((PERIPH) == GPIO20) || ((PERIPH) == GPIO21) || \
+                                    ((PERIPH) == GPIO22) || ((PERIPH) == GPIO23) || \
+                                    ((PERIPH) == GPIO24) || ((PERIPH) == GPIO25) || \
+                                    ((PERIPH) == GPIO26) || ((PERIPH) == GPIO27) || \
+                                    ((PERIPH) == GPIO28) || ((PERIPH) == GPIO29) || \
+                                    ((PERIPH) == GPIO30) || ((PERIPH) == GPIO31) || \
+                                    ((PERIPH) == GPIO32) || ((PERIPH) == GPIO33) || \
+                                    ((PERIPH) == GPIO34) || ((PERIPH) == GPIO35) || \
+                                    ((PERIPH) == GPIO36) || ((PERIPH) == GPIO37) || \
+                                    ((PERIPH) == GPIO38) || ((PERIPH) == GPIO39))
 
 /*<! APB Peripheral Clk&Rest Control */
 #define RST_SC                  ((CHIPRST_TypeDef *) ACU_RSTSC_BASE)
@@ -422,12 +454,12 @@ typedef struct
 #define BOOTMODE                ((BMIO_TypeDef *) ACU_BMIO_BASE)
 
 /*<! System Clock Control */
-#define FABRIC_SC               ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x80))
-#define PCIE_SC                 ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x90))
-#define IPCORE_SC               ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xA0))
-#define DDR_SC                  ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xB0))
-#define IS_RCC_SYSCLK(clock)    (((clock) == FABRIC_SC) || ((clock) == PCIE_SC) || \
-                                ((clock) == IPCORE_SC) || ((clock) == DDR_SC))
+#define FABRIC_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x80))
+#define PCIE_CLK                ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x90))
+#define IPCORE_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xA0))
+#define DDR_CLK                 ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xB0))
+#define IS_RCC_SYSCLK(clock)    (((clock) == FABRIC_CLK) || ((clock) == PCIE_CLK) || \
+                                ((clock) == IPCORE_CLK) || ((clock) == DDR_CLK))
 
 /*<! Cortex M3 Control */
 #define CM3_SC                  ((CM3SYS_TypeDef *) ACU_M3SC_BASE)

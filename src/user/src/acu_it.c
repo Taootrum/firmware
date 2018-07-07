@@ -109,3 +109,68 @@ void SysTick_Handler(void)
     SysTickCount++;
 }
 
+void IIC0_IRQHandler(void)
+{
+
+}
+void IIC1_IRQHandler(void)
+{
+
+}
+void IIC2_IRQHandler(void)
+{
+
+}
+void INT_IRQHandler(void)
+{
+
+}
+void GPIO_IRQHandler(void)
+{
+
+}
+void UART_IRQHandler(void)
+{
+
+}
+void SSP0_IRQHandler(void)
+{
+
+}
+void SSP1_IRQHandler(void)
+{
+
+}
+void TMR0_IRQHandler(void)
+{
+
+}
+void TMR1_IRQHandler(void)
+{
+
+}
+void WDT_IRQHandler(void)
+{
+
+}
+void PVT_IRQHandler(void)
+{
+
+}
+void DDR0_IRQHandler(void)
+{
+
+}
+void DDR1_IRQHandler(void)
+{
+
+}
+void DDR2_IRQHandler(void)
+{
+
+}
+void CU_IRQHandler(void)
+{
+
+}
+
