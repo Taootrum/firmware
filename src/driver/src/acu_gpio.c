@@ -17,7 +17,8 @@
 void GPIO_DeInit(void)
 {
     RCC_APBPeriphResetCmd(GPIO_SC, 0, SET);
-    RCC_APBPeriphResetCmd(GPIO_SC, 0, RESET);
+    RCC_APBPeriphClockCmd(GPIO_SC, 0, DISABLE);
+    RCC_APBPeriphIsoEnCmd(GPIO_SC, DISABLE);
 }
 
 /****************************************************************
@@ -91,46 +92,46 @@ void GPIO_IOPADMode(GPIO_TypeDef* GPIOx, uint32_t IoPadMode)
     {
         if (GpioPinNum >= 32)
         {
-            SET_BIT(IOPAD_SC->FCR4, GpioOffset);
+            SET_BIT(IOPAD_MUX->FCR4, GpioOffset);
         }
         else if (GpioPinNum >= 24)
         {
-            SET_BIT(IOPAD_SC->FCR3, GpioOffset);
+            SET_BIT(IOPAD_MUX->FCR3, GpioOffset);
         }
         else if (GpioPinNum >= 16)
         {
-            SET_BIT(IOPAD_SC->FCR2, GpioOffset);
+            SET_BIT(IOPAD_MUX->FCR2, GpioOffset);
         }
         else if (GpioPinNum >= 8)
         {
-            SET_BIT(IOPAD_SC->FCR1, GpioOffset);
+            SET_BIT(IOPAD_MUX->FCR1, GpioOffset);
         }
         else
         {
-            SET_BIT(IOPAD_SC->FCR0, GpioOffset);
+            SET_BIT(IOPAD_MUX->FCR0, GpioOffset);
         }
     }
     else
     {
         if (GpioPinNum >= 32)
         {
-            CLEAR_BIT(IOPAD_SC->FCR4, GpioOffset);
+            CLEAR_BIT(IOPAD_MUX->FCR4, GpioOffset);
         }
         else if (GpioPinNum >= 24)
         {
-            CLEAR_BIT(IOPAD_SC->FCR3, GpioOffset);
+            CLEAR_BIT(IOPAD_MUX->FCR3, GpioOffset);
         }
         else if (GpioPinNum >= 16)
         {
-            CLEAR_BIT(IOPAD_SC->FCR2, GpioOffset);
+            CLEAR_BIT(IOPAD_MUX->FCR2, GpioOffset);
         }
         else if (GpioPinNum >= 8)
         {
-            CLEAR_BIT(IOPAD_SC->FCR1, GpioOffset);
+            CLEAR_BIT(IOPAD_MUX->FCR1, GpioOffset);
         }
         else
         {
-            CLEAR_BIT(IOPAD_SC->FCR0, GpioOffset);
+            CLEAR_BIT(IOPAD_MUX->FCR0, GpioOffset);
         }
     }
 }

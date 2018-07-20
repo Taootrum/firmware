@@ -273,8 +273,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x8000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -299,7 +299,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20020000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>UART_DEBUG,USE_FULL_ASSERT,ACU_TEST</Define>
+              <Define>USE_FULL_ASSERT,DEBUG,ACU_TEST,SIM_ENV</Define>
               <Undefine></Undefine>
               <IncludePath>../src/include;../src/cmsis/inc;../src/driver/inc;../src/user/inc;../src/test/inc</IncludePath>
             </VariousControls>

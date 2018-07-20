@@ -29,6 +29,7 @@ void Debug_Init(void)
     UART_InitTypeDef UART_InitStructure;
 
     /*!< UART clk enable & iso disable */
+    RCC_APBPeriphResetCmd(UART_SC, 0, RESET);
     RCC_APBPeriphClockCmd(UART_SC, 0, ENABLE);
     RCC_APBPeriphIsoEnCmd(UART_SC, ENABLE);
         
@@ -83,7 +84,7 @@ BoolStatus GetChar(uint8_t *InChar)
  ***************************************************************/
 int fputc(int ch, FILE *f) 
 {    
-#if defined(SIM_DEBUG)
+#if defined(SIM_ENV)
     SIM_DEBUG_REG->CR =(ch & 0xFF);
 #else
     PutChar(ch & 0xFF); 
@@ -102,7 +103,7 @@ int fputc(int ch, FILE *f)
  ***************************************************************/
 void assert_failed(uint8_t* file, uint32_t line)
 { 
-    DEBUG_MSG("[%s|%d]:assert_param error!\n", file, line);
+    DEBUG_MSG("[%s|%d]:assert_param error!"LF, file, line);
     
     /* Infinite loop */
     while (1)
@@ -120,14 +121,14 @@ void assert_failed(uint8_t* file, uint32_t line)
 void Debug_PrintReg(void)
 {
     /* RCC */
-    DEBUG_MSG("UART_SC:\n");
+    DEBUG_MSG("UART_SC:"LF);
     DEBUG_PRINT_REG(UART_SC);
     RCC_APBSYSPrintReg(UART_SC);
     
     /* UART */
-    DEBUG_MSG("UART:\n");
+    DEBUG_MSG("UART:"LF);
     DEBUG_PRINT_REG(DEBUG_UART);
     UART_PrintReg(DEBUG_UART);
-    DEBUG_MSG("\n");
+    DEBUG_MSG(LF);
 }
 

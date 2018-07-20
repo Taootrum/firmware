@@ -18,7 +18,7 @@
 #define DEBUG_UART UART
 
 /* Acu Simulation */
-#if defined(SIM_DEBUG)
+#if defined(SIM_ENV)
 typedef struct {
     __O  uint32_t   CR;
 } DEBUG_SIM_Type;
@@ -28,15 +28,15 @@ typedef struct {
 #endif
 
 /* System Debug Msg */
-#if defined(SIM_DEBUG) || defined(UART_DEBUG)
+#if defined(DEBUG)
 #define DEBUG_MSG(fmt,args...)      printf(fmt, ##args)
-#if defined(SIM_DEBUG)
-#define DEBUG_PRINT_REG(r)          printf("%s = %#x\n", #r, (uint32_t)r)
-#define DEBUG_ERROR(fmt,args...)    printf("[%s|%d]ERROR: "fmt"\n", __func__, __LINE__, ##args)
+#if defined(SIM_ENV)
+    #define LF  "\n"
 #else
-#define DEBUG_PRINT_REG(r)          printf("%s = %#x\r\n", #r, (uint32_t)r)
-#define DEBUG_ERROR(fmt,args...)    printf("[%s|%d]ERROR: "fmt"\r\n", __func__, __LINE__, ##args)
+    #define LF  "\r\n"
 #endif
+#define DEBUG_PRINT_REG(r)          printf("%s = %#x"LF, #r, (uint32_t)r)
+#define DEBUG_ERROR(fmt,args...)    printf("[%s|%d]ERROR: "fmt""LF, __func__, __LINE__, ##args)
 #else
 #define DEBUG_MSG(fmt,args...)      ((void)0)
 #define DEBUG_ERROR(fmt,args...)    ((void)0)

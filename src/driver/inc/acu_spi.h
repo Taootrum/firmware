@@ -110,7 +110,7 @@ typedef struct {
 #define SPI_CPSDVSR                     ((uint16_t)0x0002)
 #define SPI_CPSDVSR_MIX                 ((uint16_t)0x0002)
 #define SPI_CPSDVSR_MAX                 ((uint16_t)0x00FE)
-#define IS_SPI_CPSDVSR(CPSDVSR)         (((CPSDVSR) >= SPI_CPSDVSR_MIX) || \
+#define IS_SPI_CPSDVSR(CPSDVSR)         (((CPSDVSR) >= SPI_CPSDVSR_MIX) && \
                                         ((CPSDVSR) <= SPI_CPSDVSR_MAX))
 
 /** @defgroup SPI_interrupts_definition */
@@ -150,7 +150,7 @@ typedef struct {
 #define SPI_FIFO_TH                     ((uint8_t)0x01)
 #define SPI_FIFO_TH_MIX                 ((uint8_t)0x01)
 #define SPI_FIFO_TH_MAX                 ((uint8_t)0x7F)
-#define IS_SPI_FIFO_TH(TH)              (((TH) >= SPI_FIFO_TH_MIX) || ((TH) <= SPI_FIFO_TH_MAX))
+#define IS_SPI_FIFO_TH(TH)              (((TH) >= SPI_FIFO_TH_MIX) && ((TH) <= SPI_FIFO_TH_MAX))
 
 /** @defgroup SPI_Exported_Functions */
 void SPI_DeInit(SPI_TypeDef* SPIx);

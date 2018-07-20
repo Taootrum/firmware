@@ -70,9 +70,11 @@ static ALLCASE UART_AllCases[] = {
 static ALLCASE FLASH_AllCases[] = {
     {"FLASH_InterfaceTest1", FLASH_InterfaceTest1},
     {"FLASH_InterfaceTest2", FLASH_InterfaceTest2},
+#ifndef SIM_ENV
     {"FLASH_InterfaceTest3", FLASH_InterfaceTest3},
     {"FLASH_InterfaceTest4", FLASH_InterfaceTest4},
-//    {"FLASH_InterfaceTest5", FLASH_InterfaceTest5},
+    {"FLASH_InterfaceTest5", FLASH_InterfaceTest5},
+#endif
     {"FLASH_InterfaceTest6", FLASH_InterfaceTest6},
     {"FLASH_InterfaceTest7", FLASH_InterfaceTest7},
     {"FLASH_InterfaceTest8", FLASH_InterfaceTest8}
@@ -95,13 +97,13 @@ static void ACU_SuiteTest(PALLCASE pSuiteAllCase)
         if (CaseStatus == FAILED)
         {
             g_SuiteFailCount++;
-            DEBUG_MSG("%s is FAILED.  (%d/%d)\r\n", 
+            DEBUG_MSG("%s is FAILED.  (%d/%d)"LF, 
                         pSuiteAllCase[Count].FunName, Count + 1, g_SuiteCaseCount);
         }
         else
         {
             g_SuiteSuccessCount++;
-            DEBUG_MSG("%s is SUCCESS. (%d/%d)\r\n", 
+            DEBUG_MSG("%s is SUCCESS. (%d/%d)"LF, 
                         pSuiteAllCase[Count].FunName, Count + 1, g_SuiteCaseCount);
         }
     }                

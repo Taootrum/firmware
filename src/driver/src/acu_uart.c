@@ -19,7 +19,8 @@ void UART_DeInit(UART_TypeDef *UARTx)
     /* Check the parameters */
     assert_param(IS_UART_ALL_PERIPH(UARTx));
     RCC_APBPeriphResetCmd(UART_SC, 0, SET);
-    RCC_APBPeriphResetCmd(UART_SC, 0, RESET);
+    RCC_APBPeriphClockCmd(UART_SC, 0, DISABLE);
+    RCC_APBPeriphIsoEnCmd(UART_SC, DISABLE);
 }
 
 /****************************************************************
@@ -283,7 +284,7 @@ ITStatus UART_GetRawITStatus(UART_TypeDef* UARTx, uint16_t UART_IT)
     assert_param(IS_UART_ALL_PERIPH(UARTx));
     assert_param(IS_UART_GET_IT(UART_IT));
     
-    bitstatus = (UARTx->RIS & (uint32_t)UART_IT) ? SET : RESET;
+    bitstatus = (UARTx->RIS & UART_IT) ? SET : RESET;
 
     return bitstatus;
 }
@@ -303,7 +304,7 @@ ITStatus UART_GetMaskITStatus(UART_TypeDef* UARTx, uint16_t UART_IT)
     assert_param(IS_UART_ALL_PERIPH(UARTx));
     assert_param(IS_UART_GET_IT(UART_IT));
     
-    bitstatus = (UARTx->MIS & (uint32_t)UART_IT) ? SET : RESET;
+    bitstatus = (UARTx->MIS & UART_IT) ? SET : RESET;
 
     return bitstatus;
 }

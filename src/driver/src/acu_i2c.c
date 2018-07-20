@@ -21,17 +21,20 @@ void I2C_DeInit(I2C_TypeDef* I2Cx)
     if (I2Cx == I2C0)
     {
         RCC_APBPeriphResetCmd(I2C_SC, 0, SET);
-        RCC_APBPeriphResetCmd(I2C_SC, 0, RESET);
+        RCC_APBPeriphClockCmd(I2C_SC, 0, DISABLE);
+        RCC_APBPeriphIsoEnCmd(I2C_SC, DISABLE);
     }
     else if (I2Cx == I2C1) 
     {
         RCC_APBPeriphResetCmd(I2C_SC, 1, SET);
-        RCC_APBPeriphResetCmd(I2C_SC, 1, RESET);
+        RCC_APBPeriphClockCmd(I2C_SC, 1, DISABLE);
+        RCC_APBPeriphIsoEnCmd(I2C_SC, DISABLE);
     }
     else
     {
         RCC_APBPeriphResetCmd(I2C_SC, 2, SET);
-        RCC_APBPeriphResetCmd(I2C_SC, 2, RESET);
+        RCC_APBPeriphClockCmd(I2C_SC, 2, DISABLE);
+        RCC_APBPeriphIsoEnCmd(I2C_SC, DISABLE);
     }
 }
 

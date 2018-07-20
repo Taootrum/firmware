@@ -164,14 +164,14 @@ void Hal_FlashReadByte(uint32_t ReadAddr, uint8_t *Byte)
 }
 
 /****************************************************************
-  * 函数      : Hal_WriteBootFlag()
+  * 函数      : Hal_WriteBootHead()
   * 参数      : None
   * 返回值     : None
-  * 描述      : 向flash写入boot标识
+  * 描述      : 向flash写入boot Head_Info
  ***************************************************************/
-static void Hal_WriteBootFlag(uint32_t Flag)
+static void Hal_WriteBootHead(uint8_t *Head)
 {
-    Hal_FlashWriteWord(ACU_BOOT_FLAG_ADDR, Flag);
+    Hal_FlashWriteBuffer(Head, ACU_BOOT_HEAD_ADDR, ACU_BOOT_HEAD_LEN);
 }
 
 
@@ -184,17 +184,6 @@ static void Hal_WriteBootFlag(uint32_t Flag)
 static void Hal_WriteBootSize(uint32_t Size)
 {
     Hal_FlashWriteWord(ACU_BOOT_SIZE_ADDR, Size);
-}
-
-/****************************************************************
-  * 函数      : Hal_WriteBootCheckSum()
-  * 参数      : CheckSum  : 校验和
-  * 返回值     : None
-  * 描述      : 向flash写入校验和
- ***************************************************************/
-static void Hal_WriteBootCheckSum(uint32_t CheckSum)
-{
-    Hal_FlashWriteWord(ACU_BOOT_CHECKSUM_ADDR, CheckSum);
 }
 
 /****************************************************************
@@ -236,7 +225,7 @@ void ACU_FlashUpdate(void)
     assert_param(IS_ALL_BOOT_MODE(uBootMode));
 
     /* When BOOTMODE is BootFromFlash, Update is illegal */
-    if (uBootMode == BOOT_MODE_XMOD01) /*??? || uBootMode == BOOT_MODE_XMOD11*/
+    if (uBootMode == BOOT_MODE_XMOD00) /*??? || uBootMode == BOOT_MODE_XMOD11*/
     {
         return;
     }
@@ -249,10 +238,10 @@ void ACU_FlashUpdate(void)
         {
             CheckSum += pData[i];
         }
-        Hal_FlashWriteBuffer(pData, ACU_BOOT_ADDR, Size);
-        Hal_WriteBootFlag(ACU_BOOT_FLAG);
+        Hal_FlashWriteBuffer(pData, ACU_BOOT_CODE_ADDR, Size);
+        Hal_WriteBootHead(ACU_BOOT_HEAD);
         Hal_WriteBootSize(Size);
-        Hal_WriteBootCheckSum(CheckSum);
+        Hal_FlashWriteByte(ACU_BOOT_CODE_ADDR + Size, CheckSum);
         DEBUG_MSG("ACU Firmware Update Done.\r\n");
     }
     else

@@ -27,7 +27,7 @@ extern uint32_t g_AllFailCount;
 #define ACU_SUITE_TEST(SuiteCases)\
         do  \
         {   \
-            DEBUG_MSG("%s: Functional Testing Start...\r\n", #SuiteCases); \
+            DEBUG_MSG("%s: Functional Testing Start..."LF, #SuiteCases); \
             g_SuiteCaseCount = sizeof(SuiteCases) / sizeof(SuiteCases[0]);  \
             g_SuiteSuccessCount = 0;  \
             g_SuiteFailCount = 0;  \
@@ -35,14 +35,14 @@ extern uint32_t g_AllFailCount;
             g_AllCaseCount += g_SuiteCaseCount; \
             g_AllSuccessCount += g_SuiteSuccessCount;   \
             g_AllFailCount += g_SuiteFailCount; \
-            DEBUG_MSG("%s: Total:%d, Success:%d, Fail:%d\r\n\r\n",  \
+            DEBUG_MSG("%s: Total:%d, Success:%d, Fail:%d"LF LF,  \
                         #SuiteCases, g_SuiteCaseCount, g_SuiteSuccessCount, g_SuiteFailCount);  \
         } while (0)
 
 #define ACU_ALL_TEST_REPORT()\
         do  \
         {   \
-            DEBUG_MSG("ACU REPORT:All Cases, Total:%d, Success:%d, Fail:%d\r\n", \
+            DEBUG_MSG("ACU REPORT:All Cases, Total:%d, Success:%d, Fail:%d"LF, \
                         g_AllCaseCount, g_AllSuccessCount, g_AllFailCount); \
         } while (0)
 

@@ -21,12 +21,14 @@ void SPI_DeInit(SPI_TypeDef* SPIx)
     if (SPIx == SPI0)
     {
         RCC_APBPeriphResetCmd(SPI_SC, 0, SET);
-        RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
+        RCC_APBPeriphClockCmd(SPI_SC, 0, DISABLE);
+        RCC_APBPeriphIsoEnCmd(SPI_SC, DISABLE);
     }
     else
     {
         RCC_APBPeriphResetCmd(SPI_SC, 1, SET);
-        RCC_APBPeriphResetCmd(SPI_SC, 1, RESET);
+        RCC_APBPeriphClockCmd(SPI_SC, 1, DISABLE);
+        RCC_APBPeriphIsoEnCmd(SPI_SC, DISABLE);
     }
 }
   
@@ -215,14 +217,14 @@ void SPI_ITConfig(SPI_TypeDef* SPIx, uint8_t SPI_IT, FunctionalState NewState)
  ***************************************************************/
 ITStatus SPI_GetRawITStatus(SPI_TypeDef* SPIx, uint8_t SPI_RIT)
 {
-  ITStatus bitstatus = RESET;
+    ITStatus bitstatus = RESET;
 
-  /* Check the parameters */
-  assert_param(IS_SPI_ALL_PERIPH(SPIx));
-  assert_param(IS_SPI_GET_RIT_FLAG(SPI_RIT));
-  bitstatus = ((SPIx->RIS & SPI_RIT) == (uint16_t)SET) ? SET : RESET;
-  
-  return  bitstatus;
+    /* Check the parameters */
+    assert_param(IS_SPI_ALL_PERIPH(SPIx));
+    assert_param(IS_SPI_GET_RIT_FLAG(SPI_RIT));
+    bitstatus = (SPIx->RIS & SPI_RIT) ? SET : RESET;
+
+    return  bitstatus;
 }
 
 /****************************************************************
@@ -237,14 +239,14 @@ ITStatus SPI_GetRawITStatus(SPI_TypeDef* SPIx, uint8_t SPI_RIT)
  ***************************************************************/
 ITStatus SPI_GetMaskITStatus(SPI_TypeDef* SPIx, uint8_t SPI_MIT)
 {
-  ITStatus bitstatus = RESET;
+    ITStatus bitstatus = RESET;
 
-  /* Check the parameters */
-  assert_param(IS_SPI_ALL_PERIPH(SPIx));
-  assert_param(IS_SPI_GET_MIT_FLAG(SPI_MIT));
-  bitstatus = ((SPIx->MIS & SPI_MIT) == (uint16_t)SET) ? SET : RESET;
-  
-  return  bitstatus;
+    /* Check the parameters */
+    assert_param(IS_SPI_ALL_PERIPH(SPIx));
+    assert_param(IS_SPI_GET_MIT_FLAG(SPI_MIT));
+    bitstatus = (SPIx->MIS & SPI_MIT) ? SET : RESET;
+
+    return  bitstatus;
 }
 
 /****************************************************************

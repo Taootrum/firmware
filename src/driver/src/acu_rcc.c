@@ -67,6 +67,105 @@ void RCC_DDRWriteSelectCmd(uint32_t DDR_Channels)
     WRITE_REG(RST_SC->DDR_WCFG, DDR_Channels);
 }
 
+void RCC_PLLConfig(PLLCLK_TypeDef *RCC_PLLSource, PLL_InitTypeDef *PLL_Init)
+{
+    uint8_t range = 0;
+    
+    assert_param(IS_PLL_CLK(RCC_PLLSource));
+    assert_param(IS_PLL_DIVR(PLL_Init->Divr));
+    assert_param(IS_PLL_DIVF(PLL_Init->Divf));
+    assert_param(IS_PLL_DIVQ(PLL_Init->Divq));
+
+    /* reset PLL */
+    RCC_PLLSource->RESET = 0x1;
+
+    /* cross PLL */
+    RCC_PLLSource->BYPASS = 0;
+
+    /* config Divr */
+    RCC_PLLSource->DIVR = PLL_Init->Divr;
+
+    /* config Divf */
+    RCC_PLLSource->DIVF_LOW = (uint8_t)PLL_Init->Divf;
+    RCC_PLLSource->DIVF_HIGH = (uint8_t)(PLL_Init->Divf >> 8);
+
+    /* Config Range */
+    if (RCC_PLLSource->BYPASS) 
+    {
+        RCC_PLLSource->RANGE = 0x0;
+    }
+    else
+    {
+        range = PLL_Init->PLLInputClock / 1000000;
+        if (range >= 7 && range <= 11) {
+            RCC_PLLSource->RANGE = 0x1;
+        } else if (range >= 11 && range <= 18) {
+            RCC_PLLSource->RANGE = 0x2;
+        } else if (range >= 18 && range <= 30) {
+            RCC_PLLSource->RANGE = 0x3;
+        } else if (range >= 30 && range <= 50) {
+            RCC_PLLSource->RANGE = 0x4;
+        } else if (range >= 50 && range <= 80) {
+            RCC_PLLSource->RANGE = 0x5;
+        } else if (range >= 80 && range <= 130) {
+            RCC_PLLSource->RANGE = 0x6;
+        } else if (range >= 130 && range <= 200) {
+            RCC_PLLSource->RANGE = 0x7;
+        }
+    }
+    
+    /* config Divq */
+    RCC_PLLSource->DIVQ = PLL_Init->Divq;
+
+    /* Enable parameter load & clock gate enable */
+    RCC_PLLSource->CONTROL = 0x2;
+    
+    /* normal operation */ 
+    RCC_PLLSource->RESET = 0;
+}
+
+/****************************************************************
+  * 函数      : PLL_StructInit()
+  * 参数      : 
+              PLL_StructInit: 初始化结构体
+  * 返回值     : None
+  * 描述      : PLL默认初始化
+ ***************************************************************/
+void PLL_StructInit(PLL_InitTypeDef *PLL_Init)
+{
+    /* Initialize the SPI_Direction member */
+    PLL_Init->PLLInputClock = XTAL;
+    /* initialize the SPI_Mode member */
+    PLL_Init->PLLOutputClock = APLL_CLK_FREQ;
+    /* 24M / (0 + 1) = 24M */ 
+    PLL_Init->Divr = PLL_DIVR;
+    /* 24M * (0x4A + 1) * 2 = 3600M */ 
+    PLL_Init->Divf = PLL_DIVF;
+    /* 3600M / (2 ^ 1) = 1800M */ 
+    PLL_Init->Divq = PLL_DIVQ_2;
+}
+
+LockStatus RCC_PLLGetLockStatus(PLLCLK_TypeDef *RCC_PLLSource)
+{
+    assert_param(IS_PLL_CLK(RCC_PLLSource));
+
+    return (LockStatus)RCC_PLLSource->LOCK;
+}
+
+void RCC_PLLCmd(PLLCLK_TypeDef *RCC_PLLSource, FunctionalState NewState)
+{
+    assert_param(IS_PLL_CLK(RCC_PLLSource));
+
+    if (NewState == ENABLE)
+    {
+        SET_BIT(RCC_PLLSource->ENABLE, PLL_ENABLE);
+    }
+    else
+    {
+        CLEAR_BIT(RCC_PLLSource->ENABLE, PLL_ENABLE);
+    }
+}
+
 void RCC_SYSCLKSetSource(CLK_TypeDef *RCC_SYSCLK, uint32_t RCC_SYSCLKSource)
 {
     assert_param(IS_RCC_SYSCLK(RCC_SYSCLK));
@@ -97,25 +196,56 @@ uint32_t RCC_SYSCLKGetDiv(CLK_TypeDef *RCC_SYSCLK)
 
 void RCC_SYSCLKGetFreq(RCC_ClocksTypeDef *RCC_Clocks)
 {
-    uint32_t uClkFreq = 0, uDiv = 0;
+    uint32_t uDiv = 0;
 
     /* system clock */
-    RCC_Clocks->SYSCLK_Frequency = SystemCoreClock;
-
+    RCC_Clocks->APLL_Frequency = APLL_CLK_FREQ;
+    RCC_Clocks->DPLL_Frequency = DPLL_CLK_FREQ;
+    
     /* fabric clock */
     uDiv = RCC_SYSCLKGetDiv(FABRIC_CLK);
-    uClkFreq = SystemCoreClock / (uDiv + 1);
-    RCC_Clocks->FCLK_Frequency = uClkFreq;
-
+    if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_APLL)
+    {
+        RCC_Clocks->FCLK_Frequency = RCC_Clocks->APLL_Frequency / (uDiv + 1);
+    }
+    else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_DPLL)
+    {
+        RCC_Clocks->FCLK_Frequency = RCC_Clocks->DPLL_Frequency / (uDiv + 1);
+    }
+    else
+    {
+        RCC_Clocks->FCLK_Frequency = XTAL / (uDiv + 1);
+    }
+    
     /* ipcore clock */
     uDiv = RCC_SYSCLKGetDiv(IPCORE_CLK);
-    uClkFreq = SystemCoreClock / (uDiv + 1);
-    RCC_Clocks->IPCLK_Frequency = uClkFreq;
+    if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_APLL)
+    {
+        RCC_Clocks->IPCLK_Frequency = RCC_Clocks->APLL_Frequency / (uDiv + 1);
+    }
+    else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_DPLL)
+    {
+        RCC_Clocks->IPCLK_Frequency = RCC_Clocks->DPLL_Frequency / (uDiv + 1);
+    }
+    else
+    {
+        RCC_Clocks->IPCLK_Frequency = XTAL / (uDiv + 1);
+    }
 
     /* ddr clock */
     uDiv = RCC_SYSCLKGetDiv(DDR_CLK);
-    uClkFreq = SystemCoreClock / (uDiv + 1);
-    RCC_Clocks->DDRCLK_Frequency = uClkFreq;
+    if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_APLL)
+    {
+        RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->APLL_Frequency / (uDiv + 1);
+    }
+    else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_DPLL)
+    {
+        RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->DPLL_Frequency / (uDiv + 1);
+    }
+    else
+    {
+        RCC_Clocks->DDRCLK_Frequency = XTAL / (uDiv + 1);
+    }
 }
 
 void RCC_SYSCLKCmd(CLK_TypeDef *RCC_SYSCLK, FunctionalState NewState)
@@ -299,5 +429,29 @@ void RCC_AXISYSPrintReg(IMEMC_TypeDef* RCC_IMEM)
     DEBUG_PRINT_REG(RCC_IMEM->CGE);
     DEBUG_PRINT_REG(RCC_IMEM->MPD);
     DEBUG_PRINT_REG(RCC_IMEM->SCR);
+}
+
+/****************************************************************
+  * 函数      : RCC_PLLPrintReg()
+  * 参数      : RCC_PLLSource: APLL/DPLL
+  * 返回值     : None
+  * 描述      : 
+ ***************************************************************/
+void RCC_PLLPrintReg(PLLCLK_TypeDef *RCC_PLLSource)
+{        
+    /* Check the parameters */
+    assert_param(IS_PLL_CLK(RCC_PLLSource));
+    
+    DEBUG_PRINT_REG(RCC_PLLSource->RESET);
+    DEBUG_PRINT_REG(RCC_PLLSource->BYPASS);
+    DEBUG_PRINT_REG(RCC_PLLSource->DIVR);
+    DEBUG_PRINT_REG(RCC_PLLSource->DIVF_LOW);
+    DEBUG_PRINT_REG(RCC_PLLSource->DIVF_HIGH);
+    DEBUG_PRINT_REG(RCC_PLLSource->DIVQ);
+    DEBUG_PRINT_REG(RCC_PLLSource->FSE);
+    DEBUG_PRINT_REG(RCC_PLLSource->RANGE);
+    DEBUG_PRINT_REG(RCC_PLLSource->CONTROL);
+    DEBUG_PRINT_REG(RCC_PLLSource->ENABLE);
+    DEBUG_PRINT_REG(RCC_PLLSource->LOCK);
 }
 

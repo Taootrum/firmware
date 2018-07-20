@@ -29,16 +29,10 @@ void sFLASH_Init(void)
 {
     SPI_InitTypeDef SPI_InitStructure;
     GPIO_InitTypeDef GPIO_InitStructure;
-    
-    /*!< sFLASH_SPI Periph clock enable */
-    RCC_APBPeriphClockCmd(SPI_SC, 0, ENABLE);
-    /*!< sFLASH_SPI IO enable */
-    RCC_APBPeriphIsoEnCmd(SPI_SC, ENABLE);
 
-    /*!< GPIO Periph clock enable */
-    RCC_APBPeriphClockCmd(GPIO_SC, 0, ENABLE);
-    /*!< GPIO IO enable */
-    RCC_APBPeriphIsoEnCmd(GPIO_SC, ENABLE);
+    RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
+    RCC_APBPeriphClockCmd(SPI_SC, 0, ENABLE);
+    RCC_APBPeriphIsoEnCmd(SPI_SC, ENABLE);
 
     /*!< GPIO IO as GPIO*/
     GPIO_IOPADMode(sFLASH_CS_GPIO, GPIO_IOPAD_GPIO);
@@ -53,6 +47,12 @@ void sFLASH_Init(void)
 
     /*!< Enable the sFLASH_SPI  */
     SPI_Cmd(sFLASH_SPI, ENABLE);
+    
+#ifdef SIM_ENV    
+    /* set connect to flash */
+    GPIO_Init(GPIO_14, &GPIO_InitStructure);
+    GPIO_SetOutput(GPIO_14, GPIO_SET);
+#endif
 }
 
 /****************************************************************
@@ -427,28 +427,28 @@ void sFLASH_WaitForWriteEnd(void)
 void Flash_PrintReg(void)
 {   
     /* RCC */
-    DEBUG_MSG("FABRIC_CLK:\n");
+    DEBUG_MSG("FABRIC_CLK:"LF);
     DEBUG_PRINT_REG(FABRIC_CLK);
     RCC_SYSCLKPrintReg(FABRIC_CLK);
-    DEBUG_MSG("SPI_SC:\n");
+    DEBUG_MSG("SPI_SC:"LF);
     DEBUG_PRINT_REG(SPI_SC);
     RCC_APBSYSPrintReg(SPI_SC);
-    DEBUG_MSG("GPIO_SC:\n");
+    DEBUG_MSG("GPIO_SC:"LF);
     DEBUG_PRINT_REG(GPIO_SC);
     RCC_APBSYSPrintReg(GPIO_SC);
 
     /* GPIO */
-    DEBUG_MSG("IOPAD_SC:\n");
-    DEBUG_PRINT_REG(IOPAD_SC);
-    GPIO_IOPADPrintReg(IOPAD_SC);
-    DEBUG_MSG("sFLASH_CS_GPIO:\n");
+    DEBUG_MSG("IOPAD_SC:"LF);
+    DEBUG_PRINT_REG(IOPAD_MUX);
+    GPIO_IOPADPrintReg(IOPAD_MUX);
+    DEBUG_MSG("sFLASH_CS_GPIO:"LF);
     DEBUG_PRINT_REG(sFLASH_CS_GPIO);
     GPIO_PrintReg(sFLASH_CS_GPIO);
     
     /* SPI */
-    DEBUG_MSG("sFLASH_SPI:\n");
+    DEBUG_MSG("sFLASH_SPI:"LF);
     DEBUG_PRINT_REG(sFLASH_SPI);
     SPI_PrintReg(sFLASH_SPI);
-    DEBUG_MSG("\n");
+    DEBUG_MSG(LF);
 }
 

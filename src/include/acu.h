@@ -227,6 +227,23 @@ typedef struct
     __IO uint32_t IOPAD_RST;                /*!< Offset: 0x028 IOPAD Subsystem Reset Register (R/W) */
 } CHIPRST_TypeDef;
 
+/* PLL Clock System Management */
+typedef struct
+{
+    __IO uint32_t RESET;                    /*!< Offset: 0x00 Reset Register (R/W) */
+    __IO uint32_t BYPASS;                   /*!< Offset: 0x04 Bypass Register (R/W) */
+    __IO uint32_t DIVR;                     /*!< Offset: 0x08 Reference Divider Value Register (R/W) */
+    __IO uint32_t DIVF_LOW;                 /*!< Offset: 0x0C Feedback Divider Value bit(0-7) Register (R/W) */
+    __IO uint32_t DIVF_HIGH;                /*!< Offset: 0x10 Feedback Divider Value bit(8) Register (R/W) */
+    __IO uint32_t DIVQ;                     /*!< Offset: 0x14 Output Divider Value Register (R/W) */
+    __IO uint32_t FSE;                      /*!< Offset: 0x18 Chooses Between Internal And External Input Paths Register (R/W) */
+    __IO uint32_t RANGE;                    /*!< Offset: 0x1C Filter Range Register (R/W) */
+    __IO uint32_t CONTROL;                  /*!< Offset: 0x20 Control Register (R/W) */
+    __IO uint32_t ENABLE;                   /*!< Offset: 0x24 Enable Register (R/W) */
+    __IO uint32_t LOCK;                     /*!< Offset: 0x28 Lock Register (R/W) */   
+        uint32_t RESERVED;                  /*!< Offset: 0x2C Reserved */
+} PLLCLK_TypeDef;
+
 /* Clock System Management */
 typedef struct
 {
@@ -287,6 +304,21 @@ typedef struct
     __IO uint32_t WDT_SPEEDUP;            /*!< Offset: 0x024 WDT Speedup Register (R/W) */
 } APBSYS_TypeDef;
 
+/* Interrupt generator */
+typedef struct
+{
+    __IO uint32_t STAT;                   /*!< Offset: 0x000 Interrupt Status Register (R/W) */
+    __IO uint32_t MASK;                   /*!< Offset: 0x004 Interrupt Mask Register (R/W) */
+    __IO uint32_t DATA0;                  /*!< Offset: 0x008 Interrupt Data0 Register (R/W) */
+    __IO uint32_t DATA1;                  /*!< Offset: 0x00C Interrupt Data1 Register (R/W) */
+    __IO uint32_t DATA2;                  /*!< Offset: 0x010 Interrupt Data2 Register (R/W) */
+    __IO uint32_t DATA3;                  /*!< Offset: 0x014 Interrupt Data3 Register (R/W) */
+    __IO uint32_t DATA4;                  /*!< Offset: 0x018 Interrupt Data4 Register (R/W) */
+    __IO uint32_t DATA5;                  /*!< Offset: 0x01C Interrupt Data5 Register (R/W) */
+    __IO uint32_t DATA6;                  /*!< Offset: 0x020 Interrupt Data6 Register (R/W) */
+    __IO uint32_t DATA7;                  /*!< Offset: 0x024 Interrupt Data7 Register (R/W) */
+} INT_TypeDef;
+
 /* ================================================================================ */
 /* ================           Peripheral_memory_map                ================ */
 /* ================================================================================ */
@@ -305,6 +337,7 @@ typedef struct
 #define ACU_I2C0_BASE           (ACU_APB_BASE + 0x00000)
 #define ACU_I2C1_BASE           (ACU_APB_BASE + 0x01000)
 #define ACU_I2C2_BASE           (ACU_APB_BASE + 0x02000)
+#define ACU_INT_BASE            (ACU_APB_BASE + 0x03000)
 #define ACU_UART_BASE           (ACU_APB_BASE + 0x10000)
 #define ACU_GPIO_BASE           (ACU_APB_BASE + 0x20000)
 #define ACU_SSP0_BASE           (ACU_APB_BASE + 0x30000)
@@ -358,6 +391,7 @@ typedef struct
 #define I2C0                    ((I2C_TypeDef *) ACU_I2C0_BASE)
 #define I2C1                    ((I2C_TypeDef *) ACU_I2C1_BASE)
 #define I2C2                    ((I2C_TypeDef *) ACU_I2C2_BASE)
+#define INT_GEN                 ((INT_TypeDef *) ACU_INT_BASE)
 #define UART                    ((UART_TypeDef *) ACU_UART_BASE)
 #define SPI0                    ((SPI_TypeDef *) ACU_SSP0_BASE)
 #define SPI1                    ((SPI_TypeDef *) ACU_SSP1_BASE)
@@ -448,12 +482,16 @@ typedef struct
 #define IS_RCC_AXI_PERIPH(periph)   (((periph) == IROM_SC) || ((periph) == IRAM_SC))
 
 /*<! IOPAD System Control */
-#define IOPAD_SC                ((IOPAD_TypeDef *) ACU_IOPADSC_BASE)
+#define IOPAD_MUX               ((IOPAD_TypeDef *) ACU_IOPADSC_BASE)
 
 /*<! Boot Mode Flag Register */
 #define BOOTMODE                ((BMIO_TypeDef *) ACU_BMIO_BASE)
 
 /*<! System Clock Control */
+#define APLL_CLK                ((PLLCLK_TypeDef *) (ACU_CLKSC_BASE))
+#define DPLL_CLK                ((PLLCLK_TypeDef *) (ACU_CLKSC_BASE + 0x30))
+#define IS_PLL_CLK(CLK)         (((CLK) == APLL_CLK) || ((CLK) == DPLL_CLK))
+
 #define FABRIC_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x80))
 #define PCIE_CLK                ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x90))
 #define IPCORE_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xA0))
@@ -489,6 +527,7 @@ typedef struct
 #include "acu_uart.h"
 #include "acu_misc.h"
 #include "acu_debug.h"
+#include "system_acu.h"
 
 #ifdef __cplusplus
 }

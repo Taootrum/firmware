@@ -13,7 +13,7 @@ void SysTick_Configuration(void)
     if (SysTick_Config((SystemCoreClock) / 1000))
     {
         /* Capture error */ 
-        DEBUG_MSG("SysTick_Configuration fail!\n");
+        DEBUG_MSG("SysTick_Configuration fail!"LF);
     }
 }
 

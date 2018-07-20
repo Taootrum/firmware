@@ -19,19 +19,20 @@ static const char *acu_version = "ACU_FW_V0.0.1";
   * 描述      : 系统主函数
  ***************************************************************/
 int main(void)
-{        
+{       
     /* Init the Debug Uart */
     Debug_Init();
     /* Init the SPI Flash */
     sFLASH_Init();
-    
-    DEBUG_MSG("Version: %s (%s/%s)\r\n\r\n", acu_version, __DATE__, __TIME__);
-    /* Enable all interrupt */
-    __set_PRIMASK(0);
+
+    DEBUG_MSG("Version: %s (%s/%s)"LF LF, acu_version, __DATE__, __TIME__);
 
 #ifdef ACU_UPDATE
     ACU_FlashUpdate();
 #endif
+
+    /* Enable all interrupt */
+    __set_PRIMASK(0);
 
     /* Infinite loop */
     while (1)
@@ -40,8 +41,8 @@ int main(void)
 #ifdef ACU_TEST
         ACU_HalFuncTest();
 #endif
-
-#ifdef SIM_DEBUG
+        
+#ifdef SIM_ENV
         SIM_END;
 #endif
         return 1;
