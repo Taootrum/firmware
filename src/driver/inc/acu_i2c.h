@@ -20,12 +20,10 @@ typedef struct
     uint32_t I2C_Speed;                 /*!< Specifies the clock frequency.
                                          This parameter must be set to a value lower than 3.4MHz */
     uint16_t I2C_Mode;                  /*!< Specifies the I2C mode. */
-    uint16_t I2C_DutyCycle;             /*!< Specifies the I2C fast mode duty cycle.*/
-    uint16_t I2C_RestartEnable;         /*!< Enables or disables the restart. */
     uint16_t I2C_AddressMode;           /*!< 7-bit or 10-bit. */
     uint16_t I2C_HSMasterAddress;       /*!< Specifies Hign speed master address. */
     uint16_t I2C_OwnAddress;            /*!< Specifies own address. */
-    uint16_t I2C_AcknowledgedAddress;   /*!< Specifies if 7-bit or 10-bit address is acknowledged. */
+    uint16_t I2C_AckAddress;            /*!< Specifies if 7-bit or 10-bit address is acknowledged. */
     uint16_t I2C_Acknowledge;           /*!< Specifies Enable or Disable. */
     uint16_t I2C_TxFIFOLevel;           /*!< Specifies Tx FIFO Level. */
     uint16_t I2C_RxFIFOLevel;           /*!< Specifies Rx FIFO Level. */
@@ -36,30 +34,25 @@ typedef struct
                                         ((PERIPH) == I2C2))
 
 /** @defgroup I2C_Speed */
-#define I2C_Speed_100k                  ((uint16_t)0x0000)
-#define I2C_Speed_400k                  ((uint16_t)0x0001)  
-#define I2C_Speed_3400k                 ((uint16_t)0x0002)
+#define I2C_Speed_100k                  ((uint16_t)0x0002)
+#define I2C_Speed_400k                  ((uint16_t)0x0004)  
+#define I2C_Speed_3400k                 ((uint16_t)0x0006)
 #define IS_I2C_SPEED(SPEED)             (((SPEED) == I2C_Speed_100k) || ((SPEED) == I2C_Speed_400k) || \
                                         ((SPEED) == I2C_Speed_3400k))
 
 /** @defgroup I2C_mode */
-#define I2C_Mode_I2C                    ((uint16_t)0x0001)
 #define I2C_Mode_Master                 ((uint16_t)0x0041)  
 #define I2C_Mode_Slave                  ((uint16_t)0x0000)
-#define I2C_Mode_Passive                ((uint16_t)0x0040)
-#define IS_I2C_MODE(MODE)               (((MODE) == I2C_Mode_I2C) || ((MODE) == I2C_Mode_Master) || \
-                                        ((MODE) == I2C_Mode_Slave) || ((MODE) == I2C_Mode_Passive))
+#define I2C_Mode_Passive                ((uint16_t)0x0400)
+#define IS_I2C_MODE(MODE)               (((MODE) == I2C_Mode_Master) || ((MODE) == I2C_Mode_Slave) || \
+                                        ((MODE) == I2C_Mode_Passive))
 
 /** @defgroup I2C_restart_en */
-#define I2C_Restart_Disable             ((uint16_t)0x0000)
 #define I2C_Restart_Enable              ((uint16_t)0x0020)
-#define IS_I2C_RESTART_EN(EN)           (((EN) == I2C_Restart_Disable) || ((EN) == I2C_Restart_Enable))
 
 /** @defgroup I2C_duty_cycle_in_fast_mode */
-#define I2C_DutyCycle_16_9              ((uint16_t)0x4000) /*!< I2C fast mode Tlow/Thigh = 16/9 */
-#define I2C_DutyCycle_2                 ((uint16_t)0xBFFF) /*!< I2C fast mode Tlow/Thigh = 2 */
-#define IS_I2C_DUTY_CYCLE(CYCLE)        (((CYCLE) == I2C_DutyCycle_16_9) || \
-                                        ((CYCLE) == I2C_DutyCycle_2))
+/*!< I2C fast mode Tlow/Thigh = 16/9 */
+/*!< I2C fast mode Tlow/Thigh = 2 */
 
 /** @defgroup I2C_acknowledged_address */
 #define I2C_Address_7bit                ((uint16_t)0x0000)

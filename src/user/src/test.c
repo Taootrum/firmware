@@ -80,6 +80,19 @@ static ALLCASE FLASH_AllCases[] = {
     {"FLASH_InterfaceTest8", FLASH_InterfaceTest8}
 };
 
+static ALLCASE I2C_AllCases[] = {
+    {"I2C_FunctionTest1", I2C_FunctionTest1},
+    {"I2C_FunctionTest2", I2C_FunctionTest2},
+    {"I2C_FunctionTest3", I2C_FunctionTest3},
+    {"I2C_FunctionTest4", I2C_FunctionTest4},
+    {"I2C_FunctionTest5", I2C_FunctionTest5},
+    {"I2C_FunctionTest6", I2C_FunctionTest6},
+    {"I2C_FunctionTest7", I2C_FunctionTest7},
+    {"I2C_FunctionTest8", I2C_FunctionTest8},
+    {"I2C_FunctionTest9", I2C_FunctionTest9},
+    //{"I2C_FunctionTest10", I2C_FunctionTestX}
+};
+
 /****************************************************************
   * 函数      : ACU_SuiteTest()
   * 参数      : None
@@ -122,7 +135,7 @@ void ACU_HalFuncTest(void)
     ACU_SUITE_TEST(GPIO_AllCases);
     ACU_SUITE_TEST(UART_AllCases);
     ACU_SUITE_TEST(FLASH_AllCases);
-    //ACU_SUITE_TEST(I2C_AllCases);
+    ACU_SUITE_TEST(I2C_AllCases);
     ACU_ALL_TEST_REPORT();
 }
 

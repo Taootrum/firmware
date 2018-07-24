@@ -47,67 +47,22 @@ void I2C_DeInit(I2C_TypeDef* I2Cx)
  ***************************************************************/
 void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
 {
-    uint16_t tmpreg = 0;
-    uint16_t result = 0x04;
-    uint32_t apbclock = 0x00;
+    uint16_t result = 0;
+    uint32_t apbclock = 0;
     RCC_ClocksTypeDef RCC_ClocksStatus;
 
     /* Check the parameters */
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
     assert_param(IS_I2C_SPEED(I2C_InitStruct->I2C_Speed));
     assert_param(IS_I2C_MODE(I2C_InitStruct->I2C_Mode));
-    assert_param(IS_I2C_DUTY_CYCLE(I2C_InitStruct->I2C_DutyCycle));
-    assert_param(IS_I2C_RESTART_EN(I2C_InitStruct->I2C_RestartEnable));
     assert_param(IS_I2C_OWN_ADDRESS(I2C_InitStruct->I2C_OwnAddress));
     assert_param(IS_I2C_HS_MADDRESS(I2C_InitStruct->I2C_HSMasterAddress));
     assert_param(IS_I2C_ADDRESS_MODE(I2C_InitStruct->I2C_AddressMode));
-    assert_param(IS_I2C_ACKNOWLEDGE_ADDRESS(I2C_InitStruct->I2C_AcknowledgedAddress));
+    assert_param(IS_I2C_ACKNOWLEDGE_ADDRESS(I2C_InitStruct->I2C_AckAddress));
     assert_param(IS_I2C_ACKNOWLEDGE(I2C_InitStruct->I2C_Acknowledge));
     assert_param(IS_I2C_FIFO_LEVEL(I2C_InitStruct->I2C_TxFIFOLevel));
     assert_param(IS_I2C_FIFO_LEVEL(I2C_InitStruct->I2C_RxFIFOLevel));
 
-    /*---------------------------- I2Cx Speed Configuration ------------------------*/
-    RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
-    apbclock = RCC_ClocksStatus.FCLK_Frequency;
-    
-    I2Cx->CR |= I2C_InitStruct->I2C_Speed;
-    if (I2C_InitStruct->I2C_Speed == I2C_Speed_100k)
-    {
-        /* standard mode */
-        /* Standard mode speed calculate */
-        result = (uint16_t)(apbclock / (I2C_InitStruct->I2C_Speed << 1));
-        /* Test if CCR value is under 0x4*/
-        if (result < 0x04)
-        {
-          /* Set minimum allowed value */
-          result = 0x04;  
-        }
-        /* Set speed value for standard mode */
-        tmpreg |= result;     
-        /* Set Maximum Rise Time for standard mode */
-    }
-    else if (I2C_InitStruct->I2C_Speed == I2C_Speed_400k) 
-    {
-        /* fast mode */
-        if (I2C_InitStruct->I2C_DutyCycle == I2C_DutyCycle_2)
-        {
-          /* Fast mode speed calculate: Tlow/Thigh = 2 */
-          result = (uint16_t)(apbclock / (I2C_InitStruct->I2C_Speed * 3));
-        }
-        else /*I2C_InitStruct->I2C_DutyCycle == I2C_DutyCycle_16_9*/
-        {
-          /* Fast mode speed calculate: Tlow/Thigh = 16/9 */
-          result = (uint16_t)(apbclock / (I2C_InitStruct->I2C_Speed * 25));
-          /* Set DUTY bit */
-          result |= I2C_DutyCycle_16_9;
-        }
-    }
-    else 
-    {
-        /* high mode */
-        I2Cx->HS_MADDR = I2C_InitStruct->I2C_HSMasterAddress;
-    }
-    
     /*---------------------------- I2Cx mode Configuration ------------------------*/
     if (I2C_InitStruct->I2C_Mode == I2C_Mode_Passive)
     {
@@ -116,20 +71,80 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
     else
     {
         I2Cx->SDA_CFG &= ~I2C_Mode_Passive;
-        I2Cx->CR |= I2C_InitStruct->I2C_Mode;
+        if (I2C_InitStruct->I2C_Mode == I2C_Mode_Master)
+        {
+            I2Cx->CR |= I2C_InitStruct->I2C_Mode;
+        }
+        else
+        {
+            I2Cx->CR &= ~I2C_Mode_Master;
+        }
     }
 
+    /*---------------------------- I2Cx Speed Configuration ------------------------*/
+    I2Cx->CR |= I2C_Speed_3400k;
+    if (I2C_InitStruct->I2C_Speed == I2C_Speed_100k)
+    {
+        I2Cx->CR &= ~I2C_Speed_400k;
+    }
+    else if (I2C_InitStruct->I2C_Speed == I2C_Speed_400k)
+    {
+        I2Cx->CR &= ~I2C_Speed_100k;
+    }
+    if (I2C_InitStruct->I2C_Mode == I2C_Mode_Master)
+    {
+        /* Get Fabric Clock */
+        RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
+        apbclock = RCC_ClocksStatus.FCLK_Frequency;
+        
+        if (I2C_InitStruct->I2C_Speed == I2C_Speed_100k)
+        {
+            /* Standard mode */
+            result = (uint16_t)(apbclock / 100000);
+            I2Cx->SS_SCL_HCNT = result / 2;
+            I2Cx->SS_SCL_LCNT = result / 2;
+        }
+        else if (I2C_InitStruct->I2C_Speed == I2C_Speed_400k) 
+        {
+            /* Fast mode */
+            result = (uint16_t)(apbclock / 400000);
+            I2Cx->FS_SCL_HCNT = result / 3;         /*I2C fast mode Tlow/Thigh = 2, if need Tlow/Thigh = 16 / 9 */
+            I2Cx->FS_SCL_LCNT = 2 * result / 3;
+        }
+        else 
+        {
+            /* High mode */
+            result = (uint16_t)(apbclock / 3400000);
+            I2Cx->HS_SCL_HCNT = result / 3;         /*I2C high mode Tlow/Thigh = 2, if need Tlow/Thigh = 16 / 9 */
+            I2Cx->HS_SCL_LCNT = 2 * result / 3;
+
+            /* Set Master Code */
+            I2Cx->HS_MADDR = I2C_InitStruct->I2C_HSMasterAddress;
+        }
+    }
+    
     /*---------------------------- I2Cx restart_enable Configuration ------------------------*/
-    I2Cx->CR |= I2C_InitStruct->I2C_RestartEnable;
+    I2Cx->CR |= I2C_Restart_Enable;
     
     /*---------------------------- I2Cx Address Mode Configuration ------------------------*/
-    I2Cx->CR |= I2C_InitStruct->I2C_AddressMode;
+    if (I2C_InitStruct->I2C_AddressMode == I2C_Address_10bit)
+    {
+        I2Cx->CR |= I2C_Address_10bit;
+    }
+    else
+    {
+        I2Cx->CR &= ~I2C_Address_10bit;
+    }
 
     /*---------------------------- I2Cx Own Address Configuration -----------------------*/
-    I2Cx->SAR = I2C_InitStruct->I2C_OwnAddress << 3; /* 3bit external io bit */
+    /* I2C0 4bit external io control */
+    if (I2C_InitStruct->I2C_OwnAddress)
+    {
+        I2Cx->SAR = (I2Cx == I2C0) ? I2C_InitStruct->I2C_OwnAddress << 4 : I2C_InitStruct->I2C_OwnAddress;
+    }
     
     /*---------------------------- I2Cx Ack Address Configuration -----------------------*/
-    I2Cx->TAR = I2C_InitStruct->I2C_AcknowledgedAddress;
+    I2Cx->TAR = I2C_InitStruct->I2C_AckAddress;
 
     /*---------------------------- I2Cx Acknowledge Configuration -----------------------*/
     I2Cx->ACK_GENERAL_CALL = I2C_InitStruct->I2C_Acknowledge;
@@ -150,19 +165,15 @@ void I2C_StructInit(I2C_InitTypeDef* I2C_InitStruct)
     /* initialize the I2C_ClockSpeed member */
     I2C_InitStruct->I2C_Speed = I2C_Speed_400k;
     /* Initialize the I2C_Mode member */
-    I2C_InitStruct->I2C_Mode = I2C_Mode_I2C;
-    /* Initialize the I2C_RestartEnable */
-    I2C_InitStruct->I2C_RestartEnable = I2C_Restart_Enable;
-    /* Initialize the I2C_DutyCycle member */
-    I2C_InitStruct->I2C_DutyCycle = I2C_DutyCycle_2;
+    I2C_InitStruct->I2C_Mode = I2C_Mode_Master;
     /* Initialize the I2C_AddressMode */
     I2C_InitStruct->I2C_AddressMode = I2C_Address_7bit;
     /* Initialize the I2C_HSMasterAddress member */
     I2C_InitStruct->I2C_HSMasterAddress = 0x01;
     /* Initialize the I2C_OwnAddress member */
-    I2C_InitStruct->I2C_OwnAddress = 0x0a;
+    I2C_InitStruct->I2C_OwnAddress = 0x05;
     /* Initialize the I2C_AcknowledgedAddress member */
-    I2C_InitStruct->I2C_AcknowledgedAddress = 0x55;
+    I2C_InitStruct->I2C_AckAddress = 0x55;
     /* Initialize the I2C_TxFIFOLevel member */
     I2C_InitStruct->I2C_TxFIFOLevel = 0;
     /* Initialize the I2C_RxFIFOLevel member */
@@ -216,8 +227,6 @@ uint8_t I2C_ReceiveData(I2C_TypeDef* I2Cx)
 {
     /* Check the parameters */
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
-    /* Return the data in the DR register */
-    I2Cx->DATACMD = I2C_MASTER_READ_CMD;
     
     return (uint8_t)I2Cx->DATACMD;
 }
@@ -244,7 +253,7 @@ FlagStatus I2C_GetFlagStatus(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG)
     assert_param(IS_I2C_FLAG(I2C_FLAG));
     
     bitstatus = (I2Cx->STATUS & (uint32_t)I2C_FLAG) ? SET : RESET;
-
+    
     return bitstatus;
 }
 
