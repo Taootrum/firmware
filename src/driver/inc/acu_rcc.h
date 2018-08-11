@@ -37,15 +37,17 @@ typedef struct
 
 typedef enum {UnLock = 0, Lock = 1} LockStatus;
 
-/* 24M / (PLL_DIVR + 1) = 24M */ 
-#define PLL_DIVR                    0x0     
+/* 24M / (PLL_DIVR + 1) = 24M | 24M / (DPLL_DIVR + 1) = 12M */ 
+#define PLL_DIVR                    0x0   
+#define DPLL_DIVR                   0x1   
 #define IS_PLL_DIVR(DIVR)           ((DIVR) < 3)
 
-/* 24M * (PLL_DIVF + 1) * 2 = 3600M */ 
+/* 24M * (PLL_DIVF + 1) * 2 = 3600M | 12M * (DPLL_DIVF + 1) * 2 = 4248M */ 
 #define PLL_DIVF                    0x4A
+#define DPLL_DIVF                   0xB0
 #define IS_PLL_DIVF(DIVF)           ((DIVF) <= 0x1FF)
 
-/* 3600M / (2 ^ PLL_DIVQ_2) = 1800M */ 
+/* 3600M / (2 ^ PLL_DIVQ_2) = 1800M | 4248M / (2 ^ PLL_DIVQ_2) = 2124M */ 
 #define PLL_DIVQ_2                  0x01
 #define PLL_DIVQ_4                  0x02
 #define PLL_DIVQ_8                  0x03

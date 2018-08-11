@@ -54,7 +54,8 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
     assert_param(IS_SPI_CPHA(SPI_InitStruct->SPI_CPHA));
     assert_param(IS_SPI_BAUDRATE(SPI_InitStruct->SPI_BaudRate));
     assert_param(IS_SPI_CPSDVSR(SPI_InitStruct->SPI_CPSR));
-    assert_param(IS_SPI_FIFO_TH(SPI_InitStruct->SPI_FIFO));
+    assert_param(IS_SPI_FIFO_TH(SPI_InitStruct->SPI_TX_FIFO));
+    assert_param(IS_SPI_FIFO_TH(SPI_InitStruct->SPI_RX_FIFO));
     
     /* SPIx CR0 Configuration */
     SPIx->CR0 = (uint16_t)( SPI_InitStruct->SPI_Mode | SPI_InitStruct->SPI_DataSize | 
@@ -68,7 +69,7 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
     /* SPIx CPSR Configuration */
     SPIx->CPSR = SPI_InitStruct->SPI_CPSR;
     /* SPIx FIFOTH Configuration */
-    SPIx->FIFOTH = (SPI_InitStruct->SPI_FIFO << 8) | SPI_InitStruct->SPI_FIFO;
+    SPIx->FIFOTH = (SPI_InitStruct->SPI_RX_FIFO << 8) | SPI_InitStruct->SPI_TX_FIFO;
 }
   
 /****************************************************************
@@ -95,7 +96,9 @@ void SPI_StructInit(SPI_InitTypeDef* SPI_InitStruct)
     /* Initialize the SPI_BaudRatePrescaler member */
     SPI_InitStruct->SPI_BaudRate = SPI_BAUDRATE;
     SPI_InitStruct->SPI_CPSR = SPI_CPSDVSR;
-    SPI_InitStruct->SPI_FIFO = SPI_FIFO_TH;
+    /* Initialize the SPI_TX_RX_FIFO */
+    SPI_InitStruct->SPI_TX_FIFO = SPI_FIFO_TX_TH - 1;
+    SPI_InitStruct->SPI_RX_FIFO = SPI_FIFO_RX_TH - 1;
 }
   
 /****************************************************************
@@ -166,14 +169,11 @@ uint16_t SPI_ReceiveData(SPI_TypeDef* SPIx)
  ***************************************************************/
 FlagStatus SPI_GetStatus(SPI_TypeDef* SPIx, uint16_t SPI_FLAG)
 {
-    FlagStatus bitstatus = RESET;
-    
     /* Check the parameters */
     assert_param(IS_SPI_ALL_PERIPH(SPIx));
     assert_param(IS_SPI_GET_FLAG(SPI_FLAG));
-    bitstatus = (SPIx->SR & (uint32_t)SPI_FLAG) ? SET : RESET;
 
-    return  bitstatus;
+    return  ((SPIx->SR & SPI_FLAG) ? SET : RESET);
 }
 
 /****************************************************************
@@ -217,14 +217,11 @@ void SPI_ITConfig(SPI_TypeDef* SPIx, uint8_t SPI_IT, FunctionalState NewState)
  ***************************************************************/
 ITStatus SPI_GetRawITStatus(SPI_TypeDef* SPIx, uint8_t SPI_RIT)
 {
-    ITStatus bitstatus = RESET;
-
     /* Check the parameters */
     assert_param(IS_SPI_ALL_PERIPH(SPIx));
     assert_param(IS_SPI_GET_RIT_FLAG(SPI_RIT));
-    bitstatus = (SPIx->RIS & SPI_RIT) ? SET : RESET;
 
-    return  bitstatus;
+    return ((SPIx->RIS & SPI_RIT) ? SET : RESET);
 }
 
 /****************************************************************
@@ -239,14 +236,11 @@ ITStatus SPI_GetRawITStatus(SPI_TypeDef* SPIx, uint8_t SPI_RIT)
  ***************************************************************/
 ITStatus SPI_GetMaskITStatus(SPI_TypeDef* SPIx, uint8_t SPI_MIT)
 {
-    ITStatus bitstatus = RESET;
-
     /* Check the parameters */
     assert_param(IS_SPI_ALL_PERIPH(SPIx));
     assert_param(IS_SPI_GET_MIT_FLAG(SPI_MIT));
-    bitstatus = (SPIx->MIS & SPI_MIT) ? SET : RESET;
 
-    return  bitstatus;
+    return ((SPIx->MIS & SPI_MIT) ? SET : RESET);
 }
 
 /****************************************************************

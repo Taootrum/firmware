@@ -109,6 +109,12 @@ typedef struct
                                         ((FLAG) == I2C_FLAG_REF) || ((FLAG) == I2C_FLAG_RFNE) || \
                                         ((FLAG) == I2C_FLAG_TFE) || ((FLAG) == I2C_FLAG_TFNF) || \
                                         ((FLAG) == I2C_FLAG_ACTIVITY))
+                                        
+/** @defgroup I2C_FIFO_definition */
+#define I2C_FIFO_TX_LEVEL               ((uint8_t)0x10)
+#define I2C_FIFO_RX_LEVEL               ((uint8_t)0x10)
+#define I2C_FIFO_LEVEL_MAX              ((uint8_t)0x10)
+#define IS_I2C_FIFO_TH(TH)              ((TH) <= I2C_FIFO_LEVEL_MAX)
 
 /** @defgroup I2C_hs_master_address */
 #define IS_I2C_HS_MADDRESS(ADDRESS)     ((ADDRESS) <= 0x7)

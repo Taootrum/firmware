@@ -169,9 +169,9 @@ void Hal_FlashReadByte(uint32_t ReadAddr, uint8_t *Byte)
   * 返回值     : None
   * 描述      : 向flash写入boot Head_Info
  ***************************************************************/
-static void Hal_WriteBootHead(uint8_t *Head)
+static void Hal_WriteBootHead(uint32_t Addr, uint8_t *Head)
 {
-    Hal_FlashWriteBuffer(Head, ACU_BOOT_HEAD_ADDR, ACU_BOOT_HEAD_LEN);
+    Hal_FlashWriteBuffer(Head, Addr, ACU_BOOT_HEAD_LEN);
 }
 
 
@@ -181,9 +181,9 @@ static void Hal_WriteBootHead(uint8_t *Head)
   * 返回值     : None
   * 描述      : 向flash写入boot大小
  ***************************************************************/
-static void Hal_WriteBootSize(uint32_t Size)
+static void Hal_WriteBootSize(uint32_t Addr, uint32_t Size)
 {
-    Hal_FlashWriteWord(ACU_BOOT_SIZE_ADDR, Size);
+    Hal_FlashWriteWord(Addr, Size);
 }
 
 /****************************************************************
@@ -205,7 +205,7 @@ static BootMode Hal_GetBootMode(void)
  ***************************************************************/
 static uint32_t Hal_GetBootSize(void)
 {
-    return IRAM_BOOT_SIZE_MAX;
+    return INT_GEN->DATA0;
 }
 
 /****************************************************************
@@ -238,10 +238,19 @@ void ACU_FlashUpdate(void)
         {
             CheckSum += pData[i];
         }
+
+        /* load boot to flash */
+        Hal_WriteBootHead(ACU_BOOT_HEAD_ADDR, (uint8_t *)ACU_BOOT_HEAD_INFO);
+        Hal_WriteBootSize(ACU_BOOT_SIZE_ADDR, Size);
         Hal_FlashWriteBuffer(pData, ACU_BOOT_CODE_ADDR, Size);
-        Hal_WriteBootHead(ACU_BOOT_HEAD);
-        Hal_WriteBootSize(Size);
         Hal_FlashWriteByte(ACU_BOOT_CODE_ADDR + Size, CheckSum);
+        
+        /* load boot to flash backup */
+        Hal_WriteBootHead(ACU_BOOT_BACK_HEAD_ADDR, (uint8_t *)ACU_BOOT_HEAD_INFO);
+        Hal_WriteBootSize(ACU_BOOT_BACK_SIZE_ADDR, Size);
+        Hal_FlashWriteBuffer(pData, ACU_BOOT_BACK_CODE_ADDR, Size);
+        Hal_FlashWriteByte(ACU_BOOT_BACK_CODE_ADDR + Size, CheckSum);
+        
         DEBUG_MSG("ACU Firmware Update Done.\r\n");
     }
     else

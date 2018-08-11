@@ -88,15 +88,9 @@ TestStatus GPIO_InterfaceTest2(void)
 /* GPIO_IOPADMode() */
 TestStatus GPIO_InterfaceTest3(void)
 {
-    IOPAD_TypeDef IOPAD_Structure;
     TestStatus ret = PASSED;
 
-    /* read reserved */
-    IOPAD_Structure.FCR0 = READ_REG(IOPAD_MUX->FCR0);
-    IOPAD_Structure.FCR1 = READ_REG(IOPAD_MUX->FCR1);
-    IOPAD_Structure.FCR2 = READ_REG(IOPAD_MUX->FCR2);
-    IOPAD_Structure.FCR3 = READ_REG(IOPAD_MUX->FCR3);
-    IOPAD_Structure.FCR4 = READ_REG(IOPAD_MUX->FCR4);
+    while (UART->FR & UART_FLAG_BUSY);
     
     /* reset */
     GPIO_IOPADMode(GPIO0, GPIO_IOPAD_GPIO);
@@ -151,11 +145,7 @@ TestStatus GPIO_InterfaceTest3(void)
         ret = FAILED;
     }
     
-    WRITE_REG(IOPAD_MUX->FCR0, IOPAD_Structure.FCR0);
-    WRITE_REG(IOPAD_MUX->FCR1, IOPAD_Structure.FCR1);
-    WRITE_REG(IOPAD_MUX->FCR2, IOPAD_Structure.FCR2);
-    WRITE_REG(IOPAD_MUX->FCR3, IOPAD_Structure.FCR3);
-    WRITE_REG(IOPAD_MUX->FCR4, IOPAD_Structure.FCR4);
+    RCC_IOPADReset();
     
     return ret;
 }

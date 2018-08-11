@@ -257,16 +257,12 @@ void UART_IrDACmd(UART_TypeDef* UARTx, FunctionalState NewState)
   * 描述      : 获取状态寄存器
  ***************************************************************/
 FlagStatus UART_GetFlagStatus(UART_TypeDef* UARTx, uint16_t UART_FLAG)
-{
-    FlagStatus bitstatus = RESET;
-    
+{    
     /* Check the parameters */
     assert_param(IS_UART_ALL_PERIPH(UARTx));
     assert_param(IS_UART_FLAG(UART_FLAG));
     
-    bitstatus = (UARTx->FR & (uint32_t)UART_FLAG) ? SET : RESET;
-
-    return bitstatus;
+    return ((UARTx->FR & UART_FLAG) ? SET : RESET);
 }
 
 /****************************************************************
@@ -278,15 +274,11 @@ FlagStatus UART_GetFlagStatus(UART_TypeDef* UARTx, uint16_t UART_FLAG)
  ***************************************************************/
 ITStatus UART_GetRawITStatus(UART_TypeDef* UARTx, uint16_t UART_IT)
 {
-    ITStatus bitstatus = RESET;
-    
     /* Check the parameters */
     assert_param(IS_UART_ALL_PERIPH(UARTx));
     assert_param(IS_UART_GET_IT(UART_IT));
     
-    bitstatus = (UARTx->RIS & UART_IT) ? SET : RESET;
-
-    return bitstatus;
+    return ((UARTx->RIS & UART_IT) ? SET : RESET);
 }
 
 /****************************************************************
@@ -298,15 +290,11 @@ ITStatus UART_GetRawITStatus(UART_TypeDef* UARTx, uint16_t UART_IT)
  ***************************************************************/
 ITStatus UART_GetMaskITStatus(UART_TypeDef* UARTx, uint16_t UART_IT)
 {
-    ITStatus bitstatus = RESET;
-    
     /* Check the parameters */
     assert_param(IS_UART_ALL_PERIPH(UARTx));
     assert_param(IS_UART_GET_IT(UART_IT));
     
-    bitstatus = (UARTx->MIS & UART_IT) ? SET : RESET;
-
-    return bitstatus;
+    return ((UARTx->MIS & UART_IT) ? SET : RESET);
 }
 
 /****************************************************************

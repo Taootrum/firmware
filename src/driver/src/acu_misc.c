@@ -27,10 +27,7 @@ uint32_t TIMER_GetSysTick(void)
  ***************************************************************/
 void ACU_Delay(uint32_t num)
 {
-    uint32_t i = 0, j = 0;
-
-    for (i = 0; i < num; i++)
-        for (j = 0; j < 1000; j++);
+    while (num--);
 }
 
 /****************************************************************
@@ -56,5 +53,34 @@ TestStatus Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength
     }
 
     return PASSED;
+}
+
+void printf_memory(uint8_t *mem, uint16_t len)
+{
+    uint8_t i = 0, j = 0;
+    uint8_t uMod = len / PRINT_MEM_SIZE, uOft = len % PRINT_MEM_SIZE;
+    uint8_t uPrint = 0;
+    uint32_t addr = (uint32_t)mem;
+    
+    for (i = 0; i < uMod + 1; i++)
+    {
+        uPrint = (i == uMod) ? uOft : PRINT_MEM_SIZE;
+        if (uPrint == 0)
+        {
+            return;
+        }
+
+        DEBUG_MSG("%08x:", addr);
+        for (j = 0; j < uPrint; j++)
+        {
+            DEBUG_MSG("%02x", *(mem + PRINT_MEM_SIZE * i + j));
+            if ((j + 1) % 4 == 0)
+            {
+                DEBUG_MSG(" ");
+            }
+        }
+        addr += PRINT_MEM_SIZE;
+        DEBUG_MSG(LF);
+    }
 }
 

@@ -81,6 +81,7 @@ static ALLCASE FLASH_AllCases[] = {
 };
 
 static ALLCASE I2C_AllCases[] = {
+#if 0
     {"I2C_FunctionTest1", I2C_FunctionTest1},
     {"I2C_FunctionTest2", I2C_FunctionTest2},
     {"I2C_FunctionTest3", I2C_FunctionTest3},
@@ -90,7 +91,8 @@ static ALLCASE I2C_AllCases[] = {
     {"I2C_FunctionTest7", I2C_FunctionTest7},
     {"I2C_FunctionTest8", I2C_FunctionTest8},
     {"I2C_FunctionTest9", I2C_FunctionTest9},
-    //{"I2C_FunctionTest10", I2C_FunctionTestX}
+#endif
+    {"I2C_FunctionTest10", I2C_FunctionTest10},
 };
 
 /****************************************************************
@@ -130,11 +132,11 @@ static void ACU_SuiteTest(PALLCASE pSuiteAllCase)
  ***************************************************************/
 void ACU_HalFuncTest(void)
 {
-    ACU_SUITE_TEST(CRU_AllCases);
-    ACU_SUITE_TEST(SPI_AllCases);
-    ACU_SUITE_TEST(GPIO_AllCases);
-    ACU_SUITE_TEST(UART_AllCases);
-    ACU_SUITE_TEST(FLASH_AllCases);
+    //ACU_SUITE_TEST(CRU_AllCases);
+    //ACU_SUITE_TEST(SPI_AllCases);
+    //ACU_SUITE_TEST(GPIO_AllCases);
+    //ACU_SUITE_TEST(UART_AllCases);
+    //ACU_SUITE_TEST(FLASH_AllCases);
     ACU_SUITE_TEST(I2C_AllCases);
     ACU_ALL_TEST_REPORT();
 }

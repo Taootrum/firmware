@@ -92,11 +92,11 @@ static void SetSysClock(void)
     } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
     RCC_PLLCmd(APLL_CLK, ENABLE);
 
-    /* Initialize DPLL */
+    /* Initialize DPLL 2133M */
     PLL_Init.PLLInputClock = XTAL;
     PLL_Init.PLLOutputClock = DPLL_CLK_FREQ;
-    PLL_Init.Divr = PLL_DIVR;
-    PLL_Init.Divf = PLL_DIVF;
+    PLL_Init.Divr = DPLL_DIVR;
+    PLL_Init.Divf = DPLL_DIVF;
     PLL_Init.Divq = PLL_DIVQ_2;
     RCC_PLLConfig(DPLL_CLK, &PLL_Init);
     StartUpCounter = 0;
@@ -136,11 +136,12 @@ static void SetSysClock(void)
  *----------------------------------------------------------------------------*/
 void SystemInit (void)
 {
+#if 1
     /* Disable all interrupt */
     __set_PRIMASK(1);
     
     /* Rest the System modules */
-    ResetSysModules();
+    //ResetSysModules();
 
     /* Set System Clock */
     SetSysClock();
@@ -150,5 +151,6 @@ void SystemInit (void)
         
     /* configuration systick*/
     SysTick_Configuration();
+#endif
 }
 

@@ -169,8 +169,12 @@ void DDR2_IRQHandler(void)
 {
 
 }
+
+extern uint32_t RxData;
 void CU_IRQHandler(void)
 {
-
+    WRITE_REG(CU->CQ_IRQ_CLEAR, 0x1F);
+    DDR_ReadMem((uint8_t *)&RxData, 0x1000 + 0x80, 4);
+    DEBUG_MSG("Running......"LF);
 }
 

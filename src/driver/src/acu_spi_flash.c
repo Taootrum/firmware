@@ -247,15 +247,20 @@ void sFLASH_WriteBuffer(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteTo
 }
 
 /****************************************************************
-  * 函数      : sFLASH_ReadBuffer()
+  * 函数      : sFLASH_ReadBuffer8Bit()
   * 参数      : pBuffer: pointer to the buffer that receives the data read from the FLASH.
               ReadAddr: FLASH's internal address to read from.
               NumByteToRead: number of bytes to read from the FLASH.
   * 返回值     : None
-  * 描述      : Reads a block of data from the FLASH.
+  * 描述      : Reads a block of data from the FLASH by spi work in 8bits transfer.
  ***************************************************************/
 void sFLASH_ReadBuffer(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead)
 {
+    uint16_t tx = 0, tx_end = NumByteToRead;
+    uint8_t *pRx = pBuffer;
+    uint8_t *pRxEnd = pRx + NumByteToRead;
+    uint8_t txfifolevel = 0;
+    
     sFLASH_CS_LOW();
 
     /*!< Send read instruction */
@@ -268,12 +273,92 @@ void sFLASH_ReadBuffer(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRe
 
     /* Read data*/
     sFLASH_SendByte(sFLASH_DUMMY_BYTE);
-    while (NumByteToRead--)
-    {
-        *pBuffer = sFLASH_SendByte(sFLASH_DUMMY_BYTE);
-        pBuffer++;
+    while (pRx < pRxEnd)
+    {      
+        /*!< Loop while DR register in not empty */
+        while ((txfifolevel < SPI_FIFO_TX_TH) && (tx < tx_end))
+        {
+            sFLASH_SPI->DR = sFLASH_DUMMY_BYTE;
+            tx++;
+            txfifolevel++;
+            
+            /*!< Read data when Rx_FIFO not empty */
+            if (sFLASH_SPI->SR & SPI_FLAG_RXNE)
+            {
+                *pRx++ = sFLASH_SPI->DR;
+                txfifolevel--;
+            }
+        }
+
+        /*!< Read data when Rx_FIFO not empty */
+        if (sFLASH_SPI->SR & SPI_FLAG_RXNE)
+        {
+            *pRx++ = sFLASH_SPI->DR;
+            txfifolevel--;
+        }
     }
     
+    sFLASH_CS_HIGH();
+}
+
+/****************************************************************
+  * 函数      : sFLASH_ReadBuffer()
+  * 参数      : pBuffer: pointer to the buffer that receives the data read from the FLASH.
+              ReadAddr: FLASH's internal address to read from.
+              NumByteToRead: number of bytes to read from the FLASH.
+  * 返回值     : None
+  * 描述      : Reads a block of data from the FLASH by spi work in 16bits transfer.
+ ***************************************************************/
+void sFLASH_ReadBuffer16Bit(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead)
+{
+    uint8_t txfifolevel = 0;
+    uint16_t tx = 0, tx_end = NumByteToRead / 2, temp = 0;
+    uint16_t *pRx = (uint16_t *)pBuffer;
+    uint16_t *pRxEnd = pRx + (NumByteToRead / 2);
+    
+    sFLASH_CS_LOW();
+
+    /*!< Send read instruction and address */
+    sFLASH_SendHalfWord((sFLASH_CMD_READ << 8) | ((ReadAddr & 0xFF0000) >> 16));
+    sFLASH_SendHalfWord(ReadAddr & 0xFFFF);
+
+    /* Read data*/
+    while (pRx < pRxEnd)
+    {          
+        /*!< Write as much to Tx_FIFO */
+        while ((txfifolevel < SPI_FIFO_TX_TH) && (tx < tx_end))
+        {
+            sFLASH_SPI->DR = sFLASH_DUMMY_BYTE;
+            tx++;
+            txfifolevel++;
+
+            /*!< Read data when Rx_FIFO not empty */
+            if (sFLASH_SPI->SR & SPI_FLAG_RXNE)
+            {
+                temp = sFLASH_SPI->DR;
+                *pRx++ = (temp << 8) | (temp >> 8);
+                txfifolevel--;
+            }
+        }
+
+        /*!< Read data when Rx_FIFO not empty */
+        if (sFLASH_SPI->SR & SPI_FLAG_RXNE)
+        {
+            temp = sFLASH_SPI->DR;
+            *pRx++ = (temp << 8) | (temp >> 8);
+            txfifolevel--;
+        }
+    }
+
+    /* Prevent memory from being out of bounds */
+    if (NumByteToRead % 2)
+    {
+        sFLASH_SPI->DR = sFLASH_DUMMY_BYTE;
+        while (SPI_GetStatus(sFLASH_SPI, SPI_FLAG_RXNE) == RESET);
+        temp = sFLASH_SPI->DR;
+        *(pBuffer + NumByteToRead - 1) = temp >> 8;
+    }
+
     sFLASH_CS_HIGH();
 }
 

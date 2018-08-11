@@ -26,15 +26,23 @@
 #define READ_REG(REG)           ((REG))
 #define WRITE32(ADDR, VAL)      (*(__IO uint32_t *)(ADDR) = (VAL))
 #define READ32(ADDR)            (*(__IO uint32_t *)(ADDR))
+#define WRITE16(ADDR, VAL)      (*(__IO uint16_t *)(ADDR) = (VAL))
+#define READ16(ADDR)            (*(__IO uint16_t *)(ADDR))
+#define WRITE8(ADDR, VAL)       (*(__IO uint8_t *)(ADDR) = (VAL))
+#define READ8(ADDR)             (*(__IO uint8_t *)(ADDR))
 #define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
 #define COUNT_OF(a) (sizeof(a) / sizeof(*(a)))
 #define CHECK_REG_RESERVED(REG, VAL) ((REG) == (VAL) ? TRUE : FALSE)
+
+#define PRINT_MEM_SIZE      0x10
+
 extern uint32_t SysTickCount;
 
 extern void ACU_Delay(uint32_t num);
 extern TestStatus Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength);
 extern void TIMER_ResetSysTick(void);
 extern uint32_t TIMER_GetSysTick(void);
+extern void printf_memory(uint8_t *mem, uint16_t len);
 
 #ifdef __cplusplus
 }

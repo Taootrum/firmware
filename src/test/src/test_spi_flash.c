@@ -60,13 +60,13 @@ TestStatus FLASH_InterfaceTest2(void)
     /* init */
     sFLASH_Init();
     result &= CHECK_REG_RESERVED(sFLASH_SPI->CR0, 0x7);
-    result &= CHECK_REG_RESERVED(sFLASH_SPI->CR1, 0x2);
+    result &= CHECK_REG_RESERVED(sFLASH_SPI->CR1, SPI_ENABLE);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->DR, 0x0);
-    result &= CHECK_REG_RESERVED(sFLASH_SPI->CPSR, 0x2);
+    result &= CHECK_REG_RESERVED(sFLASH_SPI->CPSR, SPI_CPSDVSR);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->IMSC, 0x0);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->ICR, 0x0);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->DMACR, 0x0);
-    result &= CHECK_REG_RESERVED(sFLASH_SPI->FIFOTH, 0x101);
+    result &= CHECK_REG_RESERVED(sFLASH_SPI->FIFOTH, ((SPI_FIFO_TX_TH - 1) << 8) | (SPI_FIFO_TX_TH - 1));
     if (result != TRUE)
     {
         DEBUG_ERROR("SPI_Init fail.");

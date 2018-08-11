@@ -273,8 +273,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x8000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_FULL_ASSERT,DEBUG,ACU_TEST,SIM_ENV</Define>
+              <Define>DEBUG,SIM_ENV</Define>
               <Undefine></Undefine>
               <IncludePath>../src/include;../src/cmsis/inc;../src/driver/inc;../src/user/inc;../src/test/inc</IncludePath>
             </VariousControls>
@@ -445,6 +445,46 @@
               <FileType>1</FileType>
               <FilePath>..\src\driver\src\acu_wdg.c</FilePath>
             </File>
+            <File>
+              <FileName>acu_ddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_ddr.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_ddr3_pmu_train_dmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_ddr3_pmu_train_dmem.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_ddr3_pmu_train_imem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_ddr3_pmu_train_imem.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_ddrc_x8_ddr3_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_ddrc_x8_ddr3_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_hong_try_2p50a_1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_hong_try_2p50a_1.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_ddr_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_ddr_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_ddr3_init_fpga.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_ddr3_init_fpga.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_ddr3_phy_init_fpga.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_ddr3_phy_init_fpga.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -474,6 +514,11 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\user\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_passive.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\user\src\i2c_passive.c</FilePath>
             </File>
           </Files>
         </Group>

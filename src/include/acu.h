@@ -300,8 +300,14 @@ typedef struct
        uint8_t  RESERVED1[16];
     __IO uint32_t ISO;                    /*!< Offset: 0x018 Interface ISO Register (R/W) */
     __IO uint32_t SCR;                    /*!< Offset: 0x01C SyncReset Clock Gate Register (R/W) */
-    __IO uint32_t WDT_PAUSE;              /*!< Offset: 0x020 WDT Pause Register (R/W) */
+    union Adress20{
+        __IO uint32_t WDT_PAUSE;          /*!< Offset: 0x020 WDT Pause Register (R/W) */
+        __IO uint32_t INT_STATUS;         /*!< Offset: 0x020 Interrupt Status Register (R/W) */
+        __IO uint32_t DLM_INTSEL;         /*!< Offset: 0x020 DLM Interrupt Select Register (R/W) */
+    };
+    union Adress24{
     __IO uint32_t WDT_SPEEDUP;            /*!< Offset: 0x024 WDT Speedup Register (R/W) */
+    };
 } APBSYS_TypeDef;
 
 /* Interrupt generator */
@@ -318,6 +324,16 @@ typedef struct
     __IO uint32_t DATA6;                  /*!< Offset: 0x020 Interrupt Data6 Register (R/W) */
     __IO uint32_t DATA7;                  /*!< Offset: 0x024 Interrupt Data7 Register (R/W) */
 } INT_TypeDef;
+
+/* Compute Unit */
+typedef struct
+{
+        uint8_t  RESERVED[0x100];
+    __IO uint32_t CQ_IRQ_RAW;             /*!< Offset: 0x100 Interrupt RAW Register (R/W) */
+    __IO uint32_t CQ_IRQ_CLEAR;           /*!< Offset: 0x104 Interrupt CLEAR Register (R/W) */
+    __IO uint32_t CQ_IRQ_MASK;            /*!< Offset: 0x108 Interrupt MASK Register (R/W) */
+    __IO uint32_t CQ_IRQ_STATUS;          /*!< Offset: 0x10C Interrupt STATUS Register (R/W) */
+} CU_TypeDef;
 
 /* ================================================================================ */
 /* ================           Peripheral_memory_map                ================ */
@@ -398,6 +414,7 @@ typedef struct
 #define TIM0                    ((TIM_TypeDef *) ACU_TIM0_BASE)
 #define TIM1                    ((TIM_TypeDef *) ACU_TIM1_BASE)
 #define WDT                     ((WDT_TypeDef *) ACU_WDT_BASE)
+#define CU                      ((CU_TypeDef *) ACU_CU_BASE)
 
 #define GPIO0                   ((GPIO_TypeDef *) (ACU_GPIO_BASE))
 #define GPIO1                   ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 1))
@@ -469,9 +486,11 @@ typedef struct
 #define SPI_SC                  ((APBSYS_TypeDef *) ACU_SSPSC_BASE)
 #define TIM_SC                  ((APBSYS_TypeDef *) ACU_TIMSC_BASE)
 #define WDT_SC                  ((APBSYS_TypeDef *) ACU_WDTSC_BASE)
+#define CU_SC                   ((APBSYS_TypeDef *) ACU_CUSC_BASE)
 #define IS_RCC_APB_PERIPH(periph)   (((periph) == I2C_SC) || ((periph) == UART_SC) || \
                                     ((periph) == GPIO_SC) || ((periph) == SPI_SC) || \
-                                    ((periph) == TIM_SC) || ((periph) == WDT_SC))
+                                    ((periph) == TIM_SC) || ((periph) == WDT_SC) || \
+                                    ((periph) == CU_SC))
                                     
 /*<! AHB Peripheral Clk&Rest Control */
 #define IS_RCC_AHB_PERIPH(periph)   (periph)
@@ -520,6 +539,9 @@ typedef struct
 #include "acu_gpio.h"
 #include "acu_i2c.h"
 #include "acu_wdg.h"
+#include "acu_ddr.h"
+#include "acu_ddr_init.h"
+#include "acu_ddr_init_fpga.h"
 #include "acu_rcc.h"
 #include "acu_spi_flash.h"
 #include "acu_spi.h"

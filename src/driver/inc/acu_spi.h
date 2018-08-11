@@ -27,7 +27,8 @@ typedef struct {
     uint16_t SPI_BaudRate;            /*!< Specifies the Baud Rate prescaler value which will be
                                          used to configure the transmit and receive SCK clock.*/
     uint16_t SPI_CPSR;
-    uint16_t SPI_FIFO;
+    uint16_t SPI_TX_FIFO;
+    uint16_t SPI_RX_FIFO;
 }SPI_InitTypeDef;
 
 #define IS_SPI_ALL_PERIPH(PERIPH)       (((PERIPH) == SPI0) || ((PERIPH) == SPI1))
@@ -106,8 +107,8 @@ typedef struct {
                                         ((FLAG) == SPI_FLAG_RXNE) || ((FLAG) == SPI_FLAG_RXF) || \
                                         ((FLAG) == SPI_FLAG_BSY))
                                         
-    /** @defgroup SPI_BaudRate_Prescaler */
-#define SPI_CPSDVSR                     ((uint16_t)0x0002)
+/** @defgroup SPI_BaudRate_Prescaler */
+#define SPI_CPSDVSR                     ((uint16_t)0x0008)
 #define SPI_CPSDVSR_MIX                 ((uint16_t)0x0002)
 #define SPI_CPSDVSR_MAX                 ((uint16_t)0x00FE)
 #define IS_SPI_CPSDVSR(CPSDVSR)         (((CPSDVSR) >= SPI_CPSDVSR_MIX) && \
@@ -147,10 +148,10 @@ typedef struct {
 #define IS_SPI_DMA(DMA)                 (((DMA) == SPI_DMA_TX) || ((DMA) == SPI_DMA_RX))
 
 /** @defgroup SPI_FIFO_definition */
-#define SPI_FIFO_TH                     ((uint8_t)0x01)
-#define SPI_FIFO_TH_MIX                 ((uint8_t)0x01)
-#define SPI_FIFO_TH_MAX                 ((uint8_t)0x7F)
-#define IS_SPI_FIFO_TH(TH)              (((TH) >= SPI_FIFO_TH_MIX) && ((TH) <= SPI_FIFO_TH_MAX))
+#define SPI_FIFO_TX_TH                  ((uint8_t)0x40)
+#define SPI_FIFO_RX_TH                  ((uint8_t)0x40)
+#define SPI_FIFO_TH_MAX                 ((uint8_t)0x3F)
+#define IS_SPI_FIFO_TH(TH)              ((TH) <= SPI_FIFO_TH_MAX)
 
 /** @defgroup SPI_Exported_Functions */
 void SPI_DeInit(SPI_TypeDef* SPIx);

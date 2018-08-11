@@ -21,17 +21,20 @@
 #define SPI_FLASH_BLOCK_SIZE        0x10000
 #define SPI_FLASH_CHIP_SIZE         0x1000000
 
-/***************************sflash 分区*******************************
-*        ALL:    0x000000 - 0xFFFFFF   16384k = 16M                  *
-*        ------------------------------------------                  *
-*        BOOT:   0x000000 - 0x01FFFF     128k                        *
-*        APP:    0x020000 - 0x05FFFF     256k                        *
-*        USER:   0x060000 - 0xFFFFFF   16000k                        *
-*********************************************************************/
+/******************************sflash 分区*******************************
+*        ALL:       0x000000 - 0xFFFFFF   16384k = 16M                  *
+*        ---------------------------------------------                  *
+*        BOOT:      0x000000 - 0x01FFFF     128k                        *
+*        BOOT_BACK: 0x020000 - 0x03FFFF     128k                        *
+*        APP:       0x040000 - 0x05FFFF     128k                        *
+*        USER:      0x060000 - 0xFFFFFF   16000k                        *
+************************************************************************/
 #define ACU_BOOT_ADDR               (0x000000)                      
 #define ACU_BOOT_SIZE               (0x020000)    /* 128k */
-#define ACU_APP_ADDR                (ACU_BOOT_ADDR + ACU_BOOT_SIZE)
-#define ACU_APP_SIZE                (0x040000)    /* 256k */
+#define ACU_BOOT_BACK_ADDR          (ACU_BOOT_ADDR + ACU_BOOT_SIZE)                      
+#define ACU_BOOT_BACK_SIZE          (0x020000)    /* 128k */
+#define ACU_APP_ADDR                (ACU_BOOT_BACK_ADDR + ACU_BOOT_BACK_SIZE)
+#define ACU_APP_SIZE                (0x020000)    /* 128k */
 #define ACU_USER_ADDR               (ACU_APP_ADDR + ACU_APP_SIZE)
 #define ACU_USER_SIZE               (0xFA0000)    /* 16000k */
 
@@ -39,7 +42,10 @@
 #define ACU_BOOT_HEAD_ADDR          (ACU_BOOT_ADDR)
 #define ACU_BOOT_SIZE_ADDR          (ACU_BOOT_ADDR + 0x8)
 #define ACU_BOOT_CODE_ADDR          (ACU_BOOT_ADDR + 0xC)
-#define ACU_BOOT_HEAD               "ACU_BOOT"
+#define ACU_BOOT_BACK_HEAD_ADDR     (ACU_BOOT_BACK_ADDR)
+#define ACU_BOOT_BACK_SIZE_ADDR     (ACU_BOOT_BACK_ADDR + 0x8)
+#define ACU_BOOT_BACK_CODE_ADDR     (ACU_BOOT_BACK_ADDR + 0xC)
+#define ACU_BOOT_HEAD_INFO          "ACU_BOOT"
 #define ACU_BOOT_HEAD_LEN           8
 
 /* IRAM BOOT */

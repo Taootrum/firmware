@@ -108,14 +108,14 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
         {
             /* Fast mode */
             result = (uint16_t)(apbclock / 400000);
-            I2Cx->FS_SCL_HCNT = result / 3;         /*I2C fast mode Tlow/Thigh = 2, if need Tlow/Thigh = 16 / 9 */
+            I2Cx->FS_SCL_HCNT = result / 3;         /*I2C fast mode Tlow/Thigh = 2 */
             I2Cx->FS_SCL_LCNT = 2 * result / 3;
         }
         else 
         {
             /* High mode */
-            result = (uint16_t)(apbclock / 3400000);
-            I2Cx->HS_SCL_HCNT = result / 3;         /*I2C high mode Tlow/Thigh = 2, if need Tlow/Thigh = 16 / 9 */
+            result = (uint16_t)(apbclock / 34000000);
+            I2Cx->HS_SCL_HCNT = result / 3;         /*I2C high mode Tlow/Thigh = 2 */
             I2Cx->HS_SCL_LCNT = 2 * result / 3;
 
             /* Set Master Code */
@@ -175,9 +175,9 @@ void I2C_StructInit(I2C_InitTypeDef* I2C_InitStruct)
     /* Initialize the I2C_AcknowledgedAddress member */
     I2C_InitStruct->I2C_AckAddress = 0x55;
     /* Initialize the I2C_TxFIFOLevel member */
-    I2C_InitStruct->I2C_TxFIFOLevel = 0;
+    I2C_InitStruct->I2C_TxFIFOLevel = I2C_FIFO_TX_LEVEL - 1;
     /* Initialize the I2C_RxFIFOLevel member */
-    I2C_InitStruct->I2C_RxFIFOLevel = 0;
+    I2C_InitStruct->I2C_RxFIFOLevel = I2C_FIFO_RX_LEVEL - 1;
 }
 
 /****************************************************************
@@ -245,16 +245,12 @@ uint8_t I2C_ReceiveData(I2C_TypeDef* I2Cx)
   * 描述      : 获取状态寄存器
  ***************************************************************/
 FlagStatus I2C_GetFlagStatus(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG)
-{
-    FlagStatus bitstatus = RESET;
-    
+{    
     /* Check the parameters */
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
     assert_param(IS_I2C_FLAG(I2C_FLAG));
-    
-    bitstatus = (I2Cx->STATUS & (uint32_t)I2C_FLAG) ? SET : RESET;
-    
-    return bitstatus;
+        
+    return ((I2Cx->STATUS & I2C_FLAG) ? SET : RESET);
 }
 
 /****************************************************************
@@ -314,16 +310,12 @@ void I2C_ITConfig(I2C_TypeDef* I2Cx, uint16_t I2C_IT, FunctionalState NewState)
   * 描述      : 获取MASK中断标志
  ***************************************************************/
 ITStatus I2C_GetITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT_STATUS)
-{
-    ITStatus bitstatus = RESET;
-    
+{    
     /* Check the parameters */
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
     assert_param(IS_I2C_IT_FLAG(I2C_IT_STATUS));
     
-    bitstatus = (I2Cx->INTR_STAT & (uint32_t)I2C_IT_STATUS) ? SET : RESET;
-
-    return bitstatus;
+    return ((I2Cx->INTR_STAT & I2C_IT_STATUS) ? SET : RESET);
 }
 
 /****************************************************************
@@ -346,16 +338,12 @@ ITStatus I2C_GetITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT_STATUS)
   * 描述      : 获取RAW中断标志
  ***************************************************************/
 ITStatus I2C_GetRawITStatus(I2C_TypeDef* I2Cx, uint16_t I2C_IT_STATUS)
-{
-    ITStatus bitstatus = RESET;
-    
+{    
     /* Check the parameters */
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
     assert_param(IS_I2C_IT_FLAG(I2C_IT_STATUS));
     
-    bitstatus = (I2Cx->RAW_INTR_STAT & (uint32_t)I2C_IT_STATUS) ? SET : RESET;
-
-    return bitstatus;
+    return ((I2Cx->RAW_INTR_STAT & I2C_IT_STATUS) ? SET : RESET);
 }
 
 /****************************************************************

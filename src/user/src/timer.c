@@ -10,10 +10,6 @@
 void SysTick_Configuration(void)
 {
     /* Setup SysTick Timer for 1 msec interrupts */
-    if (SysTick_Config((SystemCoreClock) / 1000))
-    {
-        /* Capture error */ 
-        DEBUG_MSG("SysTick_Configuration fail!"LF);
-    }
+    SysTick_Config((SystemCoreClock) / 1000);
 }
 

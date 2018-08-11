@@ -61,17 +61,17 @@ TestStatus SPI_InterfaceTest2(void)
     result &= CHECK_REG_RESERVED(SPI0->CR0, 0x7);
     result &= CHECK_REG_RESERVED(SPI0->CR1, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->DR, 0x0);
-    result &= CHECK_REG_RESERVED(SPI0->CPSR, 0x2);
+    result &= CHECK_REG_RESERVED(SPI0->CPSR, SPI_CPSDVSR);
     result &= CHECK_REG_RESERVED(SPI0->IMSC, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->ICR, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->DMACR, 0x0);
-    result &= CHECK_REG_RESERVED(SPI0->FIFOTH, 0x101);
+    result &= CHECK_REG_RESERVED(SPI0->FIFOTH, ((SPI_FIFO_TX_TH - 1) << 8) | (SPI_FIFO_TX_TH - 1));
     if (result != TRUE)
     {
         DEBUG_ERROR("SPI_Init fail.");
         ret = FAILED;
     }
-
+    
     /* rest reserved */
     RCC_APBPeriphResetCmd(SPI_SC, 0, SET);
     RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
