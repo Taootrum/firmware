@@ -14,6 +14,8 @@
               NumWrite  ：数据长度
   * 返回值     : None
   * 描述      : 向Flash写入数据流
+
+  ???不够完善,不够高效，后期测试
  ***************************************************************/
 void Hal_FlashWriteBuffer(uint8_t* pBuffer, uint32_t WriteAddr, uint32_t NumWrite)
 {

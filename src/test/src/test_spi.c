@@ -61,7 +61,7 @@ TestStatus SPI_InterfaceTest2(void)
     result &= CHECK_REG_RESERVED(SPI0->CR0, 0x7);
     result &= CHECK_REG_RESERVED(SPI0->CR1, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->DR, 0x0);
-    result &= CHECK_REG_RESERVED(SPI0->CPSR, SPI_CPSDVSR);
+    //result &= CHECK_REG_RESERVED(SPI0->CPSR, SPI_CPSDVSR);
     result &= CHECK_REG_RESERVED(SPI0->IMSC, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->ICR, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->DMACR, 0x0);
@@ -167,18 +167,20 @@ TestStatus SPI_InterfaceTest6(void)
         
     SPI_StructInit(&SPI_InitStructure);
     SPI_InitStructure.SPI_LBM = SPI_MODE_LOOPBACK;
+    SPI_InitStructure.SPI_TX_FIFO = 0;
+    SPI_InitStructure.SPI_RX_FIFO = 0;
     SPI_Init(SPI0, &SPI_InitStructure); 
     SPI_Cmd(SPI0, ENABLE); 
 
     SPI_ITConfig(SPI0, SPI_IT_TXIM, ENABLE);
     SPI_ITConfig(SPI0, SPI_IT_RXIM, ENABLE);
-	
+
     /*!< Loop while DR register in not emplty */
     while (SPI_GetStatus(SPI0, SPI_FLAG_TXE) == RESET);
-
     /*!< Send Half Word */
     SPI_SendData(SPI0, HalfWord);
-
+    while (SPI_GetStatus(SPI0, SPI_FLAG_TXE) == RESET);
+    
     if (SPI_GetRawITStatus(SPI0, SPI_IT_TXIM) == RESET
         || SPI_GetRawITStatus(SPI0, SPI_IT_RXIM) == RESET)
     {
@@ -202,18 +204,20 @@ TestStatus SPI_InterfaceTest7(void)
         
     SPI_StructInit(&SPI_InitStructure);
     SPI_InitStructure.SPI_LBM = SPI_MODE_LOOPBACK;
+    SPI_InitStructure.SPI_TX_FIFO = 0;
+    SPI_InitStructure.SPI_RX_FIFO = 0;
     SPI_Init(SPI0, &SPI_InitStructure); 
     SPI_Cmd(SPI0, ENABLE); 
 
     SPI_ITConfig(SPI0, SPI_IT_TXIM, ENABLE);
     SPI_ITConfig(SPI0, SPI_IT_RXIM, ENABLE);
-	
+
     /*!< Loop while DR register in not emplty */
     while (SPI_GetStatus(SPI0, SPI_FLAG_TXE) == RESET);
-
     /*!< Send Half Word */
     SPI_SendData(SPI0, HalfWord);
-
+    while (SPI_GetStatus(SPI0, SPI_FLAG_TXE) == RESET);
+    
     if (SPI_GetMaskITStatus(SPI0, SPI_IT_TXIM) == RESET
         || SPI_GetMaskITStatus(SPI0, SPI_IT_RXIM) == RESET)
     {

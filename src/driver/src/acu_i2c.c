@@ -114,9 +114,10 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
         else 
         {
             /* High mode */
-            result = (uint16_t)(apbclock / 34000000);
-            I2Cx->HS_SCL_HCNT = result / 3;         /*I2C high mode Tlow/Thigh = 2 */
-            I2Cx->HS_SCL_LCNT = 2 * result / 3;
+            //result = (uint16_t)(apbclock / (120*1000000));
+            result = (uint16_t)(apbclock / 3400000);
+            I2Cx->HS_SCL_HCNT = result / 15;         /*I2C high mode Tlow/Thigh = 2 */
+            I2Cx->HS_SCL_LCNT = 14 * result / 15;
 
             /* Set Master Code */
             I2Cx->HS_MADDR = I2C_InitStruct->I2C_HSMasterAddress;
@@ -363,28 +364,34 @@ ITStatus I2C_GetRawITStatus(I2C_TypeDef* I2Cx, uint16_t I2C_IT_STATUS)
   * 返回值     : None
   * 描述      : 清除中断标志
  ***************************************************************/
-void I2C_ClearITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT_STATUS)
+uint32_t I2C_ClearITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT_STATUS)
 {
-    uint32_t Temp;
-
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
     assert_param(IS_I2C_CLEAR_IT_FLAG(I2C_IT_STATUS));
 
-    switch (I2C_IT_STATUS)
-    {
-        case I2C_IT_GEN_CALL:   Temp = I2Cx->CLR_INTR;      break;    
-        case I2C_IT_START_DET:  Temp = I2Cx->CLR_GEN_CALL;  break;    
-        case I2C_IT_STOP_DET:   Temp = I2Cx->CLR_STOP_DET;  break;          
-        case I2C_IT_ACTIVITY:   Temp = I2Cx->CLR_ACTIVITY;  break;     
-        case I2C_IT_RX_DONE:    Temp = I2Cx->CLR_RX_DONE;   break;          
-        case I2C_IT_TX_ABRT:    Temp = I2Cx->CLR_TX_ABRT;   break;         
-        case I2C_IT_RD_REQ:     Temp = I2Cx->CLR_RD_REQ;    break;        
-        case I2C_IT_TX_OVER:    Temp = I2Cx->CLR_TX_OVER;   break;         
-        case I2C_IT_RX_OVER:    Temp = I2Cx->CLR_RX_OVER;   break;         
-        case I2C_IT_RX_UNDER:   Temp = I2Cx->CLR_RX_UNDER;  break;          
-        case I2C_IT_INTR:       Temp = I2Cx->CLR_INTR;      break; 
+    if (I2C_IT_STATUS == I2C_IT_GEN_CALL) {
+        return I2Cx->CLR_INTR;
+    } else if (I2C_IT_STATUS == I2C_IT_START_DET) {
+        return I2Cx->CLR_GEN_CALL;
+    } else if (I2C_IT_STATUS == I2C_IT_STOP_DET) {
+        return I2Cx->CLR_STOP_DET;
+    } else if (I2C_IT_STATUS == I2C_IT_ACTIVITY) {
+        return I2Cx->CLR_ACTIVITY;
+    } else if (I2C_IT_STATUS == I2C_IT_RX_DONE) {
+        return I2Cx->CLR_RX_DONE;
+    } else if (I2C_IT_STATUS == I2C_IT_TX_ABRT) {
+        return I2Cx->CLR_TX_ABRT;
+    } else if (I2C_IT_STATUS == I2C_IT_RD_REQ) {
+        return I2Cx->CLR_RD_REQ;
+    } else if (I2C_IT_STATUS == I2C_IT_TX_OVER) {
+        return I2Cx->CLR_TX_OVER;
+    } else if (I2C_IT_STATUS == I2C_IT_RX_OVER) {
+        return I2Cx->CLR_RX_OVER;
+    } else if (I2C_IT_STATUS == I2C_IT_RX_UNDER) {
+        return I2Cx->CLR_RX_UNDER;
+    } else{
+        return I2Cx->CLR_INTR;
     }
-    (void)Temp;
 }
 
 /****************************************************************

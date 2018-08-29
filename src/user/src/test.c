@@ -76,23 +76,54 @@ static ALLCASE FLASH_AllCases[] = {
     {"FLASH_InterfaceTest5", FLASH_InterfaceTest5},
 #endif
     {"FLASH_InterfaceTest6", FLASH_InterfaceTest6},
-    {"FLASH_InterfaceTest7", FLASH_InterfaceTest7},
-    {"FLASH_InterfaceTest8", FLASH_InterfaceTest8}
+    {"FLASH_InterfaceTest7", FLASH_InterfaceTest7}
 };
 
 static ALLCASE I2C_AllCases[] = {
-#if 0
     {"I2C_FunctionTest1", I2C_FunctionTest1},
     {"I2C_FunctionTest2", I2C_FunctionTest2},
     {"I2C_FunctionTest3", I2C_FunctionTest3},
     {"I2C_FunctionTest4", I2C_FunctionTest4},
+#ifdef SIM_ENV
     {"I2C_FunctionTest5", I2C_FunctionTest5},
     {"I2C_FunctionTest6", I2C_FunctionTest6},
     {"I2C_FunctionTest7", I2C_FunctionTest7},
     {"I2C_FunctionTest8", I2C_FunctionTest8},
-    {"I2C_FunctionTest9", I2C_FunctionTest9},
 #endif
-    {"I2C_FunctionTest10", I2C_FunctionTest10},
+    {"I2C_FunctionTest9", I2C_FunctionTest9}
+};
+
+static ALLCASE PVT_AllCases[] = {
+    {"PVT_FunctionTest1", PVT_FunctionTest1},
+    {"PVT_FunctionTest2", PVT_FunctionTest2},
+    {"PVT_FunctionTest3", PVT_FunctionTest3},
+    {"PVT_FunctionTest4", PVT_FunctionTest4},
+    {"PVT_FunctionTest5", PVT_FunctionTest5},
+    {"PVT_FunctionTest6", PVT_FunctionTest6}
+};
+
+static ALLCASE TIMER_AllCases[] = {
+    {"TIMER_FunctionTest1", TIMER_FunctionTest1},
+    {"TIMER_FunctionTest2", TIMER_FunctionTest2},
+    {"TIMER_FunctionTest3", TIMER_FunctionTest3},
+    {"TIMER_FunctionTest4", TIMER_FunctionTest4}
+};
+
+static ALLCASE WDT_AllCases[] = {
+    {"WDT_FunctionTest1", WDT_FunctionTest1},
+    {"WDT_FunctionTest2", WDT_FunctionTest2},
+    {"WDT_FunctionTest3", WDT_FunctionTest3},
+    {"WDT_FunctionTest4", WDT_FunctionTest4},
+    {"WDT_FunctionTest5", WDT_FunctionTest5}
+};
+
+static ALLCASE PCIE_AllCases[] = {
+    {"PCIE_FunctionTest1", PCIE_FunctionTest1},
+    {"PCIE_FunctionTest2", PCIE_FunctionTest2},
+    {"PCIE_FunctionTest3", PCIE_FunctionTest3},
+    {"PCIE_FunctionTest4", PCIE_FunctionTest4},
+    {"PCIE_FunctionTest5", PCIE_FunctionTest5},
+    {"PCIE_FunctionTest6", PCIE_FunctionTest6}
 };
 
 /****************************************************************
@@ -132,12 +163,21 @@ static void ACU_SuiteTest(PALLCASE pSuiteAllCase)
  ***************************************************************/
 void ACU_HalFuncTest(void)
 {
-    //ACU_SUITE_TEST(CRU_AllCases);
-    //ACU_SUITE_TEST(SPI_AllCases);
-    //ACU_SUITE_TEST(GPIO_AllCases);
-    //ACU_SUITE_TEST(UART_AllCases);
-    //ACU_SUITE_TEST(FLASH_AllCases);
+#if 1
+    ACU_SUITE_TEST(CRU_AllCases);
+    ACU_SUITE_TEST(SPI_AllCases);
+    ACU_SUITE_TEST(GPIO_AllCases);
+    ACU_SUITE_TEST(UART_AllCases);
+    ACU_SUITE_TEST(FLASH_AllCases);
     ACU_SUITE_TEST(I2C_AllCases);
+    ACU_SUITE_TEST(PVT_AllCases);
+    ACU_SUITE_TEST(TIMER_AllCases);
+    ACU_SUITE_TEST(WDT_AllCases);
+    ACU_SUITE_TEST(PCIE_AllCases);
+#else
+    ACU_SUITE_TEST(TIMER_AllCases);
+    ACU_SUITE_TEST(WDT_AllCases);
+#endif
     ACU_ALL_TEST_REPORT();
 }
 

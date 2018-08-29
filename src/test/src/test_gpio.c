@@ -61,7 +61,6 @@ TestStatus GPIO_InterfaceTest2(void)
     /* reset */
     GPIO_StructInit(&GPIO_InitStructure);
     GPIO_Init(GPIO_0, &GPIO_InitStructure);
-    result &= CHECK_REG_RESERVED(GPIO_0->IR, 0x00);
     result &= CHECK_REG_RESERVED(GPIO_0->OR, 0x00);
     result &= CHECK_REG_RESERVED(GPIO_0->DR, 0x00);
     result &= CHECK_REG_RESERVED(GPIO_0->PUDE, 0x01);

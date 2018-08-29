@@ -13,6 +13,7 @@
 TestStatus TIMER_FunctionTest1(void);
 TestStatus TIMER_FunctionTest2(void);
 TestStatus TIMER_FunctionTest3(void);
+TestStatus TIMER_FunctionTest4(void);
 
 #endif
 

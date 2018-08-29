@@ -22,7 +22,6 @@ TestStatus FLASH_InterfaceTest4(void);
 TestStatus FLASH_InterfaceTest5(void);
 TestStatus FLASH_InterfaceTest6(void);
 TestStatus FLASH_InterfaceTest7(void);
-TestStatus FLASH_InterfaceTest8(void);
 
 #endif
 

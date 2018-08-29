@@ -63,6 +63,8 @@ typedef enum IRQn
 #include <string.h>
 #include <stdio.h>
 
+#define CPUID   0x412FC231
+
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus, ResetStatus;
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_FUNCTIONAL_STATE(STATE) (((STATE) == DISABLE) || ((STATE) == ENABLE))
@@ -157,7 +159,7 @@ typedef struct
     __IO uint32_t TORR;                   /*!< Offset: 0x004 Timeout Range Register (R/W) */
     __I  uint32_t CCVR;                   /*!< Offset: 0x008 Current Counter Value Register (R/ ) */
     __O  uint32_t CRR;                    /*!< Offset: 0x00C Counter Restart Register ( /W) */
-    __I  uint32_t STAT;                   /*!< Offset: 0x010 Interrupt Status Register (R/ ) */
+    __I  uint32_t STATUS;                 /*!< Offset: 0x010 Interrupt Status Register (R/ ) */
     __I  uint32_t EOI;                    /*!< Offset: 0x014 Interrupt Clear Register (R/ ) */
 } WDT_TypeDef;
 
@@ -304,9 +306,11 @@ typedef struct
         __IO uint32_t WDT_PAUSE;          /*!< Offset: 0x020 WDT Pause Register (R/W) */
         __IO uint32_t INT_STATUS;         /*!< Offset: 0x020 Interrupt Status Register (R/W) */
         __IO uint32_t DLM_INTSEL;         /*!< Offset: 0x020 DLM Interrupt Select Register (R/W) */
+        __IO uint32_t PVT_DIV;            /*!< Offset: 0x020 PVT Clock Divider Register (R/W) */
     };
     union Adress24{
     __IO uint32_t WDT_SPEEDUP;            /*!< Offset: 0x024 WDT Speedup Register (R/W) */
+    __IO uint32_t PVT_INTMASK;            /*!< Offset: 0x024 PVT Interrupt Mask Register (R/W) */
     };
 } APBSYS_TypeDef;
 
@@ -334,6 +338,73 @@ typedef struct
     __IO uint32_t CQ_IRQ_MASK;            /*!< Offset: 0x108 Interrupt MASK Register (R/W) */
     __IO uint32_t CQ_IRQ_STATUS;          /*!< Offset: 0x10C Interrupt STATUS Register (R/W) */
 } CU_TypeDef;
+
+/* PVT Module */
+typedef struct
+{
+    __IO uint32_t APB_CTRL;             /*!< Offset: 0x000 APB Interface Enable Register (R/W) */
+    __IO uint32_t MODE_CTRL;            /*!< Offset: 0x004 Sensor Modes Control Register (R/W) */
+    __IO uint32_t TRIMO_CTRL;           /*!< Offset: 0x008 Reserved */
+    __IO uint32_t TRIMG_CTRL;           /*!< Offset: 0x00C TRIM Control Register (R/W) */
+    __I  uint32_t SENSOR_DATA;          /*!< Offset: 0x010 Sensor Data Register (R/ ) */
+    __I  uint32_t DATA_VALID;           /*!< Offset: 0x014 Data Valid Flag Register (R/ ) */
+    __IO uint32_t SENSOR_ENA;           /*!< Offset: 0x018 Sensor Enable Register (R/W) */
+} PVT_TypeDef;
+
+/* PCIE Module */
+typedef struct
+{
+    __IO uint32_t REGISTER0;            /*!< Offset: 0x000 Register (R/W) */
+    __IO uint32_t REGISTER1;            /*!< Offset: 0x004 Register (R/W) */
+        uint8_t  RESERVED[24];          /*!< Offset: 0x008 Reserved */
+    __IO uint32_t REGISTER2;            /*!< Offset: 0x020 Register (R/W) */
+    __IO uint32_t REGISTER3;            /*!< Offset: 0x024 Register (R/W) */
+    __I  uint32_t REGISTER4;            /*!< Offset: 0x028 Register (R/ ) */
+    __I  uint32_t REGISTER5;            /*!< Offset: 0x02C Register (R/ ) */
+    __I  uint32_t REGISTER6;            /*!< Offset: 0x030 Register (R/ ) */
+    __I  uint32_t REGISTER7;            /*!< Offset: 0x034 Register (R/ ) */
+    __I  uint32_t REGISTER8;            /*!< Offset: 0x038 Register (R/ ) */
+    __I  uint32_t REGISTER9;            /*!< Offset: 0x03C Register (R/ ) */
+    __I  uint32_t REGISTER10;           /*!< Offset: 0x040 Register (R/ ) */
+    __I  uint32_t REGISTER11;           /*!< Offset: 0x044 Register (R/ ) */
+    __I  uint32_t REGISTER12;           /*!< Offset: 0x048 Register (R/ ) */
+    __I  uint32_t REGISTER13;           /*!< Offset: 0x04C Register (R/ ) */
+    __I  uint32_t REGISTER14;           /*!< Offset: 0x050 Register (R/ ) */
+    __I  uint32_t REGISTER15;           /*!< Offset: 0x054 Register (R/ ) */
+    __I  uint32_t REGISTER16;           /*!< Offset: 0x058 Register (R/ ) */
+    __I  uint32_t REGISTER17;           /*!< Offset: 0x05C Register (R/ ) */
+    __I  uint32_t REGISTER18;           /*!< Offset: 0x060 Register (R/ ) */
+    __I  uint32_t REGISTER19;           /*!< Offset: 0x064 Register (R/ ) */
+    __I  uint32_t REGISTER20;           /*!< Offset: 0x068 Register (R/ ) */
+    __I  uint32_t REGISTER21;           /*!< Offset: 0x06C Register (R/ ) */
+    __I  uint32_t REGISTER22;           /*!< Offset: 0x070 Register (R/ ) */
+    __I  uint32_t REGISTER23;           /*!< Offset: 0x074 Register (R/ ) */
+    __I  uint32_t REGISTER24;           /*!< Offset: 0x078 Register (R/ ) */
+    __I  uint32_t REGISTER25;           /*!< Offset: 0x07C Register (R/ ) */
+    __I  uint32_t REGISTER26;           /*!< Offset: 0x080 Register (R/ ) */
+    __I  uint32_t REGISTER27;           /*!< Offset: 0x084 Register (R/ ) */
+    __I  uint32_t REGISTER28;           /*!< Offset: 0x088 Register (R/ ) */
+    __I  uint32_t REGISTER29;           /*!< Offset: 0x08C Register (R/ ) */
+    __I  uint32_t REGISTER30;           /*!< Offset: 0x090 Register (R/ ) */
+    __I  uint32_t REGISTER31;           /*!< Offset: 0x094 Register (R/ ) */
+    __I  uint32_t REGISTER32;           /*!< Offset: 0x098 Register (R/ ) */
+    __I  uint32_t REGISTER33;           /*!< Offset: 0x09C Register (R/ ) */
+    __I  uint32_t REGISTER34;           /*!< Offset: 0x0A0 Register (R/ ) */
+    __I  uint32_t REGISTER35;           /*!< Offset: 0x0A4 Register (R/ ) */
+        uint8_t  RESERVED1[28];         /*!< Offset: 0x0A8 Reserved */
+    __IO uint32_t DBI_SEL;              /*!< Offset: 0x0C4 Register (R/W) */
+    __IO uint32_t PHY_LOS_BIAS;         /*!< Offset: 0x0C8 Register (R/W) */
+    __IO uint32_t PHY_LOS_LEVEL;        /*!< Offset: 0x0CC Register (R/W) */
+    __IO uint32_t PHY_RX0_EQ;           /*!< Offset: 0x0D0 Register (R/W) */
+    __IO uint32_t PHY_TX_DEEMPH_GEN23;  /*!< Offset: 0x0D4 Register (R/W) */
+    __IO uint32_t PHY_TX_DEEMPH_GEN26;  /*!< Offset: 0x0D8 Register (R/W) */
+    __IO uint32_t PHY_TX_DEEMPH_GEN1;   /*!< Offset: 0x0DC Register (R/W) */
+    __IO uint32_t PCS_TX_SWING_FULL;    /*!< Offset: 0x0E0 Register (R/W) */
+    __IO uint32_t PCS_TX_SWING_LOW;     /*!< Offset: 0x0E4 Register (R/W) */
+    __IO uint32_t PHY_TX0_TERM_OFT;     /*!< Offset: 0x0E8 Register (R/W) */
+    __IO uint32_t PHY_TX_VBOOST_1V1;    /*!< Offset: 0x0EC Register (R/W) */
+    __IO uint32_t VREG_BYPASS;          /*!< Offset: 0x0F0 Register (R/W) */
+} PCIE_TypeDef;
 
 /* ================================================================================ */
 /* ================           Peripheral_memory_map                ================ */
@@ -415,6 +486,7 @@ typedef struct
 #define TIM1                    ((TIM_TypeDef *) ACU_TIM1_BASE)
 #define WDT                     ((WDT_TypeDef *) ACU_WDT_BASE)
 #define CU                      ((CU_TypeDef *) ACU_CU_BASE)
+#define PVT                     ((PVT_TypeDef *) ACU_PVT_BASE)
 
 #define GPIO0                   ((GPIO_TypeDef *) (ACU_GPIO_BASE))
 #define GPIO1                   ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 1))
@@ -487,10 +559,13 @@ typedef struct
 #define TIM_SC                  ((APBSYS_TypeDef *) ACU_TIMSC_BASE)
 #define WDT_SC                  ((APBSYS_TypeDef *) ACU_WDTSC_BASE)
 #define CU_SC                   ((APBSYS_TypeDef *) ACU_CUSC_BASE)
+#define PVT_SC                  ((APBSYS_TypeDef *) ACU_PVTSC_BASE)
+#define PCIE_SC                 ((PCIE_TypeDef *) ACU_PCIESC_BASE)
 #define IS_RCC_APB_PERIPH(periph)   (((periph) == I2C_SC) || ((periph) == UART_SC) || \
                                     ((periph) == GPIO_SC) || ((periph) == SPI_SC) || \
                                     ((periph) == TIM_SC) || ((periph) == WDT_SC) || \
-                                    ((periph) == CU_SC))
+                                    ((periph) == CU_SC) || ((periph) == PVT_SC) || \
+                                    ((periph) == PCIE_SC))
                                     
 /*<! AHB Peripheral Clk&Rest Control */
 #define IS_RCC_AHB_PERIPH(periph)   (periph)
@@ -538,7 +613,8 @@ typedef struct
 /* Includes driver headfile*/
 #include "acu_gpio.h"
 #include "acu_i2c.h"
-#include "acu_wdg.h"
+#include "acu_wdt.h"
+#include "acu_pcie.h"
 #include "acu_ddr.h"
 #include "acu_ddr_init.h"
 #include "acu_ddr_init_fpga.h"
@@ -546,6 +622,7 @@ typedef struct
 #include "acu_spi_flash.h"
 #include "acu_spi.h"
 #include "acu_tim.h"
+#include "acu_pvt.h"
 #include "acu_uart.h"
 #include "acu_misc.h"
 #include "acu_debug.h"

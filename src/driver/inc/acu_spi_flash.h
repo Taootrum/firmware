@@ -18,9 +18,6 @@
 /**@brief  M25P FLASH SPI Interface pins */  
 #define sFLASH_SPI                SPI0                    
 #define sFLASH_CS_GPIO            GPIO_SSP0_CSN        
-#define sFLASH_CLK_GPIO           GPIO_SSP0_CLK
-#define sFLASH_MOSI_GPIO          GPIO_SSP0_TXD
-#define sFLASH_MISO_GPIO          GPIO_SSP0_RXD
 
 /**@brief  M25P SPI Flash supported commands */  
 #define sFLASH_CMD_WRITE          0x02  /*!< Write to Memory instruction */

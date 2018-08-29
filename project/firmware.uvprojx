@@ -132,12 +132,12 @@
             <UseTargetDll>1</UseTargetDll>
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
-            <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
+            <UpdateFlashBeforeDebugging>0</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>4099</DriverSelection>
           </Flash1>
-          <bUseTDR>1</bUseTDR>
-          <Flash2>BIN\UL2CM3.DLL</Flash2>
+          <bUseTDR>0</bUseTDR>
+          <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -273,8 +273,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x20000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>DEBUG,SIM_ENV</Define>
+              <Define>DEBUG,ACU_TEST,SIM_ENV</Define>
               <Undefine></Undefine>
               <IncludePath>../src/include;../src/cmsis/inc;../src/driver/inc;../src/user/inc;../src/test/inc</IncludePath>
             </VariousControls>
@@ -441,11 +441,6 @@
               <FilePath>..\src\driver\src\acu_uart.c</FilePath>
             </File>
             <File>
-              <FileName>acu_wdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\driver\src\acu_wdg.c</FilePath>
-            </File>
-            <File>
               <FileName>acu_ddr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\driver\src\acu_ddr.c</FilePath>
@@ -484,6 +479,21 @@
               <FileName>acu_ddr3_phy_init_fpga.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\driver\src\acu_ddr3_phy_init_fpga.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_pvt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_pvt.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_pcie.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_pcie.c</FilePath>
+            </File>
+            <File>
+              <FileName>acu_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_wdt.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -564,9 +574,19 @@
               <FilePath>..\src\test\src\test_uart.c</FilePath>
             </File>
             <File>
-              <FileName>test_wdg.c</FileName>
+              <FileName>test_pvt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\test\src\test_wdg.c</FilePath>
+              <FilePath>..\src\test\src\test_pvt.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_pcie.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_pcie.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_wdt.c</FilePath>
             </File>
           </Files>
         </Group>

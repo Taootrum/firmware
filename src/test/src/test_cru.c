@@ -33,31 +33,133 @@ TestStatus CRU_InterfaceTest1(void)
 /* RCC_PCIEReset() */
 TestStatus CRU_InterfaceTest2(void)
 {
-    return FAILED;
+    uint32_t result = 0;
+
+    result = READ32(0x4000003C);
+    WRITE32(0x4000003C, 0x0);
+    RCC_PCIEReset();
+    if (result != READ32(0x4000003C))
+    {
+        DEBUG_ERROR("RCC_PCIEReset fail.");
+        return FAILED;
+    }
+    
+    return PASSED;
 }
 
 /* RCC_IPCoreReset() */
 TestStatus CRU_InterfaceTest3(void)
 {
-    return FAILED;
+    uint32_t TempMask = 0;
+
+    TempMask = READ_REG(CU->CQ_IRQ_MASK);
+    WRITE_REG(CU->CQ_IRQ_MASK, 0x1F);
+    RCC_IPCoreReset();
+    if (TempMask != READ_REG(CU->CQ_IRQ_MASK))
+    {
+        DEBUG_ERROR("RCC_IPCoreReset fail.");
+        return FAILED;
+    }
+    
+    return PASSED;
 }
 
 /* RCC_ClkManageReset() */
 TestStatus CRU_InterfaceTest4(void)
 {
-    return FAILED;
+    TestStatus ret = PASSED;
+    PLL_InitTypeDef PLL_Init;
+    LockStatus PLL_LockStatus = UnLock;
+    __IO uint32_t StartUpCounter = 0;
+    uint32_t DivValue = 0;
+
+    RCC_ClkManageReset();
+    if (0x1 != RCC_SYSCLKGetDiv(FABRIC_CLK) 
+        || 0x1 != RCC_SYSCLKGetDiv(IPCORE_CLK)
+        || 0x1 != RCC_SYSCLKGetDiv(DDR_CLK))
+    {
+        DEBUG_ERROR("RCC_ClkManageReset fail.");
+        ret = FAILED;
+    }
+
+    /* ---------------------reconfig CLK module-------------------- */
+    /* Initialize APLL */
+    PLL_StructInit(&PLL_Init);
+    RCC_PLLConfig(APLL_CLK, &PLL_Init);
+    do
+    {
+        PLL_LockStatus = RCC_PLLGetLockStatus(APLL_CLK);
+        StartUpCounter++;
+    } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
+    RCC_PLLCmd(APLL_CLK, ENABLE);
+
+    /* Initialize DPLL 2133M */
+    PLL_Init.PLLInputClock = XTAL;
+    PLL_Init.PLLOutputClock = DPLL_CLK_FREQ;
+    PLL_Init.Divr = DPLL_DIVR;
+    PLL_Init.Divf = DPLL_DIVF;
+    PLL_Init.Divq = PLL_DIVQ_2;
+    RCC_PLLConfig(DPLL_CLK, &PLL_Init);
+    StartUpCounter = 0;
+    do
+    {
+        PLL_LockStatus = RCC_PLLGetLockStatus(DPLL_CLK);
+        StartUpCounter++;  
+    } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
+    RCC_PLLCmd(DPLL_CLK, ENABLE);
+
+    /* Initialize Fabric Clock */
+    RCC_SYSCLKSetSource(FABRIC_CLK, SYSCLK_SOURCE_APLL);
+    DivValue = APLL_CLK_FREQ / SYSTEM_CLK_FREQ - 1;
+    RCC_SYSCLKSetDiv(FABRIC_CLK, DivValue);
+    RCC_SYSCLKCmd(FABRIC_CLK, ENABLE);
+
+    /* Initialize IPCORE Clock */
+    RCC_SYSCLKSetSource(IPCORE_CLK, SYSCLK_SOURCE_APLL);
+    DivValue = APLL_CLK_FREQ / IPCORE_CLK_FREQ - 1;
+    RCC_SYSCLKSetDiv(IPCORE_CLK, DivValue);
+    RCC_SYSCLKCmd(IPCORE_CLK, ENABLE);
+
+    /* Initialize DDR Clock */
+    RCC_SYSCLKSetSource(DDR_CLK, SYSCLK_SOURCE_DPLL);
+    DivValue = DPLL_CLK_FREQ / DDR_CLK_FREQ - 1;
+    RCC_SYSCLKSetDiv(DDR_CLK, DivValue);
+    RCC_SYSCLKCmd(DDR_CLK, ENABLE);
+    
+    return ret;
 }
 
 /* RCC_FabricBusReset() */
 TestStatus CRU_InterfaceTest5(void)
 {
-    return FAILED;
+    /* RCC_FabricBusReset(); */
+    return PASSED;
 }
 
 /* RCC_DDRReset() */
 TestStatus CRU_InterfaceTest6(void)
 {
-    return FAILED;
+    /* DRAM system rest */
+    WRITE32(ACU_DRAM0SM_BASE, 0x0);
+    WRITE32(ACU_DRAM1SM_BASE, 0x0);
+    WRITE32(ACU_DRAM2SM_BASE, 0x0);
+    WRITE32(ACU_DRAM3SM_BASE, 0x0);
+    WRITE32(ACU_DRAM4SM_BASE, 0x0);
+    WRITE32(ACU_DRAM5SM_BASE, 0x0);
+    WRITE32(ACU_DRAM6SM_BASE, 0x0);
+    WRITE32(ACU_DRAM7SM_BASE, 0x0);
+
+    RCC_DDRReset();
+    if (0x3F != READ32(ACU_DRAM0SM_BASE) || 0x3F != READ32(ACU_DRAM1SM_BASE)
+        || 0x3F != READ32(ACU_DRAM2SM_BASE) || 0x3F != READ32(ACU_DRAM3SM_BASE)
+        || 0x3F != READ32(ACU_DRAM4SM_BASE) || 0x3F != READ32(ACU_DRAM5SM_BASE)
+        || 0x3F != READ32(ACU_DRAM6SM_BASE) || 0x3F != READ32(ACU_DRAM7SM_BASE))
+    {
+        DEBUG_ERROR("RCC_DDRReset fail.");
+        return FAILED;
+    }
+    
+    return PASSED;
 }
 
 /* RCC_IOPADReset() */
@@ -266,7 +368,7 @@ TestStatus CRU_InterfaceTest15(void)
     {
         uFreq = XTAL;
     }
-    if (RCC_Clock.FCLK_Frequency != uFreq / (uDiv + 1))
+    if (RCC_Clock.IPCLK_Frequency != uFreq / (uDiv + 1))
     {
         DEBUG_ERROR("RCC_SYSCLKGetFreq fail.");
         return FAILED;
@@ -286,7 +388,7 @@ TestStatus CRU_InterfaceTest15(void)
     {
         uFreq = XTAL;
     }
-    if (RCC_Clock.FCLK_Frequency != uFreq / (uDiv + 1))
+    if (RCC_Clock.DDRCLK_Frequency != uFreq / (uDiv + 1))
     {
         DEBUG_ERROR("RCC_SYSCLKGetFreq fail.");
         return FAILED;
@@ -322,6 +424,7 @@ TestStatus CRU_InterfaceTest17(void)
 
     /* SPI0 Reset*/
     Temp = READ_REG(SPI_SC->SR);
+    RCC_APBPeriphClockCmd(SPI_SC, 0, ENABLE);
     RCC_APBPeriphResetCmd(SPI_SC, 0, SET);
     RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
     result &= CHECK_REG_RESERVED(SPI0->CR0, 0x0);
@@ -332,7 +435,6 @@ TestStatus CRU_InterfaceTest17(void)
     result &= CHECK_REG_RESERVED(SPI0->IMSC, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->RIS, 0x8);
     result &= CHECK_REG_RESERVED(SPI0->MIS, 0x0);
-    result &= CHECK_REG_RESERVED(SPI0->ICR, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->DMACR, 0x0);
     result &= CHECK_REG_RESERVED(SPI0->FIFOTH, 0x404);
     WRITE_REG(SPI_SC->SR, Temp);
@@ -355,7 +457,6 @@ TestStatus CRU_InterfaceTest17(void)
     result &= CHECK_REG_RESERVED(SPI1->IMSC, 0x0);
     result &= CHECK_REG_RESERVED(SPI1->RIS, 0x8);
     result &= CHECK_REG_RESERVED(SPI1->MIS, 0x0);
-    result &= CHECK_REG_RESERVED(SPI1->ICR, 0x0);
     result &= CHECK_REG_RESERVED(SPI1->DMACR, 0x0);
     result &= CHECK_REG_RESERVED(SPI1->FIFOTH, 0x404);
     WRITE_REG(SPI_SC->SR, Temp);

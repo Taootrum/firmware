@@ -19,7 +19,7 @@
 #define XTAL                (24000000UL)      /* Oscillator frequency */
 #define APLL_CLK_FREQ       (1800 * 1000000UL)
 #define DPLL_CLK_FREQ       (2124 * 1000000UL)
-#define SYSTEM_CLK_FREQ     (900 * 1000000UL)
+#define SYSTEM_CLK_FREQ     (100 * 1000000UL)
 #define IPCORE_CLK_FREQ     (900 * 1000000UL)
 #define DDR_CLK_FREQ        (1062 * 1000000UL)
 

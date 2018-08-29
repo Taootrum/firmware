@@ -62,7 +62,7 @@ TestStatus FLASH_InterfaceTest2(void)
     result &= CHECK_REG_RESERVED(sFLASH_SPI->CR0, 0x7);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->CR1, SPI_ENABLE);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->DR, 0x0);
-    result &= CHECK_REG_RESERVED(sFLASH_SPI->CPSR, SPI_CPSDVSR);
+    //result &= CHECK_REG_RESERVED(sFLASH_SPI->CPSR, SPI_CPSDVSR);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->IMSC, 0x0);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->ICR, 0x0);
     result &= CHECK_REG_RESERVED(sFLASH_SPI->DMACR, 0x0);
@@ -227,41 +227,6 @@ TestStatus FLASH_InterfaceTest7(void)
     {
         DEBUG_ERROR("flash write data fail.");
         return FAILED;
-    }
-
-    return PASSED;
-}
-
-/* sFLASH_EraseSector() */
-TestStatus FLASH_InterfaceTest8(void)
-{
-    uint8_t Index = 0;
-    uint8_t TxBuf[] = "ACU SPI Test: communication with an SPI_FLASH.";
-    uint8_t RxBuf[COUNT_OF(TxBuf) - 1] = {0};
-    uint8_t BufSize = COUNT_OF(TxBuf) - 1;
-    
-    /* Erase write test */
-    sFLASH_EraseSector(TEST_FLASH_SECTOR_ADDR);
-    sFLASH_WriteBuffer(TxBuf, TEST_FLASH_SECTOR_ADDR, BufSize);
-    sFLASH_ReadBuffer(RxBuf, TEST_FLASH_SECTOR_ADDR, BufSize);
-
-    /* Check the correctness of written dada */
-    if (Buffercmp(TxBuf, RxBuf, BufSize) == FAILED)
-    {
-        DEBUG_ERROR("flash write data fail.");
-        return FAILED;
-    }
-
-    /* Erase Test */
-    sFLASH_EraseSector(TEST_FLASH_SECTOR_ADDR);
-    sFLASH_ReadBuffer(RxBuf, TEST_FLASH_SECTOR_ADDR, BufSize);
-    for (Index = 0; Index < BufSize; Index++)
-    {
-        if (RxBuf[Index] != 0xFF)
-        {
-            DEBUG_ERROR("flash erase fail.");
-            return FAILED;
-        }
     }
 
     return PASSED;

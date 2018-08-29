@@ -96,7 +96,7 @@ void RCC_PLLConfig(PLLCLK_TypeDef *RCC_PLLSource, PLL_InitTypeDef *PLL_Init)
     }
     else
     {
-        range = PLL_Init->PLLInputClock / 1000000;
+        range = PLL_Init->PLLInputClock / (PLL_Init->Divr + 1) / 1000000;
         if (range >= 7 && range <= 11) {
             RCC_PLLSource->RANGE = 0x1;
         } else if (range >= 11 && range <= 18) {

@@ -38,7 +38,7 @@ void DDR_WriteMem(uint8_t *buf, uint32_t addr, uint32_t size)
         SecondMux = ChipNum % 2;
         RCC_DDRWriteSelectCmd(0x1 << FirstMux);
         WRITE32(PDCH, SecondMux << 2 | 0x2);
-
+        
         /* copy buf to DDR */
         ProgAddr = ACU_DRAM_BASE + LineNum * DDR_PAGE_SIZE + PageProgAddr;
         if (PageNum)
@@ -99,6 +99,7 @@ void DDR_ReadMem(uint8_t *buf, uint32_t addr, uint32_t size)
         /* select chip 0 - 15 */
         FirstMux = ChipNum / 2;
         SecondMux = ChipNum % 2;
+        RCC_DDRWriteSelectCmd(0x1 << FirstMux);
         RCC_DDRReadSelectCmd(FirstMux);
         WRITE32(PDCH, SecondMux << 2 | 0x2);
 

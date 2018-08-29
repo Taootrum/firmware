@@ -2,38 +2,29 @@
 
 void DDRC_Init(void)
 {
-    int i = 0;
-    int temp_set = 0;
+    uint8_t i = 0;
+    uint32_t TempSet = 0;
     
-    /* dram_sel */
-    WRITE32(0x40080420, 0x0);
+    /* DDRC read dram_sel config */
+    WRITE_REG(RST_SC->DDR_RCFG, 0x0);
 
-    /* dram_wcfg config */
+    /* DDRC write dram_wcfg config */
     for (i = 0; i < DDRC_NUMBER; i++) 
     {
-        temp_set = temp_set | (1 << i);
+        TempSet |= (0x1 << i);
     }
-    WRITE32(0x40080424, temp_set);
+    WRITE_REG(RST_SC->DDR_WCFG, TempSet);
 
-    /* set pub address non-compress mode */
+    /* DDRC system management config */
     for (i = 0; i < DDRC_NUMBER; i++) 
     {
+        /* set pub address non-compress mode */
         WRITE32(0x4008c024 + (i * 0x400), 0x4);
-    }
-    
-    /* release clock */
-    for (i = 0; i < DDRC_NUMBER; i++) 
-    {
+        /* release clock */
         WRITE32(0x4008c004 + (i * 0x400), 0x3f);
-    }
-
-    /* release pubphy pwrokin */
-    for (i = 0; i < DDRC_NUMBER; i++) {
+        /* release pubphy pwrokin */
         WRITE32(0x4008c000 + (i * 0x400), 0x1f);
-    }
-
-    /* release umctl2 apb/debug reset */
-    for (i = 0; i < DDRC_NUMBER; i++) {
+        /* release umctl2 apb/debug reset */
         WRITE32(0x4008c000 + (i * 0x400), 0x13);
     }
 

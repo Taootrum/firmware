@@ -42,9 +42,13 @@ void SPI_DeInit(SPI_TypeDef* SPIx)
  ***************************************************************/
 void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
 {
+    uint16_t TempShort = 0;
+    uint32_t Scr = 0;
+    uint16_t CpsDiv = 0;
+    RCC_ClocksTypeDef RCC_ClocksStatus;
+    
     /* check the parameters */
     assert_param(IS_SPI_ALL_PERIPH(SPIx));   
-
     /* Check the SPI parameters */
     assert_param(IS_SPI_LBM(SPI_InitStruct->SPI_LBM));
     assert_param(IS_SPI_MODE(SPI_InitStruct->SPI_Mode));
@@ -52,22 +56,28 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
     assert_param(IS_SPI_FRAME(SPI_InitStruct->SPI_FRAME));
     assert_param(IS_SPI_CPOL(SPI_InitStruct->SPI_CPOL));
     assert_param(IS_SPI_CPHA(SPI_InitStruct->SPI_CPHA));
-    assert_param(IS_SPI_BAUDRATE(SPI_InitStruct->SPI_BaudRate));
-    assert_param(IS_SPI_CPSDVSR(SPI_InitStruct->SPI_CPSR));
+    assert_param(IS_SPI_BAUDRATE(SPI_InitStruct->SPI_Baudrate));
     assert_param(IS_SPI_FIFO_TH(SPI_InitStruct->SPI_TX_FIFO));
     assert_param(IS_SPI_FIFO_TH(SPI_InitStruct->SPI_RX_FIFO));
     
     /* SPIx CR0 Configuration */
-    SPIx->CR0 = (uint16_t)( SPI_InitStruct->SPI_Mode | SPI_InitStruct->SPI_DataSize | 
+    TempShort = (uint16_t)( SPI_InitStruct->SPI_Mode | SPI_InitStruct->SPI_DataSize | 
                             SPI_InitStruct->SPI_CPOL | SPI_InitStruct->SPI_FRAME | 
-                            SPI_InitStruct->SPI_CPHA | SPI_InitStruct->SPI_BaudRate);
-    SPIx->CR0 &= ~SPI_DataSize_16b;
-    SPIx->CR0 |= SPI_InitStruct->SPI_DataSize;
+                            SPI_InitStruct->SPI_CPHA | SPI_SCR);
+    TempShort &= ~SPI_DataSize_16b;
+    TempShort |= SPI_InitStruct->SPI_DataSize;
+    SPIx->CR0 = TempShort;
 
     /* SPIx CR1 Configuration */
     SPIx->CR1 = SPI_InitStruct->SPI_LBM;
+    
     /* SPIx CPSR Configuration */
-    SPIx->CPSR = SPI_InitStruct->SPI_CPSR;
+    RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
+    Scr = RCC_ClocksStatus.FCLK_Frequency / (SPI_SCR + 1);
+    TempShort = Scr / SPI_InitStruct->SPI_Baudrate;
+    CpsDiv = TempShort + (TempShort % 2); /* CPSDVSR must an even value 2 - 254 */
+    SPIx->CPSR = CpsDiv;
+    
     /* SPIx FIFOTH Configuration */
     SPIx->FIFOTH = (SPI_InitStruct->SPI_RX_FIFO << 8) | SPI_InitStruct->SPI_TX_FIFO;
 }
@@ -93,9 +103,8 @@ void SPI_StructInit(SPI_InitTypeDef* SPI_InitStruct)
     SPI_InitStruct->SPI_CPOL = SPI_CPOL_Low;
     /* Initialize the SPI_CPHA member */
     SPI_InitStruct->SPI_CPHA = SPI_CPHA_1Edge;
-    /* Initialize the SPI_BaudRatePrescaler member */
-    SPI_InitStruct->SPI_BaudRate = SPI_BAUDRATE;
-    SPI_InitStruct->SPI_CPSR = SPI_CPSDVSR;
+    /* Initialize the SPI_Baudrate */
+    SPI_InitStruct->SPI_Baudrate = SPI_BAUDRATE;
     /* Initialize the SPI_TX_RX_FIFO */
     SPI_InitStruct->SPI_TX_FIFO = SPI_FIFO_TX_TH - 1;
     SPI_InitStruct->SPI_RX_FIFO = SPI_FIFO_RX_TH - 1;

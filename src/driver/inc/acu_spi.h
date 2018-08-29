@@ -24,9 +24,7 @@ typedef struct {
     uint16_t SPI_FRAME;               /*!< Specifies the SPI data size.*/
     uint16_t SPI_CPOL;                /*!< Specifies the serial clock steady state.ref SPI_Clock_Polarity */
     uint16_t SPI_CPHA;                /*!< Specifies the clock active edge for the bit capture.@ref SPI_Clock_Phase */
-    uint16_t SPI_BaudRate;            /*!< Specifies the Baud Rate prescaler value which will be
-                                         used to configure the transmit and receive SCK clock.*/
-    uint16_t SPI_CPSR;
+    uint32_t SPI_Baudrate;            /*!< Specifies the Baud Rate prescaler value which will be used to configure the transmit and receive SCK clock.*/
     uint16_t SPI_TX_FIFO;
     uint16_t SPI_RX_FIFO;
 }SPI_InitTypeDef;
@@ -92,10 +90,14 @@ typedef struct {
 #define IS_SPI_CPHA(CPHA)               (((CPHA) == SPI_CPHA_1Edge) || \
                                         ((CPHA) == SPI_CPHA_2Edge))
 
+/** @defgroup SPI_BUS_Frequency */
+#define SPI_BAUDRATE                    (10 * 1000000)
+#define IS_SPI_BAUDRATE(BAUDRATE)       ((BAUDRATE) <= (100 * 1000000))
+
 /** @defgroup SPI_BaudRate_Prescaler */
-#define SPI_BAUDRATE                    ((uint16_t)0x0000)
-#define SPI_BAUDRATE_MAX                ((uint16_t)0xFF00)
-#define IS_SPI_BAUDRATE(PRESCALER)      ((PRESCALER) <= SPI_BAUDRATE_MAX)
+#define SPI_SCR                         ((uint16_t)0x0000)
+#define SPI_SCR_MAX                     ((uint16_t)0xFF00)
+#define IS_SPI_SCR(SCR)                 ((SCR) <= SPI_SCR_MAX)
                                         
 /** @defgroup SPI_status_definition */
 #define SPI_FLAG_TXE                    ((uint16_t)0x0001)
@@ -107,13 +109,6 @@ typedef struct {
                                         ((FLAG) == SPI_FLAG_RXNE) || ((FLAG) == SPI_FLAG_RXF) || \
                                         ((FLAG) == SPI_FLAG_BSY))
                                         
-/** @defgroup SPI_BaudRate_Prescaler */
-#define SPI_CPSDVSR                     ((uint16_t)0x0008)
-#define SPI_CPSDVSR_MIX                 ((uint16_t)0x0002)
-#define SPI_CPSDVSR_MAX                 ((uint16_t)0x00FE)
-#define IS_SPI_CPSDVSR(CPSDVSR)         (((CPSDVSR) >= SPI_CPSDVSR_MIX) && \
-                                        ((CPSDVSR) <= SPI_CPSDVSR_MAX))
-
 /** @defgroup SPI_interrupts_definition */
 #define SPI_IT_TXIM                     ((uint8_t)0x08)
 #define SPI_IT_RXIM                     ((uint8_t)0x04)

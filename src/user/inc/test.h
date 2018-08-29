@@ -15,7 +15,9 @@
 #include "test_spi_flash.h"
 #include "test_timer.h"
 #include "test_uart.h"
-#include "test_wdg.h"
+#include "test_wdt.h"
+#include "test_pvt.h"
+#include "test_pcie.h"
 
 extern uint32_t g_SuiteCaseCount;
 extern uint32_t g_SuiteSuccessCount;

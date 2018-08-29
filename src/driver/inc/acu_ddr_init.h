@@ -19,6 +19,7 @@
 #define UMCTL2_ADDR_BASE 0x46000000
 #define PUB_ADDR_BASE    0x44000000
 
+/* UMCTL2 REGS registers */
 #define               MSTR    (UMCTL2_ADDR_BASE+0X00000000) 
 #define               STAT    (UMCTL2_ADDR_BASE+0X00000004) 
 #define            MRCTRL0    (UMCTL2_ADDR_BASE+0X00000010) 
@@ -93,7 +94,9 @@
 #define             DBGCMD    (UMCTL2_ADDR_BASE+0X0000030c) 
 #define              SWCTL    (UMCTL2_ADDR_BASE+0X00000320) 
 #define             SWSTAT    (UMCTL2_ADDR_BASE+0X00000324) 
-#define          POISONCFG    (UMCTL2_ADDR_BASE+0X0000036c) 
+#define          POISONCFG    (UMCTL2_ADDR_BASE+0X0000036c)
+
+/* UMCTL2 MP registers */
 #define              PCCFG    (UMCTL2_ADDR_BASE+0X00000400) 
 #define            PCFGR_0    (UMCTL2_ADDR_BASE+0X00000404) 
 #define            PCFGW_0    (UMCTL2_ADDR_BASE+0X00000408) 
@@ -116,7 +119,8 @@
 #define         PCFGQOS1_2    (UMCTL2_ADDR_BASE+0X000005f8) 
 #define        PCFGWQOS0_2    (UMCTL2_ADDR_BASE+0X000005fc) 
 #define        PCFGWQOS1_2    (UMCTL2_ADDR_BASE+0X00000600) 
-#define               PDCH    (UMCTL2_ADDR_BASE+0X00000f34) 
+#define               PDCH    (UMCTL2_ADDR_BASE+0X00000f34)
+/* UMCTL2 DCH1 registers */
 #define          DCH1_STAT    (UMCTL2_ADDR_BASE+0X00001b04) 
 #define       DCH1_MRCTRL0    (UMCTL2_ADDR_BASE+0X00001b10)
 #define       DCH1_MRCTRL1    (UMCTL2_ADDR_BASE+0X00001b14)

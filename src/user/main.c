@@ -20,26 +20,20 @@ static const char *acu_version = "ACU_FW_V0.0.1";
  ***************************************************************/
 int main(void)
 {   
-    #if 0
     /* Init the Debug Uart */
     Debug_Init();
     /* Init the SPI Flash */
     sFLASH_Init();
-    #endif
-
+    /* Init the PCIE */
+    //PCIE_Init();
     /* Init the DDRC */
 #ifdef SIM_ENV
-    DDRC_Init();
-    I2C_FunctionTest10();
+    //DDRC_Init();
 #else
-    DDRC_FPGA_INIT(1);
+    //DDRC_FPGAInit();
 #endif
 
     DEBUG_MSG("Version: %s (%s/%s)"LF LF, acu_version, __DATE__, __TIME__);
-
-#ifdef ACU_UPDATE
-    ACU_FlashUpdate();
-#endif
 
     /* Enable all interrupt */
     __set_PRIMASK(0);
@@ -47,8 +41,13 @@ int main(void)
     /* Infinite loop */
     while (1)
     {
-        /* function test */
+#ifdef ACU_UPDATE
+        /* update flash */
+        ACU_FlashUpdate();
+#endif
+
 #ifdef ACU_TEST
+        /* function test */
         ACU_HalFuncTest();
 #endif
         

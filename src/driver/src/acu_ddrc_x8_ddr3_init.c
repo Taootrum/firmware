@@ -2,7 +2,7 @@
 
 void ddrc_x8_ddr3_init(int chs)
 {
-    int i = 0;
+    uint8_t i = 0;
 
     /////////////////////////////////////////////
     // step 1 : Program the DWC_ddr_umctl2 registers 

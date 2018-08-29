@@ -1,6 +1,39 @@
 #include "acu_ddr_init_fpga.h"
 
-void DDRC_FPGA_INIT(int chs)
+void DDRC_FPGA_x8_Init(int chs);
+
+void DDRC_FPGAInit(void)
+{
+    uint8_t i = 0;
+    uint32_t TempSet = 0;
+    
+    /* DDRC read dram_sel config */
+    WRITE_REG(RST_SC->DDR_RCFG, 0x0);
+
+    /* DDRC write dram_wcfg config */
+    for (i = 0; i < DDRC_NUMBER; i++) 
+    {
+        TempSet |= (0x1 << i);
+    }
+    WRITE_REG(RST_SC->DDR_WCFG, TempSet);
+
+    /* DDRC system management config */
+    for (i = 0; i < DDRC_NUMBER; i++) 
+    {
+        /* set pub address non-compress mode */
+        WRITE32(0x4008c024 + (i * 0x400), 0x4);
+        /* release clock */
+        WRITE32(0x4008c004 + (i * 0x400), 0x3f);
+        /* release pubphy pwrokin */
+        WRITE32(0x4008c000 + (i * 0x400), 0x1f);
+        /* release umctl2 apb/debug reset */
+        WRITE32(0x4008c000 + (i * 0x400), 0x13);
+    }
+
+    DDRC_FPGA_x8_Init(DDRC_NUMBER);
+}
+
+void DDRC_FPGA_x8_Init(int chs)
 {
     int i = 0;
 

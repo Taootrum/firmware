@@ -6,8 +6,8 @@
   * @brief   This file contains all the functions prototypes for the IWDG 
   *          firmware library.
  ******************************************************************************/
-#ifndef __ACU_DDR_INIT_FPGA_H
-#define __ACU_DDR_INIT_FPGA_H
+#ifndef __ACU_PCIE_H
+#define __ACU_PCIE_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -15,22 +15,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "acu.h"
-#include "acu_ddr_init.h"
 
-void DDRC_FPGAInit(void);
-
-void uMCTL2_MISC_config(void);
-void DRAM_INIT_timing(void);
-void DRAM_prototype_timing(void);
-void DFI_config( void );
-void ADDR_MAP(void);
-void Port_config(void);
-void DCH1_config(void);
-void acu_umctl2_fpga_init(void);
-void Load_PE_SDRAM_init(void);
-void Load_PE_training(void);
-void acu_pub_phy_fpga_init(int DPHY_ADDR_BASE);
-void acu_pub_phy_fpga_training(void);
+void PCIE_DeInit(void);
+void PCIE_Init(void);
+void PCIE_PrintReg(void);
 
 #ifdef __cplusplus
 }

@@ -153,10 +153,14 @@ void WDT_IRQHandler(void)
 {
 
 }
+
+extern uint16_t Temperature;
 void PVT_IRQHandler(void)
 {
-
+    Temperature = PVT_ReadData();
+    PVT_Cmd(DISABLE);
 }
+
 void DDR0_IRQHandler(void)
 {
 
@@ -170,11 +174,11 @@ void DDR2_IRQHandler(void)
 
 }
 
-extern uint32_t RxData;
+extern uint32_t RxData[0x200 / 4];
 void CU_IRQHandler(void)
 {
     WRITE_REG(CU->CQ_IRQ_CLEAR, 0x1F);
-    DDR_ReadMem((uint8_t *)&RxData, 0x1000 + 0x80, 4);
+    DDR_ReadMem((uint8_t *)RxData, 0x20000000, 0x200);
     DEBUG_MSG("Running......"LF);
 }
 

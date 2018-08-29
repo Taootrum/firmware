@@ -139,7 +139,7 @@ uint8_t I2C_ReceiveData(I2C_TypeDef* I2Cx);
 FlagStatus I2C_GetFlagStatus(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG);
 ITStatus I2C_GetITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT_STATUS);
 ITStatus I2C_GetRawITStatus(I2C_TypeDef* I2Cx, uint16_t I2C_IT_STATUS);
-void I2C_ClearITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT_STATUS);
+uint32_t I2C_ClearITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT_STATUS);
 void I2C_PrintReg(I2C_TypeDef* I2Cx);
 
 #ifdef __cplusplus

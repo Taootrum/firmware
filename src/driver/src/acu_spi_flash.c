@@ -30,8 +30,16 @@ void sFLASH_Init(void)
     SPI_InitTypeDef SPI_InitStructure;
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(SPI_SC, 0, ENABLE);
+    if (sFLASH_SPI == SPI0)
+    {
+        RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
+        RCC_APBPeriphClockCmd(SPI_SC, 0, ENABLE);
+    }
+    else
+    {
+        RCC_APBPeriphResetCmd(SPI_SC, 1, RESET);
+        RCC_APBPeriphClockCmd(SPI_SC, 1, ENABLE);
+    }
     RCC_APBPeriphIsoEnCmd(SPI_SC, ENABLE);
 
     /*!< GPIO IO as GPIO*/
@@ -140,6 +148,9 @@ void sFLASH_EraseBulk(void)
  ***************************************************************/
 void sFLASH_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite)
 {
+    uint16_t tx = 0, tx_end = NumByteToWrite;
+    uint8_t txfifolevel = 0, temp = 0;
+
     /*!< Enable the write access to the FLASH */
     sFLASH_WriteEnable();
 
@@ -154,11 +165,33 @@ void sFLASH_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWr
     sFLASH_SendByte(WriteAddr & 0xFF);
 
     /*!< while there is data to be written on the FLASH */
-    while (NumByteToWrite--)
-    {
-        sFLASH_SendByte(*pBuffer);
-        pBuffer++;
+    while (NumByteToWrite)
+    {      
+        /*!< Loop while DR register in not empty */
+        while ((txfifolevel < SPI_FIFO_TX_TH) && (tx < tx_end))
+        {
+            sFLASH_SPI->DR = *pBuffer++;
+            tx++;
+            txfifolevel++;
+            
+            /*!< Read data when Rx_FIFO not empty */
+            if (sFLASH_SPI->SR & SPI_FLAG_RXNE)
+            {
+                temp = sFLASH_SPI->DR;
+                NumByteToWrite--;
+                txfifolevel--;
+            }
+        }
+
+        /*!< Read data when Rx_FIFO not empty */
+        if (sFLASH_SPI->SR & SPI_FLAG_RXNE)
+        {
+            temp = sFLASH_SPI->DR;
+            NumByteToWrite--;
+            txfifolevel--;
+        }
     }
+    (void)temp;
     sFLASH_CS_HIGH();
 
     /*!< Wait the end of Flash writing */

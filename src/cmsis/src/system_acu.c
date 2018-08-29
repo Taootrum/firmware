@@ -49,30 +49,16 @@ static void ResetSysModules(void)
     RCC_IOPADReset();
 
     /* Soft reset the peripheral modules */
-    I2C_DeInit(I2C0);
-    I2C_DeInit(I2C1);
-    I2C_DeInit(I2C2);
+    //I2C_DeInit(I2C0);
+    //I2C_DeInit(I2C1);
+    //I2C_DeInit(I2C2);
     UART_DeInit(UART);
     GPIO_DeInit();
     SPI_DeInit(SPI0);
-    SPI_DeInit(SPI1);
+    //SPI_DeInit(SPI1);
     //TIM_DeInit(TIM0);
     //TIM_DeInit(TIM1);
     //WDT_DeInit(WDT);
-
-#if 0
-    RCC_APBSYSPrintReg(I2C_SC);
-    RCC_APBSYSPrintReg(UART_SC);
-    RCC_APBSYSPrintReg(GPIO_SC);
-    RCC_APBSYSPrintReg(SPI_SC);
-    RCC_APBSYSPrintReg(TIM_SC);
-    RCC_APBSYSPrintReg(WDT_SC);
-    RCC_PLLPrintReg(APLL_CLK);
-    RCC_PLLPrintReg(DPLL_CLK);
-    RCC_SYSCLKPrintReg(FABRIC_CLK);
-    RCC_SYSCLKPrintReg(IPCORE_CLK);
-    RCC_SYSCLKPrintReg(DDR_CLK);
-#endif
 }
 
 static void SetSysClock(void)
@@ -136,12 +122,11 @@ static void SetSysClock(void)
  *----------------------------------------------------------------------------*/
 void SystemInit (void)
 {
-#if 1
     /* Disable all interrupt */
     __set_PRIMASK(1);
     
     /* Rest the System modules */
-    //ResetSysModules();
+    ResetSysModules();
 
     /* Set System Clock */
     SetSysClock();
@@ -151,6 +136,5 @@ void SystemInit (void)
         
     /* configuration systick*/
     SysTick_Configuration();
-#endif
 }
 
