@@ -200,51 +200,56 @@ void RCC_SYSCLKGetFreq(RCC_ClocksTypeDef *RCC_Clocks)
 
     /* system clock */
     RCC_Clocks->APLL_Frequency = APLL_CLK_FREQ;
+    RCC_Clocks->BPLL_Frequency = BPLL_CLK_FREQ;
+    RCC_Clocks->CPLL_Frequency = CPLL_CLK_FREQ;
     RCC_Clocks->DPLL_Frequency = DPLL_CLK_FREQ;
     
     /* fabric clock */
     uDiv = RCC_SYSCLKGetDiv(FABRIC_CLK);
-    if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_APLL)
-    {
+    if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_APLL) {
         RCC_Clocks->FCLK_Frequency = RCC_Clocks->APLL_Frequency / (uDiv + 1);
-    }
-    else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_DPLL)
-    {
-        RCC_Clocks->FCLK_Frequency = RCC_Clocks->DPLL_Frequency / (uDiv + 1);
-    }
-    else
-    {
+    } else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_BPLL) {
+        RCC_Clocks->FCLK_Frequency = RCC_Clocks->BPLL_Frequency / (uDiv + 1);
+    } else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_CPLL) {
+        RCC_Clocks->FCLK_Frequency = RCC_Clocks->CPLL_Frequency / (uDiv + 1);
+    } else {
         RCC_Clocks->FCLK_Frequency = XTAL / (uDiv + 1);
     }
     
     /* ipcore clock */
     uDiv = RCC_SYSCLKGetDiv(IPCORE_CLK);
-    if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_APLL)
-    {
+    if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_APLL) {
         RCC_Clocks->IPCLK_Frequency = RCC_Clocks->APLL_Frequency / (uDiv + 1);
-    }
-    else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_DPLL)
-    {
-        RCC_Clocks->IPCLK_Frequency = RCC_Clocks->DPLL_Frequency / (uDiv + 1);
-    }
-    else
-    {
+    } else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_BPLL) {
+        RCC_Clocks->IPCLK_Frequency = RCC_Clocks->BPLL_Frequency / (uDiv + 1);
+    } else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_CPLL) {
+        RCC_Clocks->IPCLK_Frequency = RCC_Clocks->CPLL_Frequency / (uDiv + 1);
+    } else {
         RCC_Clocks->IPCLK_Frequency = XTAL / (uDiv + 1);
     }
 
     /* ddr clock */
     uDiv = RCC_SYSCLKGetDiv(DDR_CLK);
-    if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_APLL)
-    {
+    if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_APLL) {
         RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->APLL_Frequency / (uDiv + 1);
-    }
-    else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_DPLL)
-    {
-        RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->DPLL_Frequency / (uDiv + 1);
-    }
-    else
-    {
+    } else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_BPLL) {
+        RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->BPLL_Frequency / (uDiv + 1);
+    } else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_CPLL) {
+        RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->CPLL_Frequency / (uDiv + 1);
+    } else {
         RCC_Clocks->DDRCLK_Frequency = XTAL / (uDiv + 1);
+    }
+
+    /* Hashcore clock */
+    uDiv = RCC_SYSCLKGetDiv(HASHCORE_CLK);
+    if (RCC_SYSCLKGetSource(HASHCORE_CLK) == SYSCLK_SOURCE_APLL) {
+        RCC_Clocks->HASHCLK_Frequency = RCC_Clocks->APLL_Frequency / (uDiv + 1);
+    } else if (RCC_SYSCLKGetSource(HASHCORE_CLK) == SYSCLK_SOURCE_BPLL) {
+        RCC_Clocks->HASHCLK_Frequency = RCC_Clocks->BPLL_Frequency / (uDiv + 1);
+    } else if (RCC_SYSCLKGetSource(HASHCORE_CLK) == SYSCLK_SOURCE_CPLL) {
+        RCC_Clocks->HASHCLK_Frequency = RCC_Clocks->CPLL_Frequency / (uDiv + 1);
+    } else {
+        RCC_Clocks->HASHCLK_Frequency = XTAL / (uDiv + 1);
     }
 }
 

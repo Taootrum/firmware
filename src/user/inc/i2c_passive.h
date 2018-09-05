@@ -13,7 +13,6 @@
 
 #define I2C_MASTER          I2C1
 #define PASSIVE_PAGE_SIZE   0x400
-//#define I2C_PASSIVE_WAY
 
 /** @defgroup I2C_passive */
 typedef enum cmd {

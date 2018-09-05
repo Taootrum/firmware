@@ -30,18 +30,6 @@ void sFLASH_Init(void)
     SPI_InitTypeDef SPI_InitStructure;
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    if (sFLASH_SPI == SPI0)
-    {
-        RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
-        RCC_APBPeriphClockCmd(SPI_SC, 0, ENABLE);
-    }
-    else
-    {
-        RCC_APBPeriphResetCmd(SPI_SC, 1, RESET);
-        RCC_APBPeriphClockCmd(SPI_SC, 1, ENABLE);
-    }
-    RCC_APBPeriphIsoEnCmd(SPI_SC, ENABLE);
-
     /*!< GPIO IO as GPIO*/
     GPIO_IOPADMode(sFLASH_CS_GPIO, GPIO_IOPAD_GPIO);
     GPIO_InitStructure.GPIO_Direction = GPIO_OUTPUT;

@@ -30,6 +30,11 @@ void WDT_Init(WDT_InitTypeDef *WDT_InitStruct)
 {
     assert_param(IS_WDT_MODE(WDT_InitStruct->WDT_Mode));
     assert_param(IS_WDT_TOP(WDT_InitStruct->WDT_Top));
+    
+    /*---------------------------- System Management Configuration ------------------------*/
+    RCC_APBPeriphResetCmd(WDT_SC, 0, RESET);
+    RCC_APBPeriphClockCmd(WDT_SC, 0, ENABLE);
+    RCC_APBPeriphIsoEnCmd(WDT_SC, ENABLE);
 
     /*---------------------------- WDT Seed Configuration ------------------------*/
     WRITE_REG(WDT_SC->WDT_SPEEDUP, 0);

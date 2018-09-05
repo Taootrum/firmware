@@ -49,6 +49,11 @@ void UART_Init(UART_TypeDef* UARTx, UART_InitTypeDef* UART_InitStruct)
     assert_param(IS_UART_HW_FLOW_CTRL(UART_InitStruct->UART_HardwareFlowControl));
     assert_param(IS_UART_LBE(UART_InitStruct->UART_LoopBackControl));
 
+    /*----------------------- System Management Configuration -----------------------------*/
+    RCC_APBPeriphResetCmd(UART_SC, 0, RESET);
+    RCC_APBPeriphClockCmd(UART_SC, 0, ENABLE);
+    RCC_APBPeriphIsoEnCmd(UART_SC, ENABLE);
+
     /*----------------------- USART BRR Configuration -----------------------------*/
     RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
     apbclock = RCC_ClocksStatus.FCLK_Frequency; /* apbclock_max = 100MHz */

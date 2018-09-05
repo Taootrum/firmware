@@ -14,9 +14,6 @@ TestStatus TIMER_FunctionTest1(void)
     uint32_t LastValue = 0, CurValue = 0;
     
     TIM_DeInit();
-    RCC_APBPeriphResetCmd(TIM_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(TIM_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(TIM_SC, ENABLE);
     TIM_InitStructure.TIM_Mode = FREE_RUNNING;
     TIM_Init(TIM0, &TIM_InitStructure);
     TIM_Cmd(TIM0, ENABLE);
@@ -39,9 +36,6 @@ TestStatus TIMER_FunctionTest2(void)
     uint32_t LastValue = 0, CurValue = 0;
     
     TIM_DeInit();
-    RCC_APBPeriphResetCmd(TIM_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(TIM_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(TIM_SC, ENABLE);
     TIM_InitStructure.TIM_Mode = USER_DEFINED;
     TIM_InitStructure.TIM_TimingTime = 100;     /* 100ms */
     TIM_Init(TIM0, &TIM_InitStructure);
@@ -65,9 +59,6 @@ TestStatus TIMER_FunctionTest3(void)
     uint32_t count = 0x20000;
     
     TIM_DeInit();
-    RCC_APBPeriphResetCmd(TIM_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(TIM_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(TIM_SC, ENABLE);
     TIM_InitStructure.TIM_Mode = USER_DEFINED;
     TIM_InitStructure.TIM_TimingTime = 1;     /* 100ms */
     TIM_Init(TIM0, &TIM_InitStructure);
@@ -91,9 +82,6 @@ TestStatus TIMER_FunctionTest4(void)
     uint32_t count = 0x20000;
     
     TIM_DeInit();
-    RCC_APBPeriphResetCmd(TIM_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(TIM_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(TIM_SC, ENABLE);
     TIM_InitStructure.TIM_Mode = USER_DEFINED;
     TIM_InitStructure.TIM_TimingTime = 1;     /* 100ms */
     TIM_Init(TIM0, &TIM_InitStructure);

@@ -39,9 +39,6 @@ TestStatus UART_InterfaceTest1(void)
     result &= CHECK_REG_RESERVED(UART->ICR, 0x0);
     result &= CHECK_REG_RESERVED(UART->DMACR, 0x0);
 
-    RCC_APBPeriphResetCmd(UART_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(UART_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(UART_SC, ENABLE);
     UART_StructInit(&UART_InitStructure);
     UART_Init(DEBUG_UART, &UART_InitStructure);
     UART_Cmd(DEBUG_UART, ENABLE);

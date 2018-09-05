@@ -17,11 +17,14 @@
 
 typedef struct
 {
-    uint32_t APLL_Frequency;    /*!< returns system clock frequency 1600M */
-    uint32_t DPLL_Frequency;    /*!< returns system clock frequency 1600M */
+    uint32_t APLL_Frequency;    /*!< returns system clock frequency 1800M */
+    uint32_t BPLL_Frequency;    /*!< returns system clock frequency 1800M */
+    uint32_t CPLL_Frequency;    /*!< returns system clock frequency 2133M */
+    uint32_t DPLL_Frequency;    /*!< returns system clock frequency 1800M */
     uint32_t FCLK_Frequency;    /*!< returns Fabric clock frequency expressed in Hz */
     uint32_t IPCLK_Frequency;   /*!< returns IP_CORE clock frequency expressed in Hz */
     uint32_t DDRCLK_Frequency;  /*!< returns DDR clock frequency expressed in Hz */
+    uint32_t HASHCLK_Frequency; /*!< returns HASH clock frequency expressed in Hz */
 } RCC_ClocksTypeDef;
 
 /**@brief  PLL Init structure definition */
@@ -37,14 +40,14 @@ typedef struct
 
 typedef enum {UnLock = 0, Lock = 1} LockStatus;
 
-/* 24M / (PLL_DIVR + 1) = 24M | 24M / (DPLL_DIVR + 1) = 12M */ 
+/* 24M / (PLL_DIVR + 1) = 24M | 24M / (CPLL_DIVR + 1) = 12M */ 
 #define PLL_DIVR                    0x0   
-#define DPLL_DIVR                   0x1   
+#define CPLL_DIVR                   0x1   
 #define IS_PLL_DIVR(DIVR)           ((DIVR) < 3)
 
-/* 24M * (PLL_DIVF + 1) * 2 = 3600M | 12M * (DPLL_DIVF + 1) * 2 = 4248M */ 
+/* 24M * (PLL_DIVF + 1) * 2 = 3600M | 12M * (CPLL_DIVF + 1) * 2 = 4248M */ 
 #define PLL_DIVF                    0x4A
-#define DPLL_DIVF                   0xB0
+#define CPLL_DIVF                   0xB0
 #define IS_PLL_DIVF(DIVF)           ((DIVF) <= 0x1FF)
 
 /* 3600M / (2 ^ PLL_DIVQ_2) = 1800M | 4248M / (2 ^ PLL_DIVQ_2) = 2124M */ 
@@ -83,11 +86,12 @@ typedef enum {UnLock = 0, Lock = 1} LockStatus;
 
 /* system clock manage */
 #define SYSCLK_SOURCE_APLL          ((uint32_t)0x00000000)
-#define SYSCLK_SOURCE_DPLL          ((uint32_t)0x00000001)
-#define SYSCLK_SOURCE_OSC           ((uint32_t)0x00000002)
-#define IS_RCC_SYSCLK_SOURCE(source)    (((source) == SYSCLK_SOURCE_APLL) || \
-                                        ((source) == SYSCLK_SOURCE_DPLL) || \
-                                        ((source) == SYSCLK_SOURCE_OSC))
+#define SYSCLK_SOURCE_BPLL          ((uint32_t)0x00000001)
+#define SYSCLK_SOURCE_CPLL          ((uint32_t)0x00000002)
+//#define SYSCLK_SOURCE_DPLL          ((uint32_t)0x00000001)
+#define SYSCLK_SOURCE_OSC           ((uint32_t)0x00000003)
+#define IS_RCC_SYSCLK_SOURCE(source)    (((source) == SYSCLK_SOURCE_APLL) || ((source) == SYSCLK_SOURCE_BPLL) || \
+                                        ((source) == SYSCLK_SOURCE_CPLL) || ((source) == SYSCLK_SOURCE_OSC))
 
 #define SYSCLK_DIV_MAX              ((uint32_t)0x0000007F)
 #define IS_RCC_SYSCLK_DIV(div)      ((div) <= SYSCLK_DIV_MAX)

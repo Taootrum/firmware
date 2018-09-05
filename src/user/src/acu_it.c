@@ -121,10 +121,16 @@ void IIC2_IRQHandler(void)
 {
 
 }
+
+#ifdef ACU_TEST
+extern uint8_t INT_TestInterruptFlag;
+#endif
 void INT_IRQHandler(void)
 {
-
+    INT_ClearIT();
+    INT_TestInterruptFlag = SET;
 }
+
 void GPIO_IRQHandler(void)
 {
 
@@ -157,8 +163,15 @@ void WDT_IRQHandler(void)
 extern uint16_t Temperature;
 void PVT_IRQHandler(void)
 {
-    Temperature = PVT_ReadData();
-    PVT_Cmd(DISABLE);
+    if (PVT_GetIntStat() == PVT0_INT) {
+        Temperature = PVT_ReadData(PVT0);
+        PVT_Cmd(PVT0, DISABLE);
+    } else if (PVT_GetIntStat() == PVT1_INT) {
+        Temperature = PVT_ReadData(PVT1);
+        PVT_Cmd(PVT1, DISABLE);
+    } else {
+        Temperature = 0xFFFF;
+    }
 }
 
 void DDR0_IRQHandler(void)
@@ -178,7 +191,7 @@ extern uint32_t RxData[0x200 / 4];
 void CU_IRQHandler(void)
 {
     WRITE_REG(CU->CQ_IRQ_CLEAR, 0x1F);
-    DDR_ReadMem((uint8_t *)RxData, 0x20000000, 0x200);
+    DDR_InterleaveReadMem((uint8_t *)RxData, 0x20000000, 0x200);
     DEBUG_MSG("Running......"LF);
 }
 

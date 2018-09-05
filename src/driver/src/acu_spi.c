@@ -22,13 +22,11 @@ void SPI_DeInit(SPI_TypeDef* SPIx)
     {
         RCC_APBPeriphResetCmd(SPI_SC, 0, SET);
         RCC_APBPeriphClockCmd(SPI_SC, 0, DISABLE);
-        RCC_APBPeriphIsoEnCmd(SPI_SC, DISABLE);
     }
     else
     {
         RCC_APBPeriphResetCmd(SPI_SC, 1, SET);
         RCC_APBPeriphClockCmd(SPI_SC, 1, DISABLE);
-        RCC_APBPeriphIsoEnCmd(SPI_SC, DISABLE);
     }
 }
   
@@ -59,6 +57,19 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
     assert_param(IS_SPI_BAUDRATE(SPI_InitStruct->SPI_Baudrate));
     assert_param(IS_SPI_FIFO_TH(SPI_InitStruct->SPI_TX_FIFO));
     assert_param(IS_SPI_FIFO_TH(SPI_InitStruct->SPI_RX_FIFO));
+
+    /* System Management Configuration */
+    if (SPIx == SPI0)
+    {
+        RCC_APBPeriphResetCmd(SPI_SC, 0, RESET);
+        RCC_APBPeriphClockCmd(SPI_SC, 0, ENABLE);
+    }
+    else
+    {
+        RCC_APBPeriphResetCmd(SPI_SC, 1, RESET);
+        RCC_APBPeriphClockCmd(SPI_SC, 1, ENABLE);
+    }
+    RCC_APBPeriphIsoEnCmd(SPI_SC, ENABLE);
     
     /* SPIx CR0 Configuration */
     TempShort = (uint16_t)( SPI_InitStruct->SPI_Mode | SPI_InitStruct->SPI_DataSize | 

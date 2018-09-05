@@ -76,7 +76,8 @@ TestStatus CRU_InterfaceTest4(void)
     RCC_ClkManageReset();
     if (0x1 != RCC_SYSCLKGetDiv(FABRIC_CLK) 
         || 0x1 != RCC_SYSCLKGetDiv(IPCORE_CLK)
-        || 0x1 != RCC_SYSCLKGetDiv(DDR_CLK))
+        || 0x1 != RCC_SYSCLKGetDiv(DDR_CLK)
+        || 0x1 != RCC_SYSCLKGetDiv(HASHCORE_CLK))
     {
         DEBUG_ERROR("RCC_ClkManageReset fail.");
         ret = FAILED;
@@ -93,20 +94,31 @@ TestStatus CRU_InterfaceTest4(void)
     } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
     RCC_PLLCmd(APLL_CLK, ENABLE);
 
-    /* Initialize DPLL 2133M */
-    PLL_Init.PLLInputClock = XTAL;
-    PLL_Init.PLLOutputClock = DPLL_CLK_FREQ;
-    PLL_Init.Divr = DPLL_DIVR;
-    PLL_Init.Divf = DPLL_DIVF;
-    PLL_Init.Divq = PLL_DIVQ_2;
-    RCC_PLLConfig(DPLL_CLK, &PLL_Init);
+    /* Initialize BPLL */
+    PLL_StructInit(&PLL_Init);
+    RCC_PLLConfig(BPLL_CLK, &PLL_Init);
     StartUpCounter = 0;
     do
     {
-        PLL_LockStatus = RCC_PLLGetLockStatus(DPLL_CLK);
+        PLL_LockStatus = RCC_PLLGetLockStatus(BPLL_CLK);
+        StartUpCounter++;
+    } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
+    RCC_PLLCmd(BPLL_CLK, ENABLE);
+
+    /* Initialize CPLL 2133M */
+    PLL_Init.PLLInputClock = XTAL;
+    PLL_Init.PLLOutputClock = CPLL_CLK_FREQ;
+    PLL_Init.Divr = CPLL_DIVR;
+    PLL_Init.Divf = CPLL_DIVF;
+    PLL_Init.Divq = PLL_DIVQ_2;
+    RCC_PLLConfig(CPLL_CLK, &PLL_Init);
+    StartUpCounter = 0;
+    do
+    {
+        PLL_LockStatus = RCC_PLLGetLockStatus(CPLL_CLK);
         StartUpCounter++;  
     } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
-    RCC_PLLCmd(DPLL_CLK, ENABLE);
+    RCC_PLLCmd(CPLL_CLK, ENABLE);
 
     /* Initialize Fabric Clock */
     RCC_SYSCLKSetSource(FABRIC_CLK, SYSCLK_SOURCE_APLL);
@@ -115,14 +127,14 @@ TestStatus CRU_InterfaceTest4(void)
     RCC_SYSCLKCmd(FABRIC_CLK, ENABLE);
 
     /* Initialize IPCORE Clock */
-    RCC_SYSCLKSetSource(IPCORE_CLK, SYSCLK_SOURCE_APLL);
-    DivValue = APLL_CLK_FREQ / IPCORE_CLK_FREQ - 1;
+    RCC_SYSCLKSetSource(IPCORE_CLK, SYSCLK_SOURCE_BPLL);
+    DivValue = BPLL_CLK_FREQ / IPCORE_CLK_FREQ - 1;
     RCC_SYSCLKSetDiv(IPCORE_CLK, DivValue);
     RCC_SYSCLKCmd(IPCORE_CLK, ENABLE);
 
     /* Initialize DDR Clock */
-    RCC_SYSCLKSetSource(DDR_CLK, SYSCLK_SOURCE_DPLL);
-    DivValue = DPLL_CLK_FREQ / DDR_CLK_FREQ - 1;
+    RCC_SYSCLKSetSource(DDR_CLK, SYSCLK_SOURCE_CPLL);
+    DivValue = CPLL_CLK_FREQ / DDR_CLK_FREQ - 1;
     RCC_SYSCLKSetDiv(DDR_CLK, DivValue);
     RCC_SYSCLKCmd(DDR_CLK, ENABLE);
     
@@ -254,8 +266,8 @@ TestStatus CRU_InterfaceTest11(void)
     TestStatus ret = PASSED;
 
     Temp = READ_REG(FABRIC_CLK->CLKSRC);
-    RCC_SYSCLKSetSource(FABRIC_CLK, SYSCLK_SOURCE_DPLL);
-    if (SYSCLK_SOURCE_DPLL != RCC_SYSCLKGetSource(FABRIC_CLK))
+    RCC_SYSCLKSetSource(FABRIC_CLK, SYSCLK_SOURCE_BPLL);
+    if (SYSCLK_SOURCE_BPLL != RCC_SYSCLKGetSource(FABRIC_CLK))
     {
         DEBUG_ERROR("RCC_SYSCLKSetSource fail.");
         ret = FAILED;
@@ -328,6 +340,8 @@ TestStatus CRU_InterfaceTest15(void)
     
     RCC_SYSCLKGetFreq(&RCC_Clock);
     if (RCC_Clock.APLL_Frequency != APLL_CLK_FREQ
+        || RCC_Clock.BPLL_Frequency != BPLL_CLK_FREQ
+        || RCC_Clock.CPLL_Frequency != CPLL_CLK_FREQ
         || RCC_Clock.DPLL_Frequency != DPLL_CLK_FREQ)
     {
         DEBUG_ERROR("RCC_SYSCLKGetFreq fail.");
@@ -336,16 +350,13 @@ TestStatus CRU_InterfaceTest15(void)
 
     /* fabric clock */
     uDiv = RCC_SYSCLKGetDiv(FABRIC_CLK);
-    if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_APLL)
-    {
+    if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_APLL) {
         uFreq = APLL_CLK_FREQ;
-    }
-    else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_DPLL)
-    {
-        uFreq = DPLL_CLK_FREQ;
-    }
-    else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_OSC)
-    {
+    } else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_BPLL) {
+        uFreq = BPLL_CLK_FREQ;
+    } else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_CPLL) {
+        uFreq = CPLL_CLK_FREQ;
+    } else if (RCC_SYSCLKGetSource(FABRIC_CLK) == SYSCLK_SOURCE_OSC) {
         uFreq = XTAL;
     }
     if (RCC_Clock.FCLK_Frequency != uFreq / (uDiv + 1))
@@ -356,16 +367,13 @@ TestStatus CRU_InterfaceTest15(void)
 
     /* ipcore clock */
     uDiv = RCC_SYSCLKGetDiv(IPCORE_CLK);
-    if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_APLL)
-    {
+    if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_APLL) {
         uFreq = APLL_CLK_FREQ;
-    }
-    else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_DPLL)
-    {
-        uFreq = DPLL_CLK_FREQ;
-    }
-    else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_OSC)
-    {
+    } else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_BPLL) {
+        uFreq = BPLL_CLK_FREQ;
+    } else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_CPLL) {
+        uFreq = CPLL_CLK_FREQ;
+    } else if (RCC_SYSCLKGetSource(IPCORE_CLK) == SYSCLK_SOURCE_OSC) {
         uFreq = XTAL;
     }
     if (RCC_Clock.IPCLK_Frequency != uFreq / (uDiv + 1))
@@ -376,16 +384,13 @@ TestStatus CRU_InterfaceTest15(void)
 
     /* ddr clock */
     uDiv = RCC_SYSCLKGetDiv(DDR_CLK);
-    if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_APLL)
-    {
+    if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_APLL) {
         uFreq = APLL_CLK_FREQ;
-    }
-    else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_DPLL)
-    {
-        uFreq = DPLL_CLK_FREQ;
-    }
-    else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_OSC)
-    {
+    } else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_BPLL) {
+        uFreq = BPLL_CLK_FREQ;
+    } else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_CPLL) {
+        uFreq = CPLL_CLK_FREQ;
+    } else if (RCC_SYSCLKGetSource(DDR_CLK) == SYSCLK_SOURCE_OSC) {
         uFreq = XTAL;
     }
     if (RCC_Clock.DDRCLK_Frequency != uFreq / (uDiv + 1))
@@ -403,14 +408,14 @@ TestStatus CRU_InterfaceTest16(void)
     uint32_t Temp = 0;
     TestStatus ret = PASSED;
 
-    Temp = READ_REG(PCIE_CLK->CLKGT);
-    RCC_SYSCLKCmd(PCIE_CLK, DISABLE);
-    if (ENABLE != READ_REG(PCIE_CLK->CLKGT))
+    Temp = READ_REG(HASHCORE_CLK->CLKGT);
+    RCC_SYSCLKCmd(HASHCORE_CLK, DISABLE);
+    if (ENABLE != READ_REG(HASHCORE_CLK->CLKGT))
     {
         DEBUG_ERROR("RCC_SYSCLKCmd fail.");
         ret = FAILED;
     }
-    WRITE_REG(PCIE_CLK->CLKGT, Temp);
+    WRITE_REG(HASHCORE_CLK->CLKGT, Temp);
     
     return ret;
 }

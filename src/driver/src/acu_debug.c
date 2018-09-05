@@ -27,11 +27,6 @@ void Debug_DeInit(void)
 void Debug_Init(void)
 {
     UART_InitTypeDef UART_InitStructure;
-
-    /*!< UART clk enable & iso disable */
-    RCC_APBPeriphResetCmd(UART_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(UART_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(UART_SC, ENABLE);
         
     /*!< Uart configuration */
     UART_StructInit(&UART_InitStructure);

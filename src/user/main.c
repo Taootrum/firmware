@@ -26,6 +26,7 @@ int main(void)
     sFLASH_Init();
     /* Init the PCIE */
     //PCIE_Init();
+    
     /* Init the DDRC */
 #ifdef SIM_ENV
     //DDRC_Init();

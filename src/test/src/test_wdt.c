@@ -14,9 +14,6 @@ TestStatus WDT_FunctionTest1(void)
     uint32_t LastValue = 0, CurValue = 0;
     
     WDT_DeInit();
-    RCC_APBPeriphResetCmd(WDT_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(WDT_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(WDT_SC, ENABLE);
     WDT_StructInit(&WDT_InitStructure);
     WDT_Init(&WDT_InitStructure);
     WDT_Cmd(ENABLE);
@@ -40,9 +37,6 @@ TestStatus WDT_FunctionTest2(void)
     uint32_t LastValue = 0, CurValue = 0;
     
     WDT_DeInit();
-    RCC_APBPeriphResetCmd(WDT_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(WDT_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(WDT_SC, ENABLE);
     WDT_StructInit(&WDT_InitStructure);
     WDT_Init(&WDT_InitStructure);
     WDT_Cmd(ENABLE);
@@ -74,9 +68,6 @@ TestStatus WDT_FunctionTest3(void)
     uint32_t count = 0x1000;
     
     WDT_DeInit();
-    RCC_APBPeriphResetCmd(WDT_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(WDT_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(WDT_SC, ENABLE);
     WDT_InitStructure.WDT_Mode = WDT_TIMEOUT_RESET;
     WDT_InitStructure.WDT_Top = WDT_TOP;
     WDT_Init(&WDT_InitStructure);
@@ -87,13 +78,12 @@ TestStatus WDT_FunctionTest3(void)
     WDT_Restart();
     
     while (WDT_GetITStatus() == 0 && --count > 0);
+    WDT_DeInit();
     if (count == 0)
     {
         DEBUG_ERROR("wdt interrupt fail.");
-        WDT_DeInit();
         return FAILED;
     }
-    WDT_DeInit();
     
     return PASSED;
 }
@@ -105,9 +95,6 @@ TestStatus WDT_FunctionTest4(void)
     uint32_t count = 0x1000;
     
     WDT_DeInit();
-    RCC_APBPeriphResetCmd(WDT_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(WDT_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(WDT_SC, ENABLE);
     WDT_InitStructure.WDT_Mode = WDT_TIMEOUT_RESET;
     WDT_InitStructure.WDT_Top = WDT_TOP;
     WDT_Init(&WDT_InitStructure);
@@ -138,9 +125,6 @@ TestStatus WDT_FunctionTest5(void)
     uint32_t count = 0x1000;
     
     WDT_DeInit();
-    RCC_APBPeriphResetCmd(WDT_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(WDT_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(WDT_SC, ENABLE);
     WDT_InitStructure.WDT_Mode = WDT_TIMEOUT_RESET;
     WDT_InitStructure.WDT_Top = WDT_TOP;
     WDT_Init(&WDT_InitStructure);

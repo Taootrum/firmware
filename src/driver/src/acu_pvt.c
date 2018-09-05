@@ -9,15 +9,25 @@
 
 /****************************************************************
   * 函数      : PVT_DeInit()
-  * 参数      : None
+  * 参数      : PVTx: PVT peripheral
   * 返回值     : None
   * 描述      : PVT清除初始化
  ***************************************************************/
-void PVT_DeInit(void)
+void PVT_DeInit(PVT_TypeDef* PVTx)
 {
-    RCC_APBPeriphResetCmd(PVT_SC, 0, SET);
-    RCC_APBPeriphClockCmd(PVT_SC, 0, DISABLE);
-    RCC_APBPeriphIsoEnCmd(PVT_SC, DISABLE);
+    /* Check the parameters */
+    assert_param(IS_PVT_ALL_PERIPH(PVTx));
+    
+    if (PVTx == PVT0)
+    {
+        RCC_APBPeriphResetCmd(PVT_SC, 0, SET);
+        RCC_APBPeriphClockCmd(PVT_SC, 0, DISABLE);
+    }
+    else
+    {
+        RCC_APBPeriphResetCmd(PVT_SC, 1, SET);
+        RCC_APBPeriphClockCmd(PVT_SC, 1, DISABLE);
+    }
 }
   
 /****************************************************************
@@ -26,27 +36,48 @@ void PVT_DeInit(void)
   * 返回值     : None
   * 描述      : PVT初始化
  ***************************************************************/
-void PVT_Init(PVT_InitTypeDef* PVT_InitStruct)
+void PVT_Init(PVT_TypeDef* PVTx, PVT_InitTypeDef* PVT_InitStruct)
 {
     uint32_t apbclock = 0, divider = 0;
     RCC_ClocksTypeDef RCC_ClocksStatus;
 
     /* Check the PVT parameters */
+    assert_param(IS_PVT_ALL_PERIPH(PVTx));
     assert_param(IS_PVT_MODE(PVT_InitStruct->PVT_MODE));
     assert_param(IS_PVT_TRIM(PVT_InitStruct->PVT_TIMG));
 
+    /* system management config */
+    if (PVTx == PVT0)
+    {
+        RCC_APBPeriphResetCmd(PVT_SC, 0, RESET);
+        RCC_APBPeriphClockCmd(PVT_SC, 0, ENABLE);
+    }
+    else
+    {
+        RCC_APBPeriphResetCmd(PVT_SC, 1, RESET);
+        RCC_APBPeriphClockCmd(PVT_SC, 1, ENABLE);
+    }
+    RCC_APBPeriphIsoEnCmd(PVT_SC, ENABLE);
+    
     /* PVT Clock Configuration */
     RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
     apbclock = RCC_ClocksStatus.FCLK_Frequency;
     divider = apbclock / 1200000 - 1; /* pvt clock 1.2M */
-    WRITE_REG(PVT_SC->PVT_DIV, divider);
+    if (PVTx == PVT0)
+    {
+        WRITE_REG(PVT_SC->PVT0_DIV, divider);
+    }
+    else
+    {
+        WRITE_REG(PVT_SC->PVT1_DIV, divider);
+    }
     
     /* PVT APB_CTRL Configuration */
-    PVT->APB_CTRL = 0x1;
+    PVTx->APB_CTRL = 0x1;
     /* PVT MODE_CTRL Configuration */
-    PVT->MODE_CTRL = PVT_InitStruct->PVT_MODE;
+    PVTx->MODE_CTRL = PVT_InitStruct->PVT_MODE;
     /* PVT TRIMG_CTRL Configuration */
-    PVT->TRIMG_CTRL = PVT_InitStruct->PVT_TIMG;
+    PVTx->TRIMG_CTRL = PVT_InitStruct->PVT_TIMG;
 }
   
 /****************************************************************
@@ -65,66 +96,81 @@ void PVT_StructInit(PVT_InitTypeDef* PVT_InitStruct)
   
 /****************************************************************
   * 函数      : PVT_Cmd()
-  * 参数      : NewState: 使能状态
+  * 参数      : PVTx: PVT peripheral
+              NewState: 使能状态
   * 返回值     : None
   * 描述      : PVT使能/关闭
  ***************************************************************/
-void PVT_Cmd(FunctionalState NewState)
+void PVT_Cmd(PVT_TypeDef* PVTx, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param(IS_FUNCTIONAL_STATE(NewState));
     
     if (NewState == ENABLE)
     {
-        WRITE_REG(PVT->SENSOR_ENA, PVT_ENABLE);
+        WRITE_REG(PVTx->SENSOR_ENA, PVT_ENABLE);
     }
     else
     {
-        WRITE_REG(PVT->SENSOR_ENA, 0);
+        WRITE_REG(PVTx->SENSOR_ENA, 0);
     }
 }
 
 /****************************************************************
   * 函数      : PVT_ITConfig()
-  * 参数      : NewState: ENABLE/DISABLE
+  * 参数      : Type: PVT0_INT = 0x1,
+                    PVT1_INT = 0x2,
+                    EFUSE_INT = 0x4
+              NewState: ENABLE/DISABLE
   * 返回值     : None
-  * 描述      : SPI中断配置
+  * 描述      : PVT中断配置
  ***************************************************************/
-void PVT_ITConfig(FunctionalState NewState)
+void PVT_ITConfig(PVT_IntType Type, FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param(IS_FUNCTIONAL_STATE(NewState));
 
     if (NewState == ENABLE)
     {
-        WRITE_REG(PVT_SC->PVT_INTMASK, PVT_INT_ENABLE);
+        SET_BIT(PVT_SC->PVT_INTMASK, Type);
     }
     else
     {
-        WRITE_REG(PVT_SC->PVT_INTMASK, 0);
+        CLEAR_BIT(PVT_SC->PVT_INTMASK, Type);
     }
 }
 
 /****************************************************************
   * 函数      : PVT_ReadData()
-  * 参数      : None
+  * 参数      : PVTx: PVT peripheral
   * 返回值     : None
   * 描述      : 从数据寄存器读数据
  ***************************************************************/
-uint16_t PVT_ReadData(void)
+uint16_t PVT_ReadData(PVT_TypeDef* PVTx)
 {
-    return PVT->SENSOR_DATA;
+    return PVTx->SENSOR_DATA;
 }
   
 /****************************************************************
   * 函数      : PVT_GetStatus()
-  * 参数      : None
+  * 参数      : PVTx: PVT peripheral
   * 返回值     : None
   * 描述      : SPI获取状态寄存器
  ***************************************************************/
-FlagStatus PVT_GetStatus(void)
+FlagStatus PVT_GetStatus(PVT_TypeDef* PVTx)
 {
-    return (READ_REG(PVT->DATA_VALID) ? SET : RESET);
+    return (READ_REG(PVTx->DATA_VALID) ? SET : RESET);
+}
+
+/****************************************************************
+  * 函数      : PVT_GetIntStat()
+  * 参数      : PNone
+  * 返回值     : None
+  * 描述      : SPI获取中断状态寄存器
+ ***************************************************************/
+uint16_t PVT_GetIntStat(void)
+{
+    return PVT_SC->PVT_INTSTA;
 }
 
 /****************************************************************
@@ -133,14 +179,14 @@ FlagStatus PVT_GetStatus(void)
   * 返回值     : None
   * 描述      : PVT 打印寄存器
  ***************************************************************/
-void PVT_PrintReg(void)
+void PVT_PrintReg(PVT_TypeDef* PVTx)
 {        
-    DEBUG_PRINT_REG(PVT->APB_CTRL);
-    DEBUG_PRINT_REG(PVT->MODE_CTRL);
-    DEBUG_PRINT_REG(PVT->TRIMO_CTRL);
-    DEBUG_PRINT_REG(PVT->TRIMG_CTRL);
-    DEBUG_PRINT_REG(PVT->SENSOR_DATA);
-    DEBUG_PRINT_REG(PVT->DATA_VALID);
-    DEBUG_PRINT_REG(PVT->SENSOR_ENA);
+    DEBUG_PRINT_REG(PVTx->APB_CTRL);
+    DEBUG_PRINT_REG(PVTx->MODE_CTRL);
+    DEBUG_PRINT_REG(PVTx->TRIMO_CTRL);
+    DEBUG_PRINT_REG(PVTx->TRIMG_CTRL);
+    DEBUG_PRINT_REG(PVTx->SENSOR_DATA);
+    DEBUG_PRINT_REG(PVTx->DATA_VALID);
+    DEBUG_PRINT_REG(PVTx->SENSOR_ENA);
 }
 

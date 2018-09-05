@@ -249,10 +249,10 @@ typedef struct
 /* Clock System Management */
 typedef struct
 {
-    __IO uint32_t CLKSRC;                 /*!< Offset: 0x080 Fabric clock ClkGen Clock Source Register (R/W) */
-    __IO uint32_t CLKRATIO;               /*!< Offset: 0x084 Fabric clock ClkGen Clock Divider Register (R/W) */
+    __IO uint32_t CLKSRC;                 /*!< Offset: 0x0C0 Fabric clock ClkGen Clock Source Register (R/W) */
+    __IO uint32_t CLKRATIO;               /*!< Offset: 0x0C4 Fabric clock ClkGen Clock Divider Register (R/W) */
        uint8_t  RESERVED2[4];
-    __IO uint32_t CLKGT;                  /*!< Offset: 0x08C Fabric clock ClkGen Clock Gate Register (R/W) */
+    __IO uint32_t CLKGT;                  /*!< Offset: 0x0CC Fabric clock ClkGen Clock Gate Register (R/W) */
 } CLK_TypeDef;
 
 /* BOOT MODE Management */
@@ -306,18 +306,40 @@ typedef struct
         __IO uint32_t WDT_PAUSE;          /*!< Offset: 0x020 WDT Pause Register (R/W) */
         __IO uint32_t INT_STATUS;         /*!< Offset: 0x020 Interrupt Status Register (R/W) */
         __IO uint32_t DLM_INTSEL;         /*!< Offset: 0x020 DLM Interrupt Select Register (R/W) */
-        __IO uint32_t PVT_DIV;            /*!< Offset: 0x020 PVT Clock Divider Register (R/W) */
+        __IO uint32_t PVT0_DIV;           /*!< Offset: 0x020 PVT0 Clock Divider Register (R/W) */
+        __IO uint32_t DDR_PORT_ADDR;      /*!< Offset: 0x020 DDR Port Addr Register (R/W) */
     };
     union Adress24{
-    __IO uint32_t WDT_SPEEDUP;            /*!< Offset: 0x024 WDT Speedup Register (R/W) */
-    __IO uint32_t PVT_INTMASK;            /*!< Offset: 0x024 PVT Interrupt Mask Register (R/W) */
+        __IO uint32_t WDT_SPEEDUP;        /*!< Offset: 0x024 WDT Speedup Register (R/W) */
+        __IO uint32_t PVT1_DIV;           /*!< Offset: 0x024 PVT1 Clock Divider Register (R/W) */
+        __IO uint32_t DDR_MODE_CONFIG;    /*!< Offset: 0x024 DDR Mode Configure Register (R/W) */
     };
+    union Adress28{
+        __IO uint32_t PVT_INTMASK;        /*!< Offset: 0x028 PVT Interrupt Mask Register (R/W) */
+        __IO uint32_t DDR_CSYSREG;        /*!< Offset: 0x028 DDR Csysreg Register (R/W) */
+    };
+    union Adress2C{
+        __IO uint32_t PVT_INTSTA;         /*!< Offset: 0x02C PVT Interrupt Sta Register (R/W) */
+        __I  uint32_t DDR_CACTIVE_OR;     /*!< Offset: 0x02C DDR Cactive OR Register (R/ ) */
+    };
+    __I  uint32_t DDR_CSYSACK;            /*!< Offset: 0x030 DDR Csysack Register (R/ ) */
+    __I  uint32_t DDR_CACTIVE;            /*!< Offset: 0x034 DDR Cactive Register (R/ ) */
+    __IO uint32_t DDR_ARURGENT;           /*!< Offset: 0x038 DDR AXI Read Urgent Register (R/W) */
+    __IO uint32_t DDR_AWURGENT;           /*!< Offset: 0x03C DDR AXI Write Urgent Register (R/W) */
+    __IO uint32_t DDR_PARMASK;            /*!< Offset: 0x040 DDR AXI Port Read Mask Register (R/W) */
+    __IO uint32_t DDR_PAWMASK;            /*!< Offset: 0x044 DDR AXI Port Write Mask Register (R/W) */
+    __IO uint32_t DDR_AQOS0;              /*!< Offset: 0x048 DDR AXI Port0 QoS Register (R/W) */
+    __IO uint32_t DDR_AQOS1;              /*!< Offset: 0x04C DDR AXI Port1 QoS Register (R/W) */
+    __IO uint32_t DDR_AQOS2;              /*!< Offset: 0x050 DDR AXI Port2 QoS Register (R/W) */
+    __I  uint32_t DDR_MRR_DATA0;          /*!< Offset: 0x054 + 0x4*n DDR CH0 MRR Data Register (R/ ) */
+    __I  uint32_t DDR_MRR_DATA1;          /*!< Offset: 0x094 + 0x4*n DDR CH1 MRR Data Register (R/ ) */
+    __I  uint32_t DDR_CHVLD;              /*!< Offset: 0x0D4 DDR MMR Valid Register (R/ ) */
 } APBSYS_TypeDef;
 
 /* Interrupt generator */
 typedef struct
 {
-    __IO uint32_t STAT;                   /*!< Offset: 0x000 Interrupt Status Register (R/W) */
+    __IO uint32_t STATUS;                 /*!< Offset: 0x000 Interrupt Status Register (R/W) */
     __IO uint32_t MASK;                   /*!< Offset: 0x004 Interrupt Mask Register (R/W) */
     __IO uint32_t DATA0;                  /*!< Offset: 0x008 Interrupt Data0 Register (R/W) */
     __IO uint32_t DATA1;                  /*!< Offset: 0x00C Interrupt Data1 Register (R/W) */
@@ -486,7 +508,8 @@ typedef struct
 #define TIM1                    ((TIM_TypeDef *) ACU_TIM1_BASE)
 #define WDT                     ((WDT_TypeDef *) ACU_WDT_BASE)
 #define CU                      ((CU_TypeDef *) ACU_CU_BASE)
-#define PVT                     ((PVT_TypeDef *) ACU_PVT_BASE)
+#define PVT0                    ((PVT_TypeDef *) ACU_PVT_BASE)
+#define PVT1                    ((PVT_TypeDef *) (ACU_PVT_BASE + 0x1000))
 
 #define GPIO0                   ((GPIO_TypeDef *) (ACU_GPIO_BASE))
 #define GPIO1                   ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 1))
@@ -583,15 +606,18 @@ typedef struct
 
 /*<! System Clock Control */
 #define APLL_CLK                ((PLLCLK_TypeDef *) (ACU_CLKSC_BASE))
-#define DPLL_CLK                ((PLLCLK_TypeDef *) (ACU_CLKSC_BASE + 0x30))
-#define IS_PLL_CLK(CLK)         (((CLK) == APLL_CLK) || ((CLK) == DPLL_CLK))
+#define BPLL_CLK                ((PLLCLK_TypeDef *) (ACU_CLKSC_BASE + 0x30))
+#define CPLL_CLK                ((PLLCLK_TypeDef *) (ACU_CLKSC_BASE + 0x60))
+#define DPLL_CLK                ((PLLCLK_TypeDef *) (ACU_CLKSC_BASE + 0x90))
+#define IS_PLL_CLK(CLK)         (((CLK) == APLL_CLK) || ((CLK) == BPLL_CLK) ||\
+                                ((CLK) == CPLL_CLK) || ((CLK) == DPLL_CLK))
 
-#define FABRIC_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x80))
-#define PCIE_CLK                ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x90))
-#define IPCORE_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xA0))
-#define DDR_CLK                 ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xB0))
-#define IS_RCC_SYSCLK(clock)    (((clock) == FABRIC_CLK) || ((clock) == PCIE_CLK) || \
-                                ((clock) == IPCORE_CLK) || ((clock) == DDR_CLK))
+#define FABRIC_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xC0))
+#define IPCORE_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xD0))
+#define DDR_CLK                 ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xE0))
+#define HASHCORE_CLK            ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xF0))
+#define IS_RCC_SYSCLK(clock)    (((clock) == FABRIC_CLK) || ((clock) == IPCORE_CLK) || \
+                                ((clock) == DDR_CLK) || ((clock) == HASHCORE_CLK))
 
 /*<! Cortex M3 Control */
 #define CM3_SC                  ((CM3SYS_TypeDef *) ACU_M3SC_BASE)
@@ -624,6 +650,7 @@ typedef struct
 #include "acu_tim.h"
 #include "acu_pvt.h"
 #include "acu_uart.h"
+#include "acu_int_gen.h"
 #include "acu_misc.h"
 #include "acu_debug.h"
 #include "system_acu.h"

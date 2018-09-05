@@ -19,9 +19,6 @@ TestStatus I2C_FunctionTest6(void);
 TestStatus I2C_FunctionTest7(void);
 TestStatus I2C_FunctionTest8(void);
 TestStatus I2C_FunctionTest9(void);
-TestStatus I2C_FunctionTest10(void);
-TestStatus I2C_FunctionTest11(void);
-TestStatus I2C_FunctionTest12(void);
 TestStatus I2C_FunctionTestX(void);
 
 #endif

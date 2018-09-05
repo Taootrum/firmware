@@ -28,6 +28,11 @@ void TIM_Init(TIM_TypeDef* TIMx, TIM_InitTypeDef *TIM_InitStruct)
     assert_param(IS_TIM_ALL_PERIPH(TIMx));
     assert_param(IS_TIM_MODE(TIM_InitStruct->TIM_Mode));
     assert_param(IS_TIM_TIME(TIM_InitStruct->TIM_TimingTime));
+    
+    /*------------------ System Management Configuration ---------------*/
+    RCC_APBPeriphResetCmd(TIM_SC, 0, RESET);
+    RCC_APBPeriphClockCmd(TIM_SC, 0, ENABLE);
+    RCC_APBPeriphIsoEnCmd(TIM_SC, ENABLE);
 
     /*------------------ TIMx TimerNLoadCountRegister Configuration ---------------*/
     if (TIM_InitStruct->TIM_Mode == FREE_RUNNING)

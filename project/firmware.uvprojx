@@ -495,6 +495,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\driver\src\acu_wdt.c</FilePath>
             </File>
+            <File>
+              <FileName>acu_int_gen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\driver\src\acu_int_gen.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -587,6 +592,21 @@
               <FileName>test_wdt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\test\src\test_wdt.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_int_gen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_int_gen.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_cu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_cu.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_ddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\test\src\test_ddr.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -15,6 +15,7 @@ uint32_t g_AllSuccessCount = 0;
 uint32_t g_AllFailCount = 0;
 
 static ALLCASE CRU_AllCases[] = {
+#if 0
     {"CRU_InterfaceTest1", CRU_InterfaceTest1},
     {"CRU_InterfaceTest2", CRU_InterfaceTest2},
     {"CRU_InterfaceTest3", CRU_InterfaceTest3},
@@ -34,6 +35,24 @@ static ALLCASE CRU_AllCases[] = {
     {"CRU_InterfaceTest17", CRU_InterfaceTest17},
     {"CRU_InterfaceTest18", CRU_InterfaceTest18},
     {"CRU_InterfaceTest19", CRU_InterfaceTest19}
+#else
+    {"CRU_InterfaceTest4", CRU_InterfaceTest4},
+    {"CRU_InterfaceTest5", CRU_InterfaceTest5},
+    {"CRU_InterfaceTest6", CRU_InterfaceTest6},
+    {"CRU_InterfaceTest7", CRU_InterfaceTest7},
+    {"CRU_InterfaceTest8", CRU_InterfaceTest8},
+    {"CRU_InterfaceTest9", CRU_InterfaceTest9},
+    {"CRU_InterfaceTest10", CRU_InterfaceTest10},
+    {"CRU_InterfaceTest11", CRU_InterfaceTest11},
+    {"CRU_InterfaceTest12", CRU_InterfaceTest12},
+    {"CRU_InterfaceTest13", CRU_InterfaceTest13},
+    {"CRU_InterfaceTest14", CRU_InterfaceTest14},
+    {"CRU_InterfaceTest15", CRU_InterfaceTest15},
+    {"CRU_InterfaceTest16", CRU_InterfaceTest16},
+    {"CRU_InterfaceTest17", CRU_InterfaceTest17},
+    {"CRU_InterfaceTest18", CRU_InterfaceTest18},
+    {"CRU_InterfaceTest19", CRU_InterfaceTest19}
+#endif
 };
 
 static ALLCASE SPI_AllCases[] = {
@@ -52,8 +71,8 @@ static ALLCASE GPIO_AllCases[] = {
     {"GPIO_InterfaceTest2", GPIO_InterfaceTest2},
     {"GPIO_InterfaceTest3", GPIO_InterfaceTest3},
     {"GPIO_InterfaceTest4", GPIO_InterfaceTest4},
-    {"GPIO_InterfaceTest3", GPIO_InterfaceTest5},
-    {"GPIO_InterfaceTest4", GPIO_InterfaceTest6}
+    {"GPIO_InterfaceTest5", GPIO_InterfaceTest5},
+    {"GPIO_InterfaceTest6", GPIO_InterfaceTest6}
 };
 
 static ALLCASE UART_AllCases[] = {
@@ -126,6 +145,25 @@ static ALLCASE PCIE_AllCases[] = {
     {"PCIE_FunctionTest6", PCIE_FunctionTest6}
 };
 
+static ALLCASE INT_AllCases[] = {
+    {"INT_FunctionTest1", INT_FunctionTest1},
+    {"INT_FunctionTest2", INT_FunctionTest2}
+};
+
+static ALLCASE CU_AllCases[] = {
+    {"CU_FunctionTest1", CU_FunctionTest1},
+    {"CU_FunctionTest2", CU_FunctionTest2},
+#ifndef SIM_ENV
+    {"CU_FunctionTest3", CU_FunctionTest3}
+#endif
+};
+
+static ALLCASE DDR_AllCases[] = {
+    {"DDR_FunctionTest1", DDR_FunctionTest1},
+    {"DDR_FunctionTest2", DDR_FunctionTest2},
+    {"DDR_FunctionTest3", DDR_FunctionTest3}
+};
+
 /****************************************************************
   * 函数      : ACU_SuiteTest()
   * 参数      : None
@@ -168,15 +206,22 @@ void ACU_HalFuncTest(void)
     ACU_SUITE_TEST(SPI_AllCases);
     ACU_SUITE_TEST(GPIO_AllCases);
     ACU_SUITE_TEST(UART_AllCases);
-    ACU_SUITE_TEST(FLASH_AllCases);
+    //ACU_SUITE_TEST(FLASH_AllCases);
     ACU_SUITE_TEST(I2C_AllCases);
-    ACU_SUITE_TEST(PVT_AllCases);
+    //ACU_SUITE_TEST(PVT_AllCases);
     ACU_SUITE_TEST(TIMER_AllCases);
     ACU_SUITE_TEST(WDT_AllCases);
     ACU_SUITE_TEST(PCIE_AllCases);
+    ACU_SUITE_TEST(INT_AllCases);
+    
+    /* Initialize Fabric Clock */
+    //RCC_SYSCLKSetDiv(FABRIC_CLK, APLL_CLK_FREQ / (900 * 1000000) - 1);
+    //DDRC_Init();
+    //ACU_SUITE_TEST(CU_AllCases);
+    
+    //ACU_SUITE_TEST(DDR_AllCases);
 #else
-    ACU_SUITE_TEST(TIMER_AllCases);
-    ACU_SUITE_TEST(WDT_AllCases);
+    ACU_SUITE_TEST(FLASH_AllCases);
 #endif
     ACU_ALL_TEST_REPORT();
 }
