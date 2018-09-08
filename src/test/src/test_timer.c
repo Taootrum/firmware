@@ -60,7 +60,7 @@ TestStatus TIMER_FunctionTest3(void)
     
     TIM_DeInit();
     TIM_InitStructure.TIM_Mode = USER_DEFINED;
-    TIM_InitStructure.TIM_TimingTime = 1;     /* 100ms */
+    TIM_InitStructure.TIM_TimingTime = 1;     /* 1ms */
     TIM_Init(TIM0, &TIM_InitStructure);
     TIM_ITConfig(TIM0, ENABLE);
     TIM_Cmd(TIM0, ENABLE);
@@ -83,7 +83,7 @@ TestStatus TIMER_FunctionTest4(void)
     
     TIM_DeInit();
     TIM_InitStructure.TIM_Mode = USER_DEFINED;
-    TIM_InitStructure.TIM_TimingTime = 1;     /* 100ms */
+    TIM_InitStructure.TIM_TimingTime = 1;     /* 1ms */
     TIM_Init(TIM0, &TIM_InitStructure);
     TIM_ITConfig(TIM0, ENABLE);
     TIM_Cmd(TIM0, ENABLE);

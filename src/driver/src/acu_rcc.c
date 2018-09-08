@@ -29,6 +29,7 @@ void RCC_IPCoreReset(void)
 void RCC_ClkManageReset(void)
 {
     WRITE_REG(RST_SC->CLKM_RST, SYS_RESET_LOW);
+    ACU_Delay(1);
     WRITE_REG(RST_SC->CLKM_RST, SYS_RESET_HIGH);
 }
 

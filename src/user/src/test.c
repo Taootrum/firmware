@@ -15,7 +15,7 @@ uint32_t g_AllSuccessCount = 0;
 uint32_t g_AllFailCount = 0;
 
 static ALLCASE CRU_AllCases[] = {
-#if 0
+#if 1
     {"CRU_InterfaceTest1", CRU_InterfaceTest1},
     {"CRU_InterfaceTest2", CRU_InterfaceTest2},
     {"CRU_InterfaceTest3", CRU_InterfaceTest3},
@@ -121,6 +121,11 @@ static ALLCASE PVT_AllCases[] = {
     {"PVT_FunctionTest6", PVT_FunctionTest6}
 };
 
+static ALLCASE EFUSE_AllCases[] = {
+    {"EFUSE_FunctionTest1", EFUSE_FunctionTest1},
+    {"EFUSE_FunctionTest2", EFUSE_FunctionTest2}
+};
+
 static ALLCASE TIMER_AllCases[] = {
     {"TIMER_FunctionTest1", TIMER_FunctionTest1},
     {"TIMER_FunctionTest2", TIMER_FunctionTest2},
@@ -194,6 +199,27 @@ static void ACU_SuiteTest(PALLCASE pSuiteAllCase)
 }
 
 /****************************************************************
+  * 函数      : ACU_SingleTest()
+  * 参数      : None
+  * 返回值     : None
+  * 描述      : 单例测试
+ ***************************************************************/
+static void ACU_SingleTest(uint8_t TestNum, PALLCASE pSingleCase)
+{
+    TestStatus CaseStatus = FAILED;
+
+    CaseStatus = pSingleCase->pFun();
+    if (CaseStatus == FAILED)
+    {
+        DEBUG_MSG("<%2d>:%s TEST CASE FAILED."LF, TestNum, pSingleCase->FunName);
+    }
+    else
+    {
+        DEBUG_MSG("<%2d>:%s TEST CASE PASSED."LF, TestNum, pSingleCase->FunName);
+    }
+}
+
+/****************************************************************
   * 函数      : ACU_HalFuncTest()
   * 参数      : None
   * 返回值     : None
@@ -201,28 +227,147 @@ static void ACU_SuiteTest(PALLCASE pSuiteAllCase)
  ***************************************************************/
 void ACU_HalFuncTest(void)
 {
-#if 1
-    ACU_SUITE_TEST(CRU_AllCases);
-    ACU_SUITE_TEST(SPI_AllCases);
-    ACU_SUITE_TEST(GPIO_AllCases);
-    ACU_SUITE_TEST(UART_AllCases);
-    //ACU_SUITE_TEST(FLASH_AllCases);
-    ACU_SUITE_TEST(I2C_AllCases);
-    //ACU_SUITE_TEST(PVT_AllCases);
-    ACU_SUITE_TEST(TIMER_AllCases);
-    ACU_SUITE_TEST(WDT_AllCases);
-    ACU_SUITE_TEST(PCIE_AllCases);
-    ACU_SUITE_TEST(INT_AllCases);
+    uint32_t TestNum = READ_REG(INT_GEN->DATA6);
     
-    /* Initialize Fabric Clock */
-    //RCC_SYSCLKSetDiv(FABRIC_CLK, APLL_CLK_FREQ / (900 * 1000000) - 1);
-    //DDRC_Init();
-    //ACU_SUITE_TEST(CU_AllCases);
+    /* All Cases Testing */
+    if (TestNum == 0)
+    {
+        #if 1
+        ACU_SUITE_TEST(CRU_AllCases);
+        ACU_SUITE_TEST(SPI_AllCases);
+        ACU_SUITE_TEST(GPIO_AllCases);
+        ACU_SUITE_TEST(UART_AllCases);
+        ACU_SUITE_TEST(FLASH_AllCases);
+        ACU_SUITE_TEST(I2C_AllCases);
+        ACU_SUITE_TEST(PVT_AllCases);
+        ACU_SUITE_TEST(EFUSE_AllCases);
+        ACU_SUITE_TEST(TIMER_AllCases);
+        ACU_SUITE_TEST(WDT_AllCases);
+        ACU_SUITE_TEST(PCIE_AllCases);
+        ACU_SUITE_TEST(INT_AllCases);
+        
+        /* Initialize Fabric Clock */
+        //RCC_SYSCLKSetDiv(FABRIC_CLK, APLL_CLK_FREQ / (900 * 1000000) - 1);
+        //DDRC_Init();
+        //ACU_SUITE_TEST(CU_AllCases);
+        
+        //ACU_SUITE_TEST(DDR_AllCases);
+        #else
+        ACU_SUITE_TEST(PVT_AllCases);
+        ACU_SUITE_TEST(EFUSE_AllCases);
+        #endif
+        ACU_ALL_TEST_REPORT();
+        
+        #if 1
+        if (g_AllCaseCount == g_AllSuccessCount)
+        {
+            DEBUG_MSG("TEST CASE PASSED."LF LF);
+        }
+        else
+        {
+            DEBUG_MSG("TEST CASE FAILED."LF LF);
+        }
+        #endif
+        
+        return;
+    }
+
+    /* Single Case Testing */
+    uint8_t CaseStepNum = 0;
+    uint8_t CruNum = sizeof(CRU_AllCases) / sizeof(CRU_AllCases[0]);
+    uint8_t SpiNum = sizeof(SPI_AllCases) / sizeof(SPI_AllCases[0]);
+    uint8_t GpioNum = sizeof(GPIO_AllCases) / sizeof(GPIO_AllCases[0]);
+    uint8_t UartNum = sizeof(UART_AllCases) / sizeof(UART_AllCases[0]);
+    uint8_t FlashNum = sizeof(FLASH_AllCases) / sizeof(FLASH_AllCases[0]);
+    uint8_t I2cNum = sizeof(I2C_AllCases) / sizeof(I2C_AllCases[0]);
+    uint8_t PvtNum = sizeof(PVT_AllCases) / sizeof(PVT_AllCases[0]);
+    uint8_t EfuseNum = sizeof(EFUSE_AllCases) / sizeof(EFUSE_AllCases[0]);
+    uint8_t TimerNum = sizeof(TIMER_AllCases) / sizeof(TIMER_AllCases[0]);
+    uint8_t WdtNum = sizeof(WDT_AllCases) / sizeof(WDT_AllCases[0]);
+    uint8_t PcieNum = sizeof(PCIE_AllCases) / sizeof(PCIE_AllCases[0]);
+    uint8_t IntNum = sizeof(INT_AllCases) / sizeof(INT_AllCases[0]);
+
+    if (TestNum <= CaseStepNum + CruNum)
+    {
+        ACU_SingleTest(TestNum, &CRU_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += CruNum;
+    if (TestNum <= CaseStepNum + SpiNum)
+    {
+        ACU_SingleTest(TestNum, &SPI_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
     
-    //ACU_SUITE_TEST(DDR_AllCases);
-#else
-    ACU_SUITE_TEST(FLASH_AllCases);
-#endif
-    ACU_ALL_TEST_REPORT();
+    CaseStepNum += SpiNum;
+    if (TestNum <= CaseStepNum + GpioNum)
+    {
+        ACU_SingleTest(TestNum, &GPIO_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+    
+    CaseStepNum += GpioNum;
+    if (TestNum <= CaseStepNum + UartNum)
+    {
+        ACU_SingleTest(TestNum, &UART_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += UartNum;
+    if (TestNum <= CaseStepNum + FlashNum)
+    {
+        ACU_SingleTest(TestNum, &FLASH_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += FlashNum;
+    if (TestNum <= CaseStepNum + I2cNum)
+    {
+        ACU_SingleTest(TestNum, &I2C_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += I2cNum;
+    if (TestNum <= CaseStepNum + PvtNum)
+    {
+        ACU_SingleTest(TestNum, &PVT_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += PvtNum;
+    if (TestNum <= CaseStepNum + EfuseNum)
+    {
+        ACU_SingleTest(TestNum, &EFUSE_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += EfuseNum;
+    if (TestNum <= CaseStepNum + TimerNum)
+    {
+        ACU_SingleTest(TestNum, &TIMER_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += TimerNum;
+    if (TestNum <= CaseStepNum + WdtNum)
+    {
+        ACU_SingleTest(TestNum, &WDT_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += WdtNum;
+    if (TestNum <= CaseStepNum + PcieNum)
+    {
+        ACU_SingleTest(TestNum, &PCIE_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += PcieNum;
+    if (TestNum <= CaseStepNum + IntNum)
+    {
+        ACU_SingleTest(TestNum, &INT_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
 }
 

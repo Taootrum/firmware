@@ -17,6 +17,7 @@
 #include "test_uart.h"
 #include "test_wdt.h"
 #include "test_pvt.h"
+#include "test_efuse.h"
 #include "test_pcie.h"
 #include "test_int_gen.h"
 #include "test_cu.h"

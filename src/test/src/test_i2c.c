@@ -526,7 +526,7 @@ TestStatus I2C_FunctionTest9(void)
     I2C_InitStructure.I2C_AddressMode = I2C_Address_7bit;
     I2C_InitStructure.I2C_HSMasterAddress = 0x1;
     I2C_InitStructure.I2C_OwnAddress = 0x55;
-    I2C_InitStructure.I2C_AckAddress = 0x50;
+    I2C_InitStructure.I2C_AckAddress = 0x52;
     I2C_InitStructure.I2C_Acknowledge = I2C_ACK_ENABLE;
     I2C_InitStructure.I2C_TxFIFOLevel = I2C_FIFO_TX_LEVEL - 1;
     I2C_InitStructure.I2C_RxFIFOLevel = I2C_FIFO_RX_LEVEL - 1;

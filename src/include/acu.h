@@ -373,6 +373,16 @@ typedef struct
     __IO uint32_t SENSOR_ENA;           /*!< Offset: 0x018 Sensor Enable Register (R/W) */
 } PVT_TypeDef;
 
+/* EFUSE Module */
+typedef struct
+{
+    __IO uint32_t ESI_MEMFUSE_CTRL;     /*!< Offset: 0x000 EFUSE Control Register (R/W) */
+    __O  uint32_t ESI_MEMFUSE_WRDATA;   /*!< Offset: 0x004 EFUSE Write Data Register ( /W) */
+    __IO uint32_t ESI_MEMFUSE_RDDATA;   /*!< Offset: 0x008 EFUSE Read Data Register (R/W) */
+    __I  uint32_t ESI_MEMFUSE_STAT;     /*!< Offset: 0x00C EFUSE Status Register (R/ ) */
+    __IO uint32_t ESI_MEMFUSE_DIV;      /*!< Offset: 0x010 EFUSE Clock Divider Register (R/W) */
+} EFUSE_TypeDef;
+
 /* PCIE Module */
 typedef struct
 {
@@ -510,6 +520,7 @@ typedef struct
 #define CU                      ((CU_TypeDef *) ACU_CU_BASE)
 #define PVT0                    ((PVT_TypeDef *) ACU_PVT_BASE)
 #define PVT1                    ((PVT_TypeDef *) (ACU_PVT_BASE + 0x1000))
+#define EFUSE                   ((EFUSE_TypeDef *) (ACU_PVT_BASE + 0x2000))
 
 #define GPIO0                   ((GPIO_TypeDef *) (ACU_GPIO_BASE))
 #define GPIO1                   ((GPIO_TypeDef *) (ACU_GPIO_BASE + 0x40 * 1))
@@ -649,6 +660,7 @@ typedef struct
 #include "acu_spi.h"
 #include "acu_tim.h"
 #include "acu_pvt.h"
+#include "acu_efuse.h"
 #include "acu_uart.h"
 #include "acu_int_gen.h"
 #include "acu_misc.h"
