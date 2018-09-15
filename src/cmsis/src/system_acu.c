@@ -31,8 +31,6 @@
  *----------------------------------------------------------------------------*/
 uint32_t SystemCoreClock = SYSTEM_CLK_FREQ;
 
-static void SetSysClock(void);
-
 /*----------------------------------------------------------------------------
   System Core Clock update function
  *----------------------------------------------------------------------------*/
@@ -41,6 +39,9 @@ void SystemCoreClockUpdate (void)
     SystemCoreClock = SYSTEM_CLK_FREQ;
 }
 
+/*----------------------------------------------------------------------------
+  System Reset Modules function
+ *----------------------------------------------------------------------------*/
 static void ResetSysModules(void)
 {
     /* Clock system manager reset */
@@ -61,6 +62,9 @@ static void ResetSysModules(void)
     //WDT_DeInit(WDT);
 }
 
+/*----------------------------------------------------------------------------
+  System Set Fabric Clock function
+ *----------------------------------------------------------------------------*/
 static void SetSysClock(void)
 {
     PLL_InitTypeDef PLL_Init;
@@ -68,7 +72,7 @@ static void SetSysClock(void)
     __IO uint32_t StartUpCounter = 0;
     uint32_t DivValue = 0;
 
-    /* Initialize APLL */
+    /* Initialize APLL 1800MHz*/
     PLL_StructInit(&PLL_Init);
     RCC_PLLConfig(APLL_CLK, &PLL_Init);
     do
@@ -78,12 +82,8 @@ static void SetSysClock(void)
     } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
     RCC_PLLCmd(APLL_CLK, ENABLE);
 
-    /* Initialize BPLL */
-    PLL_Init.PLLInputClock = XTAL;
-    PLL_Init.PLLOutputClock = BPLL_CLK_FREQ;
-    PLL_Init.Divr = PLL_DIVR;
-    PLL_Init.Divf = PLL_DIVF;
-    PLL_Init.Divq = PLL_DIVQ_2;
+    /* Initialize BPLL 1800MHz */
+    PLL_StructInit(&PLL_Init);
     RCC_PLLConfig(BPLL_CLK, &PLL_Init);
     StartUpCounter = 0;
     do
@@ -93,21 +93,6 @@ static void SetSysClock(void)
     } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
     RCC_PLLCmd(BPLL_CLK, ENABLE);
     
-    /* Initialize CPLL 2133M */
-    PLL_Init.PLLInputClock = XTAL;
-    PLL_Init.PLLOutputClock = CPLL_CLK_FREQ;
-    PLL_Init.Divr = CPLL_DIVR;
-    PLL_Init.Divf = CPLL_DIVF;
-    PLL_Init.Divq = PLL_DIVQ_2;
-    RCC_PLLConfig(CPLL_CLK, &PLL_Init);
-    StartUpCounter = 0;
-    do
-    {
-        PLL_LockStatus = RCC_PLLGetLockStatus(CPLL_CLK);
-        StartUpCounter++;  
-    } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
-    RCC_PLLCmd(CPLL_CLK, ENABLE);
-
     /* Initialize Fabric Clock */
     RCC_SYSCLKSetSource(FABRIC_CLK, SYSCLK_SOURCE_APLL);
     DivValue = APLL_CLK_FREQ / SYSTEM_CLK_FREQ - 1;
@@ -115,21 +100,10 @@ static void SetSysClock(void)
     RCC_SYSCLKCmd(FABRIC_CLK, ENABLE);
 
     /* Initialize IPCORE Clock */
-    RCC_SYSCLKSetSource(IPCORE_CLK, SYSCLK_SOURCE_BPLL);
-    DivValue = BPLL_CLK_FREQ / IPCORE_CLK_FREQ - 1;
+    RCC_SYSCLKSetSource(IPCORE_CLK, SYSCLK_SOURCE_APLL);
+    DivValue = APLL_CLK_FREQ / IPCORE_CLK_FREQ - 1;
     RCC_SYSCLKSetDiv(IPCORE_CLK, DivValue);
     RCC_SYSCLKCmd(IPCORE_CLK, ENABLE);
-
-    /* Initialize DDR Clock */
-    RCC_SYSCLKSetSource(DDR_CLK, SYSCLK_SOURCE_CPLL);
-    DivValue = CPLL_CLK_FREQ / DDR_CLK_FREQ - 1;
-    RCC_SYSCLKSetDiv(DDR_CLK, DivValue);
-    RCC_SYSCLKCmd(DDR_CLK, ENABLE);
-    
-    /*!< GPIO Periph clock enable */
-    RCC_APBPeriphResetCmd(GPIO_SC, 0, RESET);
-    RCC_APBPeriphClockCmd(GPIO_SC, 0, ENABLE);
-    RCC_APBPeriphIsoEnCmd(GPIO_SC, ENABLE);
 }
 
 /*----------------------------------------------------------------------------
@@ -148,8 +122,13 @@ void SystemInit (void)
 
     /* Update Core Clock */
     SystemCoreClockUpdate();
-        
+
     /* configuration systick*/
     SysTick_Configuration();
+
+    /*!< GPIO Periph enable */
+    RCC_APBPeriphResetCmd(GPIO_SC, 0, RESET);
+    RCC_APBPeriphClockCmd(GPIO_SC, 0, ENABLE);
+    RCC_APBPeriphIsoEnCmd(GPIO_SC, ENABLE);
 }
 

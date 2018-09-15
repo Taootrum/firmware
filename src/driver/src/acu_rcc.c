@@ -139,9 +139,9 @@ void PLL_StructInit(PLL_InitTypeDef *PLL_Init)
     /* initialize the SPI_Mode member */
     PLL_Init->PLLOutputClock = APLL_CLK_FREQ;
     /* 24M / (0 + 1) = 24M */ 
-    PLL_Init->Divr = PLL_DIVR;
+    PLL_Init->Divr = APLL_DIVR;
     /* 24M * (0x4A + 1) * 2 = 3600M */ 
-    PLL_Init->Divf = PLL_DIVF;
+    PLL_Init->Divf = APLL_DIVF;
     /* 3600M / (2 ^ 1) = 1800M */ 
     PLL_Init->Divq = PLL_DIVQ_2;
 }
@@ -251,6 +251,18 @@ void RCC_SYSCLKGetFreq(RCC_ClocksTypeDef *RCC_Clocks)
         RCC_Clocks->HASHCLK_Frequency = RCC_Clocks->CPLL_Frequency / (uDiv + 1);
     } else {
         RCC_Clocks->HASHCLK_Frequency = XTAL / (uDiv + 1);
+    }
+
+    /* ddr1 clock */
+    uDiv = RCC_SYSCLKGetDiv(DDR1_CLK);
+    if (RCC_SYSCLKGetSource(DDR1_CLK) == SYSCLK_SOURCE_APLL) {
+        RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->APLL_Frequency / (uDiv + 1);
+    } else if (RCC_SYSCLKGetSource(DDR1_CLK) == SYSCLK_SOURCE_BPLL) {
+        RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->BPLL_Frequency / (uDiv + 1);
+    } else if (RCC_SYSCLKGetSource(DDR1_CLK) == SYSCLK_SOURCE_CPLL) {
+        RCC_Clocks->DDRCLK_Frequency = RCC_Clocks->CPLL_Frequency / (uDiv + 1);
+    } else {
+        RCC_Clocks->DDRCLK_Frequency = XTAL / (uDiv + 1);
     }
 }
 

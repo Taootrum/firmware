@@ -171,19 +171,6 @@ TestStatus PCIE_FunctionTest5(void)
     return ret;
 }
 
-static void ELBI_WriteAccess(uint32_t Addr, uint32_t Data)
-{
-    WRITE32(0x40008E00, Addr);
-    WRITE32(0x40008E04, Data);
-}
-
-static uint32_t ELBI_ReadAccess(uint32_t Addr)
-{
-    WRITE32(0x40008E08, Addr);
-    
-    return READ32(0x40008E0C);
-}
-
 /* ELBI write&read access */
 TestStatus PCIE_FunctionTest6(void)
 {

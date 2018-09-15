@@ -28,8 +28,6 @@ TestStatus CRU_InterfaceTest14(void);
 TestStatus CRU_InterfaceTest15(void);
 TestStatus CRU_InterfaceTest16(void);
 TestStatus CRU_InterfaceTest17(void);
-TestStatus CRU_InterfaceTest18(void);
-TestStatus CRU_InterfaceTest19(void);
 
 #endif
 

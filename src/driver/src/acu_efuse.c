@@ -16,7 +16,9 @@
 void EFUSE_DeInit(void)
 {
     RCC_APBPeriphResetCmd(PVT_SC, 2, SET);
+    RCC_APBPeriphResetCmd(PVT_SC, 3, SET);
     RCC_APBPeriphClockCmd(PVT_SC, 2, DISABLE);
+    RCC_APBPeriphClockCmd(PVT_SC, 3, DISABLE);
 }
   
 /****************************************************************
@@ -27,19 +29,24 @@ void EFUSE_DeInit(void)
  ***************************************************************/
 void EFUSE_Init(void)
 {
-    uint32_t apbclock = 0, divider = 0;
-    RCC_ClocksTypeDef RCC_ClocksStatus;
+    uint32_t DivValue = 0;
 
     /* system management config */
     RCC_APBPeriphResetCmd(PVT_SC, 2, RESET);
+    RCC_APBPeriphResetCmd(PVT_SC, 3, RESET);
     RCC_APBPeriphClockCmd(PVT_SC, 2, ENABLE);
+    RCC_APBPeriphClockCmd(PVT_SC, 3, ENABLE);
     RCC_APBPeriphIsoEnCmd(PVT_SC, ENABLE);
-    
-    /* EFUSE Clock Configuration */
-    RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
-    apbclock = RCC_ClocksStatus.FCLK_Frequency;
-    divider = apbclock / 10000000 - 1; /* EFUSE clock 10M */
-    WRITE_REG(EFUSE->ESI_MEMFUSE_DIV, divider);
+
+    /* Initialize EFUSE Clock */
+    /* First divider 100M */
+    RCC_SYSCLKSetSource(EFUSE_CLK, SYSCLK_SOURCE_APLL);
+    DivValue = APLL_CLK_FREQ / 100000000 - 1;
+    RCC_SYSCLKSetDiv(EFUSE_CLK, DivValue);
+    RCC_SYSCLKCmd(EFUSE_CLK, ENABLE);
+    /* Seconf divider */
+    DivValue = 100000000 / EFUSE_CLK_FREQ - 1;
+    WRITE_REG(EFUSE->ESI_MEMFUSE_DIV, DivValue);
 }
 
 /****************************************************************

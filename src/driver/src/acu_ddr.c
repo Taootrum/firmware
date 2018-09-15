@@ -218,9 +218,9 @@ void DDR_ReadMem(uint8_t *buf, uint32_t addr, uint32_t size, uint8_t channel)
     }
 }
 
-void DDR_InterleaveWriteMem(uint8_t *buf, uint64_t addr, uint32_t size)
+void DDR_InterleaveWriteMem(uint8_t *buf, uint32_t addr, uint32_t size)
 {
-    uint64_t PageHeadAddr = 0;
+    uint32_t PageHeadAddr = 0;
     uint8_t PageProgAddr = 0;
     uint32_t RowNum = 0, LineNum = 0;
     uint32_t PageNum = 0, PageMod = 0;
@@ -283,9 +283,9 @@ void DDR_InterleaveWriteMem(uint8_t *buf, uint64_t addr, uint32_t size)
     }
 }
 
-void DDR_InterleaveReadMem(uint8_t *buf, uint64_t addr, uint32_t size)
+void DDR_InterleaveReadMem(uint8_t *buf, uint32_t addr, uint32_t size)
 {
-    uint64_t PageHeadAddr = 0;
+    uint32_t PageHeadAddr = 0;
     uint8_t PageProgAddr = 0;
     uint32_t RowNum = 0, LineNum = 0;
     uint32_t PageNum = 0, PageMod = 0;

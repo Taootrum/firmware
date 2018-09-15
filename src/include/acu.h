@@ -485,7 +485,7 @@ typedef struct
 #define ACU_IOPADSC_BASE        (ACU_SYS_BASE + 0x09000)
 #define ACU_BMIO_BASE           (ACU_IOPADSC_BASE + 0x03fc)
 #define ACU_CLKSC_BASE          (ACU_SYS_BASE + 0x09400)
-#define ACU_M3SC_BASE           (ACU_SYS_BASE + 0x0A000)
+#define ACU_M3SC_BASE           (ACU_SYS_BASE + 0x09800)
 #define ACU_DRAM0SM_BASE        (ACU_SYS_BASE + 0x0C000)
 #define ACU_DRAM1SM_BASE        (ACU_SYS_BASE + 0x0C400)
 #define ACU_DRAM2SM_BASE        (ACU_SYS_BASE + 0x0C800)
@@ -627,8 +627,11 @@ typedef struct
 #define IPCORE_CLK              ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xD0))
 #define DDR_CLK                 ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xE0))
 #define HASHCORE_CLK            ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0xF0))
+#define DDR1_CLK                ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x100))
+#define EFUSE_CLK               ((CLK_TypeDef *) (ACU_CLKSC_BASE + 0x110))
 #define IS_RCC_SYSCLK(clock)    (((clock) == FABRIC_CLK) || ((clock) == IPCORE_CLK) || \
-                                ((clock) == DDR_CLK) || ((clock) == HASHCORE_CLK))
+                                ((clock) == DDR_CLK) || ((clock) == HASHCORE_CLK) || \
+                                ((clock) == DDR1_CLK) || ((clock) == EFUSE_CLK))
 
 /*<! Cortex M3 Control */
 #define CM3_SC                  ((CM3SYS_TypeDef *) ACU_M3SC_BASE)

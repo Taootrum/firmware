@@ -18,19 +18,19 @@
 #define DEBUG_UART UART
 
 /* Acu Simulation */
-#if defined(SIM_ENV)
+#if defined(ACU_SIM)
 typedef struct {
     __O  uint32_t   CR;
 } DEBUG_SIM_Type;
 
-#define SIM_DEBUG_REG           ((DEBUG_SIM_Type *)0x20006fb0)
+#define SIM_DEBUG_REG           ((DEBUG_SIM_Type *)0x2001FFFC)
 #define SIM_END                 (SIM_DEBUG_REG->CR = 0xFF)
 #endif
 
 /* System Debug Msg */
-#if defined(DEBUG)
+#if defined(ACU_DEBUG)
 #define DEBUG_MSG(fmt,args...)      printf(fmt, ##args)
-#if defined(SIM_ENV)
+#if defined(ACU_SIM)
     #define LF  "\n"
 #else
     #define LF  "\r\n"

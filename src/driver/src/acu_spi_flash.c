@@ -44,7 +44,7 @@ void sFLASH_Init(void)
     /*!< Enable the sFLASH_SPI  */
     SPI_Cmd(sFLASH_SPI, ENABLE);
     
-#ifdef SIM_ENV    
+#ifdef ACU_SIM
     /* set connect to flash */
     GPIO_Init(GPIO_14, &GPIO_InitStructure);
     GPIO_SetOutput(GPIO_14, GPIO_SET);

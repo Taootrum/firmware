@@ -25,6 +25,19 @@ void PCIE_Init(void)
     WRITE32(ACU_PCIE_BASE + 0x24, 0x40000000);
 }
 
+void ELBI_WriteAccess(uint32_t Addr, uint32_t Data)
+{
+    WRITE32(0x40008E00, Addr);
+    WRITE32(0x40008E04, Data);
+}
+
+uint32_t ELBI_ReadAccess(uint32_t Addr)
+{
+    WRITE32(0x40008E08, Addr);
+    
+    return READ32(0x40008E0C);
+}
+
 void PCIE_PrintReg(void)
 {
     DEBUG_PRINT_REG(PCIE_SC);

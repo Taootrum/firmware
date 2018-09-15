@@ -32,9 +32,7 @@ static ALLCASE CRU_AllCases[] = {
     {"CRU_InterfaceTest14", CRU_InterfaceTest14},
     {"CRU_InterfaceTest15", CRU_InterfaceTest15},
     {"CRU_InterfaceTest16", CRU_InterfaceTest16},
-    {"CRU_InterfaceTest17", CRU_InterfaceTest17},
-    {"CRU_InterfaceTest18", CRU_InterfaceTest18},
-    {"CRU_InterfaceTest19", CRU_InterfaceTest19}
+    {"CRU_InterfaceTest17", CRU_InterfaceTest17}
 #else
     {"CRU_InterfaceTest4", CRU_InterfaceTest4},
     {"CRU_InterfaceTest5", CRU_InterfaceTest5},
@@ -49,9 +47,7 @@ static ALLCASE CRU_AllCases[] = {
     {"CRU_InterfaceTest14", CRU_InterfaceTest14},
     {"CRU_InterfaceTest15", CRU_InterfaceTest15},
     {"CRU_InterfaceTest16", CRU_InterfaceTest16},
-    {"CRU_InterfaceTest17", CRU_InterfaceTest17},
-    {"CRU_InterfaceTest18", CRU_InterfaceTest18},
-    {"CRU_InterfaceTest19", CRU_InterfaceTest19}
+    {"CRU_InterfaceTest17", CRU_InterfaceTest17}
 #endif
 };
 
@@ -89,7 +85,7 @@ static ALLCASE UART_AllCases[] = {
 static ALLCASE FLASH_AllCases[] = {
     {"FLASH_InterfaceTest1", FLASH_InterfaceTest1},
     {"FLASH_InterfaceTest2", FLASH_InterfaceTest2},
-#ifndef SIM_ENV
+#ifndef ACU_SIM
     {"FLASH_InterfaceTest3", FLASH_InterfaceTest3},
     {"FLASH_InterfaceTest4", FLASH_InterfaceTest4},
     {"FLASH_InterfaceTest5", FLASH_InterfaceTest5},
@@ -103,7 +99,7 @@ static ALLCASE I2C_AllCases[] = {
     {"I2C_FunctionTest2", I2C_FunctionTest2},
     {"I2C_FunctionTest3", I2C_FunctionTest3},
     {"I2C_FunctionTest4", I2C_FunctionTest4},
-#ifdef SIM_ENV
+#ifdef ACU_SIM
     {"I2C_FunctionTest5", I2C_FunctionTest5},
     {"I2C_FunctionTest6", I2C_FunctionTest6},
     {"I2C_FunctionTest7", I2C_FunctionTest7},
@@ -154,19 +150,23 @@ static ALLCASE INT_AllCases[] = {
     {"INT_FunctionTest1", INT_FunctionTest1},
     {"INT_FunctionTest2", INT_FunctionTest2}
 };
+    
+static ALLCASE DDR_AllCases[] = {
+#ifdef ACU_DDR3
+    {"DDR_FunctionTest1", DDR_FunctionTest1},
+#endif
+#ifdef ACU_DDR4
+    {"DDR_FunctionTest2", DDR_FunctionTest2},
+#endif
+    {"DDR_FunctionTest3", DDR_FunctionTest3}
+};
 
 static ALLCASE CU_AllCases[] = {
     {"CU_FunctionTest1", CU_FunctionTest1},
     {"CU_FunctionTest2", CU_FunctionTest2},
-#ifndef SIM_ENV
+#ifndef ACU_SIM
     {"CU_FunctionTest3", CU_FunctionTest3}
 #endif
-};
-
-static ALLCASE DDR_AllCases[] = {
-    {"DDR_FunctionTest1", DDR_FunctionTest1},
-    {"DDR_FunctionTest2", DDR_FunctionTest2},
-    {"DDR_FunctionTest3", DDR_FunctionTest3}
 };
 
 /****************************************************************
@@ -186,13 +186,13 @@ static void ACU_SuiteTest(PALLCASE pSuiteAllCase)
         if (CaseStatus == FAILED)
         {
             g_SuiteFailCount++;
-            DEBUG_MSG("%s is FAILED.  (%d/%d)"LF, 
+            DEBUG_MSG("%s is FAILED. (%d/%d)"LF, 
                         pSuiteAllCase[Count].FunName, Count + 1, g_SuiteCaseCount);
         }
         else
         {
             g_SuiteSuccessCount++;
-            DEBUG_MSG("%s is SUCCESS. (%d/%d)"LF, 
+            DEBUG_MSG("%s is PASSED. (%d/%d)"LF, 
                         pSuiteAllCase[Count].FunName, Count + 1, g_SuiteCaseCount);
         }
     }                
@@ -227,7 +227,7 @@ static void ACU_SingleTest(uint8_t TestNum, PALLCASE pSingleCase)
  ***************************************************************/
 void ACU_HalFuncTest(void)
 {
-    uint32_t TestNum = READ_REG(INT_GEN->DATA6);
+    uint32_t TestNum = 53;//READ_REG(INT_GEN->DATA6);
     
     /* All Cases Testing */
     if (TestNum == 0)
@@ -247,18 +247,15 @@ void ACU_HalFuncTest(void)
         ACU_SUITE_TEST(INT_AllCases);
         
         /* Initialize Fabric Clock */
-        //RCC_SYSCLKSetDiv(FABRIC_CLK, APLL_CLK_FREQ / (900 * 1000000) - 1);
-        //DDRC_Init();
-        //ACU_SUITE_TEST(CU_AllCases);
-        
-        //ACU_SUITE_TEST(DDR_AllCases);
+        DDRC_Init();
+        ACU_SUITE_TEST(DDR_AllCases);
+        ACU_SUITE_TEST(CU_AllCases);
         #else
-        ACU_SUITE_TEST(PVT_AllCases);
-        ACU_SUITE_TEST(EFUSE_AllCases);
+        DDRC_Init();
+        ACU_SUITE_TEST(CU_AllCases);
         #endif
         ACU_ALL_TEST_REPORT();
         
-        #if 1
         if (g_AllCaseCount == g_AllSuccessCount)
         {
             DEBUG_MSG("TEST CASE PASSED."LF LF);
@@ -267,7 +264,6 @@ void ACU_HalFuncTest(void)
         {
             DEBUG_MSG("TEST CASE FAILED."LF LF);
         }
-        #endif
         
         return;
     }
@@ -286,6 +282,8 @@ void ACU_HalFuncTest(void)
     uint8_t WdtNum = sizeof(WDT_AllCases) / sizeof(WDT_AllCases[0]);
     uint8_t PcieNum = sizeof(PCIE_AllCases) / sizeof(PCIE_AllCases[0]);
     uint8_t IntNum = sizeof(INT_AllCases) / sizeof(INT_AllCases[0]);
+    uint8_t DDRNum = sizeof(DDR_AllCases) / sizeof(DDR_AllCases[0]);
+    uint8_t CUNum = sizeof(CU_AllCases) / sizeof(CU_AllCases[0]);
 
     if (TestNum <= CaseStepNum + CruNum)
     {
@@ -367,6 +365,22 @@ void ACU_HalFuncTest(void)
     if (TestNum <= CaseStepNum + IntNum)
     {
         ACU_SingleTest(TestNum, &INT_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += IntNum;
+    if (TestNum <= CaseStepNum + DDRNum)
+    {
+        DDRC_Init();
+        ACU_SingleTest(TestNum, &DDR_AllCases[TestNum - CaseStepNum - 1]);
+        return;
+    }
+
+    CaseStepNum += DDRNum;
+    if (TestNum <= CaseStepNum + CUNum)
+    {
+        DDRC_Init();
+        ACU_SingleTest(TestNum, &CU_AllCases[TestNum - CaseStepNum - 1]);
         return;
     }
 }

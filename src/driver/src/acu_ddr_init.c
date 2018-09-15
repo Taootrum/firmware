@@ -1,6 +1,55 @@
 #include "acu_ddr_init.h"
 
-void DDRC_Init(void)
+static void DDRC_ClockInit(void)
+{
+    PLL_InitTypeDef PLL_Init;
+    LockStatus PLL_LockStatus = UnLock;
+    __IO uint32_t StartUpCounter = 0;
+    uint32_t DivValue = 0;
+
+    /* Initialize CPLL 2133MHz for DDR3 / 2400MHz for DDR4  */
+    PLL_Init.PLLInputClock = XTAL;
+    PLL_Init.PLLOutputClock = CPLL_CLK_FREQ;
+    PLL_Init.Divr = CPLL_DIVR;
+    PLL_Init.Divf = CPLL_DIVF;
+    PLL_Init.Divq = PLL_DIVQ_2;
+    RCC_PLLConfig(CPLL_CLK, &PLL_Init);
+    do
+    {
+        PLL_LockStatus = RCC_PLLGetLockStatus(CPLL_CLK);
+        StartUpCounter++;  
+    } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
+    RCC_PLLCmd(CPLL_CLK, ENABLE);
+
+    /* Initialize DPLL 2133MHz for DDR3 / 2400MHz for DDR4 */
+    PLL_Init.PLLInputClock = XTAL;
+    PLL_Init.PLLOutputClock = DPLL_CLK_FREQ;
+    PLL_Init.Divr = DPLL_DIVR;
+    PLL_Init.Divf = DPLL_DIVF;
+    PLL_Init.Divq = PLL_DIVQ_2;
+    RCC_PLLConfig(DPLL_CLK, &PLL_Init);
+    StartUpCounter = 0;
+    do
+    {
+        PLL_LockStatus = RCC_PLLGetLockStatus(DPLL_CLK);
+        StartUpCounter++;  
+    } while((PLL_LockStatus == UnLock) && (StartUpCounter < PLL_LOCK_TIMEOUT));
+    RCC_PLLCmd(DPLL_CLK, ENABLE);
+
+    /* Initialize DDR Clock */
+    RCC_SYSCLKSetSource(DDR_CLK, SYSCLK_SOURCE_CPLL);
+    DivValue = CPLL_CLK_FREQ / DDR_CLK_FREQ - 1;
+    RCC_SYSCLKSetDiv(DDR_CLK, DivValue);
+    RCC_SYSCLKCmd(DDR_CLK, ENABLE);
+
+    /* Initialize DDR1 Clock */
+    RCC_SYSCLKSetSource(DDR1_CLK, SYSCLK_SOURCE_DPLL);
+    DivValue = DPLL_CLK_FREQ / DDR1_CLK_FREQ - 1;
+    RCC_SYSCLKSetDiv(DDR1_CLK, DivValue);
+    RCC_SYSCLKCmd(DDR1_CLK, ENABLE);
+}
+
+static void DDRC_CommonInit(void)
 {
     uint8_t i = 0;
     uint32_t TempSet = 0;
@@ -27,40 +76,16 @@ void DDRC_Init(void)
         /* release umctl2 apb/debug reset */
         WRITE32(0x4008c000 + (i * 0x400), 0x13);
     }
+}
 
+void DDRC_Init(void)
+{
+    DDRC_ClockInit();
+    DDRC_CommonInit();
+    #if defined(ACU_DDR3)
     ddrc_x8_ddr3_init(DDRC_NUMBER);
-
-    #if 0
-    /* simple test */
-    WRITE32(0xa0000000, 0x12345678);
-    WRITE32(0xa0000004, 0x9abcdef0);
-    WRITE32(0xa0000008, 0x11223344); 
-    WRITE32(0xa000000c, 0x55667788);
-    for (i = 0; i < DDRC_NUMBER; i++) 
-    {
-        WRITE32(0x40080420, i); // dram_sel 
-
-        if(i==0) DEBUG_MSG("DDRC#0 read test. \n"); 
-        else if(i==1) DEBUG_MSG("DDRC#1 read test. \n"); 
-        else if(i==2) DEBUG_MSG("DDRC#2 read test. \n"); 
-        else if(i==3) DEBUG_MSG("DDRC#3 read test. \n"); 
-        else if(i==4) DEBUG_MSG("DDRC#4 read test. \n"); 
-        else if(i==5) DEBUG_MSG("DDRC#5 read test. \n"); 
-        else if(i==6) DEBUG_MSG("DDRC#6 read test. \n"); 
-        else if(i==7) DEBUG_MSG("DDRC#7 read test. \n"); 
-
-        if(READ32(0xa0000000) == 0x12345678) {
-            DEBUG_MSG("DDR read data = 0x12345678\n");
-        } else {
-            DEBUG_MSG("DDR read data Error! \r\n");
-        }   
-
-        if(READ32(0xa0000004) == 0x9abcdef0) {
-            DEBUG_MSG("DDR read data = 0x9abcdef0\n");
-        } else {
-            DEBUG_MSG("DDR read data Error! \r\n");
-        }   
-    }
+    #elif defined(ACU_DDR4)
+    ddrc_x8_ddr4_init(DDRC_NUMBER);
     #endif
 }
 

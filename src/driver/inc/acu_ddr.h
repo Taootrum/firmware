@@ -22,12 +22,12 @@
 #define DDR_SPACE_SIZE          0x40000000
 #define DDR_SPACE_ROW_NUM       (0x40000000 / DDR_PAGE_SIZE)
 
-//#define I2C_PASSIVE_WAY
+#define I2C_PASSIVE_WAY
 
 void DDR_WriteMem(uint8_t *buf, uint32_t addr, uint32_t size, uint8_t channel);
 void DDR_ReadMem(uint8_t *buf, uint32_t addr, uint32_t size, uint8_t channel);
-void DDR_InterleaveWriteMem(uint8_t *buf, uint64_t addr, uint32_t size);
-void DDR_InterleaveReadMem(uint8_t *buf, uint64_t addr, uint32_t size);
+void DDR_InterleaveWriteMem(uint8_t *buf, uint32_t addr, uint32_t size);
+void DDR_InterleaveReadMem(uint8_t *buf, uint32_t addr, uint32_t size);
 
 #ifdef __cplusplus
 }

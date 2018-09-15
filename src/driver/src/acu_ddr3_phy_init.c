@@ -1,6 +1,6 @@
 #include "acu_ddr_init.h"
 
-void pub_phy_init_hong_2p50a_1(int DPHY_ADDR_BASE,int chs)
+void ddr3_pub_phy_init(int DPHY_ADDR_BASE,int chs)
 {
     // [dwc_ddrphy_phyinit_main] Start of dwc_ddrphy_phyinit_main()
     // [dwc_ddrphy_phyinit_sequence] Start of dwc_ddrphy_phyinit_sequence()

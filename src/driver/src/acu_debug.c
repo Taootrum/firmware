@@ -79,7 +79,7 @@ BoolStatus GetChar(uint8_t *InChar)
  ***************************************************************/
 int fputc(int ch, FILE *f) 
 {    
-#if defined(SIM_ENV)
+#if defined(ACU_SIM)
     SIM_DEBUG_REG->CR =(ch & 0xFF);
 #else
     PutChar(ch & 0xFF); 

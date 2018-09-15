@@ -213,7 +213,7 @@ TestStatus FLASH_InterfaceTest6(void)
     sFLASH_ReadBuffer() */
 TestStatus FLASH_InterfaceTest7(void)
 {
-    uint8_t TxBuf[] = "ACU SPI Test: communication with an SPI_FLASH.";
+    uint8_t TxBuf[] = "Access a SPI_Flash.";
     uint8_t RxBuf[COUNT_OF(TxBuf) - 1] = {0};
     uint8_t BufSize = COUNT_OF(TxBuf) - 1;
     

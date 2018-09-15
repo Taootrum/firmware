@@ -37,19 +37,16 @@ void ACU_Delay(uint32_t num)
               BufferLength: buffer's length
   * 返回值     : PASSED: pBuffer1 identical to pBuffer2
               FAILED: pBuffer1 differs from pBuffer2
-  * 描述      : 系统延时函数.
+  * 描述      : buffer比较函数.
  ***************************************************************/
 TestStatus Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength)
 {
     while (BufferLength--)
     {
-        if (*pBuffer1 != *pBuffer2)
+        if (*pBuffer1++ != *pBuffer2++)
         {
             return FAILED;
         }
-
-        pBuffer1++;
-        pBuffer2++;
     }
 
     return PASSED;

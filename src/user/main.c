@@ -28,10 +28,10 @@ int main(void)
     //PCIE_Init();
     
     /* Init the DDRC */
-#ifdef SIM_ENV
+#ifdef ACU_SIM
     //DDRC_Init();
 #else
-    //DDRC_FPGAInit();
+    DDRC_FPGAInit();
 #endif
 
     DEBUG_MSG("Version: %s (%s/%s)"LF LF, acu_version, __DATE__, __TIME__);
@@ -52,7 +52,7 @@ int main(void)
         ACU_HalFuncTest();
 #endif
         
-#ifdef SIM_ENV
+#ifdef ACU_SIM
         SIM_END;
 #endif
         return 1;

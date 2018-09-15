@@ -139,9 +139,11 @@
 
 void DDRC_Init(void);
 void ddrc_x8_ddr3_init(int chs);
+void ddrc_x8_ddr4_init(int chs);
 int do_ddr_training(int DPHY_ADDR_BASE, int chs);
 void dump_stream_msg(int DPHY_ADDR_BASE);
-void pub_phy_init_hong_2p50a_1(int DPHY_ADDR_BASE, int chs);
+void ddr3_pub_phy_init(int DPHY_ADDR_BASE, int chs);
+void ddr4_pub_phy_init(int DPHY_ADDR_BASE, int chs);
 
 #ifdef __cplusplus
 }

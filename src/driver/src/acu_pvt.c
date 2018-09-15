@@ -71,6 +71,7 @@ void PVT_Init(PVT_TypeDef* PVTx, PVT_InitTypeDef* PVT_InitStruct)
     {
         WRITE_REG(PVT_SC->PVT1_DIV, divider);
     }
+    ACU_Delay(10);
     
     /* PVT APB_CTRL Configuration */
     PVTx->APB_CTRL = 0x1;

@@ -129,7 +129,7 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
         else 
         {
             /* High mode */
-            //result = (uint16_t)(apbclock / (120*1000000));
+            //result = (uint16_t)(apbclock / (60*1000000)); /* fabric clock = 900MHz,i2c max speed = 60MHz in simulation */
             result = (uint16_t)(apbclock / 3400000);
             I2Cx->HS_SCL_HCNT = result / 15;         /*I2C high mode Tlow/Thigh = 2 */
             I2Cx->HS_SCL_LCNT = 14 * result / 15;

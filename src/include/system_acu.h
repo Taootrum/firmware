@@ -19,12 +19,25 @@
 #define XTAL                (24000000UL)      /* Oscillator frequency */
 #define APLL_CLK_FREQ       (1800 * 1000000UL)
 #define BPLL_CLK_FREQ       (1800 * 1000000UL)
+#ifdef ACU_DDR3
 #define CPLL_CLK_FREQ       (2124 * 1000000UL)
-#define DPLL_CLK_FREQ       (1800 * 1000000UL)
-#define SYSTEM_CLK_FREQ     (100 * 1000000UL)
+#define DPLL_CLK_FREQ       (2124 * 1000000UL)
+#else
+#define CPLL_CLK_FREQ       (2400 * 1000000UL)
+#define DPLL_CLK_FREQ       (2400 * 1000000UL)
+#endif
+
+#define SYSTEM_CLK_FREQ     (200 * 1000000UL)
 #define IPCORE_CLK_FREQ     (900 * 1000000UL)
-#define DDR_CLK_FREQ        (1062 * 1000000UL)
 #define HASHCORE_CLK_FREQ   (100 * 1000000UL)
+#ifdef ACU_DDR3
+#define DDR_CLK_FREQ        (1062 * 1000000UL)
+#define DDR1_CLK_FREQ       (1062 * 1000000UL)
+#else
+#define DDR_CLK_FREQ        (1200 * 1000000UL)
+#define DDR1_CLK_FREQ       (1200 * 1000000UL)
+#endif
+#define EFUSE_CLK_FREQ      (10 * 1000000UL)
 
 #define PLL_LOCK_TIMEOUT    ((uint32_t)0x10000)
 

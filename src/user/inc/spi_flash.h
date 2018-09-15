@@ -12,7 +12,7 @@
 #include "acu.h"
 
 /* sFlash Define */
-#ifdef SIM_ENV
+#ifdef ACU_SIM
 #define SPI_FLASH_ID                sFLASH_N25Q128_ID
 #else
 #define SPI_FLASH_ID                sFLASH_W25Q128FV_ID

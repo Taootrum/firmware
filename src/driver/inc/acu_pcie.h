@@ -18,6 +18,8 @@
 
 void PCIE_DeInit(void);
 void PCIE_Init(void);
+void ELBI_WriteAccess(uint32_t Addr, uint32_t Data);
+uint32_t ELBI_ReadAccess(uint32_t Addr);
 void PCIE_PrintReg(void);
 
 #ifdef __cplusplus

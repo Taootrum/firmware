@@ -41,14 +41,14 @@ extern uint32_t g_AllFailCount;
             g_AllCaseCount += g_SuiteCaseCount; \
             g_AllSuccessCount += g_SuiteSuccessCount;   \
             g_AllFailCount += g_SuiteFailCount; \
-            DEBUG_MSG("%s: Total:%d, Success:%d, Fail:%d"LF LF,  \
+            DEBUG_MSG("%s: Total:%d, Pass:%d, Fail:%d"LF LF,  \
                         #SuiteCases, g_SuiteCaseCount, g_SuiteSuccessCount, g_SuiteFailCount);  \
         } while (0)
 
 #define ACU_ALL_TEST_REPORT()\
         do  \
         {   \
-            DEBUG_MSG("ACU REPORT:All Cases, Total:%d, Success:%d, Fail:%d"LF, \
+            DEBUG_MSG("ACU REPORT:All Cases, Total:%d, Pass:%d, Fail:%d"LF, \
                         g_AllCaseCount, g_AllSuccessCount, g_AllFailCount); \
         } while (0)
 
