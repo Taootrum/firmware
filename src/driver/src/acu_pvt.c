@@ -39,7 +39,6 @@ void PVT_DeInit(PVT_TypeDef* PVTx)
 void PVT_Init(PVT_TypeDef* PVTx, PVT_InitTypeDef* PVT_InitStruct)
 {
     uint32_t apbclock = 0, divider = 0;
-    RCC_ClocksTypeDef RCC_ClocksStatus;
 
     /* Check the PVT parameters */
     assert_param(IS_PVT_ALL_PERIPH(PVTx));
@@ -60,8 +59,7 @@ void PVT_Init(PVT_TypeDef* PVTx, PVT_InitTypeDef* PVT_InitStruct)
     RCC_APBPeriphIsoEnCmd(PVT_SC, ENABLE);
     
     /* PVT Clock Configuration */
-    RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
-    apbclock = RCC_ClocksStatus.FCLK_Frequency;
+    apbclock = SystemCoreClock;
     divider = apbclock / 1200000 - 1; /* pvt clock 1.2M */
     if (PVTx == PVT0)
     {

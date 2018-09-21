@@ -3,7 +3,7 @@
   * @author  Denglin SOC Team
   * @version V1.0.0
   * @date    11-MAY-2018
-  * @brief   ACU WDG Module Function. 
+  * @brief   ACU System Initial C file. 
  ******************************************************************************/
 /*
  * Copyright (c) 2009-2016 ARM Limited. All rights reserved.
@@ -24,7 +24,6 @@
  */
 
 #include "acu.h"
-#include "timer.h"
 
 /*----------------------------------------------------------------------------
   System Core Clock Variable
@@ -119,12 +118,6 @@ void SystemInit (void)
 
     /* Set System Clock */
     SetSysClock();
-
-    /* Update Core Clock */
-    SystemCoreClockUpdate();
-
-    /* configuration systick*/
-    SysTick_Configuration();
 
     /*!< GPIO Periph enable */
     RCC_APBPeriphResetCmd(GPIO_SC, 0, RESET);

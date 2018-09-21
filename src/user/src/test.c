@@ -227,7 +227,7 @@ static void ACU_SingleTest(uint8_t TestNum, PALLCASE pSingleCase)
  ***************************************************************/
 void ACU_HalFuncTest(void)
 {
-    uint32_t TestNum = 53;//READ_REG(INT_GEN->DATA6);
+    uint32_t TestNum = 0;//READ_REG(INT_GEN->DATA6);
     
     /* All Cases Testing */
     if (TestNum == 0)

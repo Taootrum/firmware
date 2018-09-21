@@ -13,7 +13,7 @@
   * I2C1 master
   * DDR
  ***************************************************************/
-uint32_t TxData[MEM_INIT_SIZE / 4] = {
+uint32_t TxData[128] = {
     0x8764845f, 0xc35cdea7,0xf5fbcfa9,0x0a39254f,
     0x99bebd01, 0x123f0dcc,0x3822f3e7,0xe4412e7b,
     0x39be8b0d, 0x438c9f70,0x092e4ae5,0x1c870a26,
@@ -50,10 +50,42 @@ uint32_t TxData[MEM_INIT_SIZE / 4] = {
     0xbc54bad0, 0x4202b185,0x0b921e3b,0xdeea4bfd,
     0x2ba9c5d9, 0xdc0ca2a2,0x3fde9118,0x9ab406e4
 };
-uint32_t RxData[MEM_INIT_SIZE / 4] = {0};
+uint32_t RxData[128] = {0};
 
 void CU_RegInit(uint32_t cmdBufAddr, uint32_t cmdBufSize)
 {
+    #ifdef GATE_SIM
+    uint32_t TempValue = 0x000103CF;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0004, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x00000003;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0008, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x00000004;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0020, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x00000302;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0024, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x1FFFFFFF;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0050, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x1FFFFFFF;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0054, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x1FFFFFFF;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0058, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x1FFFFFFF;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x005C, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x0000001F;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0108, PASSIVE_WRITE_DATA_CMD);
+
+    I2C_PassiveWriteWord((uint8_t *)&cmdBufAddr, ACU_CU_BASE + 0x021c, PASSIVE_WRITE_DATA_CMD);  /* Cmd buffer addr lo */
+    TempValue = 0x00000000;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0220, PASSIVE_WRITE_DATA_CMD);  /* Cmd buffer addr hi */
+
+    I2C_PassiveWriteWord((uint8_t *)&cmdBufSize, ACU_CU_BASE + 0x0224, PASSIVE_WRITE_DATA_CMD);  /* Cmd buffer size */
+    TempValue = 0x0000000F;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0228, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0xFFFFFFFF;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x023C, PASSIVE_WRITE_DATA_CMD);
+    TempValue = 0x00000002;
+    I2C_PassiveWriteWord((uint8_t *)&TempValue, ACU_CU_BASE + 0x0230, PASSIVE_WRITE_DATA_CMD);  /* Kick off */
+    #else
     WRITE32(ACU_CU_BASE + 0x0004, 0x000103CF);
     WRITE32(ACU_CU_BASE + 0x0008, 0x00000003);
     WRITE32(ACU_CU_BASE + 0x0020, 0x00000004);
@@ -71,6 +103,7 @@ void CU_RegInit(uint32_t cmdBufAddr, uint32_t cmdBufSize)
     WRITE32(ACU_CU_BASE + 0x0228, 0x0000000F);
     WRITE32(ACU_CU_BASE + 0x023C, 0xFFFFFFFF);
     WRITE32(ACU_CU_BASE + 0x0230, 0x00000002);  /* Kick off */
+    #endif
 }
 
 uint32_t DMA_CmdBuf[DMA_CMDBUF_SIZE / 4] = {
@@ -80,7 +113,11 @@ uint32_t DMA_CmdBuf[DMA_CMDBUF_SIZE / 4] = {
     0x00010001, 0x0004008c, 0x00000000, 0x00000000, //(src addr hi)
     0x00010001, 0x00040090, 0x20000000, 0x00000000, //(dst addr lo)
     0x00010001, 0x00040094, 0x00000000, 0x00000000, //(dst addr hi)
+#ifdef GATE_SIM
+    0x00010001, 0x000400a8, 0x00000004, 0x00000000, //(copy size)
+#else
     0x00010001, 0x000400a8, 0x00000200, 0x00000000, //(copy size)
+#endif
     0x00010001, 0x00040098, 0x00000000, 0x00000000, //(src offset x)
     0x00010003, 0xffffffff, 0xee00a171, 0xd69f08b5, 
     0x00010006, 0x0000000f, 0xffffff00, 0x00000000, 

@@ -35,7 +35,6 @@ void UART_Init(UART_TypeDef* UARTx, UART_InitTypeDef* UART_InitStruct)
     uint32_t apbclock = 0x00;
     uint32_t integerdivider = 0x00;
     uint32_t fractionaldivider = 0x00;
-    RCC_ClocksTypeDef RCC_ClocksStatus;
     
     /* Check the parameters */
     assert_param(IS_UART_ALL_PERIPH(UARTx));
@@ -55,8 +54,7 @@ void UART_Init(UART_TypeDef* UARTx, UART_InitTypeDef* UART_InitStruct)
     RCC_APBPeriphIsoEnCmd(UART_SC, ENABLE);
 
     /*----------------------- USART BRR Configuration -----------------------------*/
-    RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
-    apbclock = RCC_ClocksStatus.FCLK_Frequency; /* apbclock_max = 100MHz */
+    apbclock = SystemCoreClock; /* apbclock_max = 100MHz */
     
     /* Integer part computing in case Oversampling mode is 16 Samples */
     integerdivider = (25 * apbclock) / (2 * (UART_InitStruct->UART_BaudRate / 5)); /*(1000 * apbclock) / (16 * UART_InitStruct->UART_BaudRate) */ 

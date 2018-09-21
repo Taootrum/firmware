@@ -58,6 +58,8 @@ TestStatus UART_InterfaceTest2(void)
     UART_InitTypeDef UART_InitStructure;
     TestStatus ret = PASSED;
     BoolStatus result = TRUE;
+    uint32_t integerdivider = 0x00;
+    uint32_t fractionaldivider = 0x00;
 
     while (UART->FR & UART_FLAG_BUSY);
     RCC_APBPeriphResetCmd(UART_SC, 0, SET);
@@ -71,8 +73,10 @@ TestStatus UART_InterfaceTest2(void)
     result &= CHECK_REG_RESERVED(UART->RSR, 0x0);
     result &= CHECK_REG_RESERVED(UART->FR & 0xF8, 0x90);
     result &= CHECK_REG_RESERVED(UART->ILPR, 0x0);
-    result &= CHECK_REG_RESERVED(UART->IBRD, 0x36);
-    result &= CHECK_REG_RESERVED(UART->FBRD, 0x10);
+    integerdivider = (25 * SystemCoreClock) / (2 * (UART_InitStructure.UART_BaudRate / 5)); /*(1000 * apbclock) / (16 * UART_InitStruct->UART_BaudRate) */ 
+    fractionaldivider = ((integerdivider % 1000) * 64 + 500);
+    result &= CHECK_REG_RESERVED(UART->IBRD, (uint16_t)(integerdivider / 1000));
+    result &= CHECK_REG_RESERVED(UART->FBRD, (uint16_t)(fractionaldivider / 1000));
     result &= CHECK_REG_RESERVED(UART->LCR, 0x60);
     result &= CHECK_REG_RESERVED(UART->CR, 0x300);
     result &= CHECK_REG_RESERVED(UART->IFLS, 0x12);

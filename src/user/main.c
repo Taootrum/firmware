@@ -19,8 +19,12 @@ static const char *acu_version = "ACU_FW_V0.0.1";
   * 描述      : 系统主函数
  ***************************************************************/
 int main(void)
-{   
-    /* Init the Debug Uart */
+{    
+    /* system clock update */
+    SystemCoreClockUpdate();
+    /* configuration systick */
+    SysTick_Init();
+    /* Initialize the Uart */
     Debug_Init();
     /* Init the SPI Flash */
     sFLASH_Init();
@@ -31,7 +35,7 @@ int main(void)
 #ifdef ACU_SIM
     //DDRC_Init();
 #else
-    DDRC_FPGAInit();
+    //DDRC_FPGAInit();
 #endif
 
     DEBUG_MSG("Version: %s (%s/%s)"LF LF, acu_version, __DATE__, __TIME__);

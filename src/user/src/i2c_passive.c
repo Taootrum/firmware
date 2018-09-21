@@ -38,6 +38,9 @@ void I2C_PassiveWriteWord(uint8_t *Data, uint32_t AcuAddr, PassiveCmd Command)
         while (I2C_GetFlagStatus(I2C1, I2C_FLAG_TFNF) == RESET);
         I2C_SendData(I2C_MASTER, Data[i]);
     }
+    
+    /* wait for send done */
+    while (I2C_GetFlagStatus(I2C_MASTER, I2C_FLAG_TFE) == RESET);
 }
 
 /****************************************************************
@@ -118,7 +121,7 @@ void I2C_PassiveWritePage(uint8_t *Data, uint32_t AcuAddr, uint16_t Size)
         tx++;
     }
 
-    /* wait for cmd send complex */
+    /* wait for send done */
     while (I2C_GetFlagStatus(I2C_MASTER, I2C_FLAG_TFE) == RESET);
 }
 
@@ -155,7 +158,7 @@ void I2C_PassiveReadPage(uint8_t *Data, uint32_t AcuAddr, uint16_t Size)
     while (I2C_GetFlagStatus(I2C_MASTER, I2C_FLAG_TFNF) == RESET);
     I2C_SendData(I2C_MASTER, (uint8_t)((AcuAddr >> 24) & 0xff));
 
-    /* wait for cmd send complex */
+    /* wait for cmd send done */
     while (I2C_GetFlagStatus(I2C_MASTER, I2C_FLAG_TFE) == RESET);
 
     /* read burst datas form pasive */

@@ -10,6 +10,6 @@
 
 #include "acu.h"
 
-void SysTick_Configuration(void);
+void SysTick_Init(void);
 
 #endif

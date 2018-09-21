@@ -89,6 +89,30 @@ TestStatus DDR_FunctionTest3(void)
     uint32_t RxBuf[8 * 2] = {0};
     uint8_t i = 0;
 
+#ifdef I2C_PASSIVE_WAY
+    I2C_InitTypeDef I2C_InitStructure;
+
+    /*!< I2C Periph reset enable */
+    I2C_DeInit(I2C0);
+    I2C_DeInit(I2C1);
+    RCC_APBPeriphResetCmd(I2C_SC, 0, RESET);
+    RCC_APBPeriphClockCmd(I2C_SC, 0, ENABLE);
+    
+    /*!< I2C1 as master */
+    I2C_InitStructure.I2C_Speed = I2C_Speed_3400k;
+    I2C_InitStructure.I2C_Mode = I2C_Mode_Master;
+    I2C_InitStructure.I2C_AddressMode = I2C_Address_7bit;
+    I2C_InitStructure.I2C_HSMasterAddress = 0x1;
+    I2C_InitStructure.I2C_OwnAddress = 0x55;
+    I2C_InitStructure.I2C_AckAddress = 0x52;
+    I2C_InitStructure.I2C_Acknowledge = I2C_ACK_ENABLE;
+    I2C_InitStructure.I2C_TxFIFOLevel = I2C_FIFO_TX_LEVEL - 1;
+    I2C_InitStructure.I2C_RxFIFOLevel = I2C_FIFO_RX_LEVEL - 1;
+    I2C_Cmd(I2C1, DISABLE);
+    I2C_Init(I2C1, &I2C_InitStructure);
+    I2C_Cmd(I2C1, ENABLE);
+#endif
+
     /* Write 16 ddrc */
     for (i = 0; i < DDRC_NUMBER * 2; i++)
     {

@@ -46,7 +46,6 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
 {
     uint16_t result = 0;
     uint32_t apbclock = 0;
-    RCC_ClocksTypeDef RCC_ClocksStatus;
 
     /* Check the parameters */
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
@@ -109,8 +108,7 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
     if (I2C_InitStruct->I2C_Mode == I2C_Mode_Master)
     {
         /* Get Fabric Clock */
-        RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
-        apbclock = RCC_ClocksStatus.FCLK_Frequency;
+        apbclock = SystemCoreClock;
         
         if (I2C_InitStruct->I2C_Speed == I2C_Speed_100k)
         {
@@ -129,10 +127,14 @@ void I2C_Init(I2C_TypeDef* I2Cx, I2C_InitTypeDef* I2C_InitStruct)
         else 
         {
             /* High mode */
-            //result = (uint16_t)(apbclock / (60*1000000)); /* fabric clock = 900MHz,i2c max speed = 60MHz in simulation */
-            result = (uint16_t)(apbclock / 3400000);
-            I2Cx->HS_SCL_HCNT = result / 15;         /*I2C high mode Tlow/Thigh = 2 */
-            I2Cx->HS_SCL_LCNT = 14 * result / 15;
+            result = (uint16_t)(apbclock / 7000000);
+            //result = (uint16_t)(apbclock / 3400000);
+            if (result < 28)
+            {
+                result = 28;
+            }
+            I2Cx->HS_SCL_HCNT = result / 2 - 8;     /*I2C high mode Tlow/Thigh = 1 */
+            I2Cx->HS_SCL_LCNT = result / 2 - 1;
 
             /* Set Master Code */
             I2Cx->HS_MADDR = I2C_InitStruct->I2C_HSMasterAddress;

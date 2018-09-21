@@ -39,7 +39,7 @@
 #endif
 #define EFUSE_CLK_FREQ      (10 * 1000000UL)
 
-#define PLL_LOCK_TIMEOUT    ((uint32_t)0x10000)
+#define PLL_LOCK_TIMEOUT    ((uint32_t)0x10)
 
 extern uint32_t SystemCoreClock;          /*!< System Clock Frequency (Core Clock) */
   

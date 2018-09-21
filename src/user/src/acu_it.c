@@ -187,11 +187,12 @@ void DDR2_IRQHandler(void)
 
 }
 
-extern uint32_t RxData[0x200 / 4];
+#include "test_cu.h"
+extern uint32_t RxData[128];
 void CU_IRQHandler(void)
 {
     WRITE_REG(CU->CQ_IRQ_CLEAR, 0x1F);
-    DDR_InterleaveReadMem((uint8_t *)RxData, 0x20000000, 0x200);
+    DDR_InterleaveReadMem((uint8_t *)RxData, 0x20000000, MEM_INIT_SIZE);
     DEBUG_MSG("Running......"LF);
 }
 

@@ -10,10 +10,15 @@
 
 #include "acu.h"
 
+#define GATE_SIM
 #define DLM_INTERRUPT
 
 #define INSTRUCTION_SIZE    0x70
+#ifdef GATE_SIM
+#define MEM_INIT_SIZE       0x4
+#else
 #define MEM_INIT_SIZE       0x200
+#endif
 #define DMA_CMDBUF_SIZE     0xA8
 #define SHD_CMDBUF_SIZE     0x220
 

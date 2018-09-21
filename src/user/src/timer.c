@@ -7,7 +7,7 @@
  ******************************************************************************/
 #include "timer.h"
 
-void SysTick_Configuration(void)
+void SysTick_Init(void)
 {
     /* Setup SysTick Timer for 1 msec interrupts */
     SysTick_Config((SystemCoreClock) / 1000);

@@ -43,7 +43,6 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
     uint16_t TempShort = 0;
     uint32_t Scr = 0;
     uint16_t CpsDiv = 0;
-    RCC_ClocksTypeDef RCC_ClocksStatus;
     
     /* check the parameters */
     assert_param(IS_SPI_ALL_PERIPH(SPIx));   
@@ -83,8 +82,7 @@ void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct)
     SPIx->CR1 = SPI_InitStruct->SPI_LBM;
     
     /* SPIx CPSR Configuration */
-    RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
-    Scr = RCC_ClocksStatus.FCLK_Frequency / (SPI_SCR + 1);
+    Scr = SystemCoreClock / (SPI_SCR + 1);
     TempShort = Scr / SPI_InitStruct->SPI_Baudrate;
     CpsDiv = TempShort + (TempShort % 2); /* CPSDVSR must an even value 2 - 254 */
     SPIx->CPSR = CpsDiv;

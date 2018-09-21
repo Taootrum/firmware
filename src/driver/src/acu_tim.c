@@ -23,7 +23,6 @@ void TIM_DeInit(void)
 void TIM_Init(TIM_TypeDef* TIMx, TIM_InitTypeDef *TIM_InitStruct)
 {
     uint32_t apbclock = 0;
-    RCC_ClocksTypeDef RCC_ClocksStatus;
 
     assert_param(IS_TIM_ALL_PERIPH(TIMx));
     assert_param(IS_TIM_MODE(TIM_InitStruct->TIM_Mode));
@@ -41,8 +40,7 @@ void TIM_Init(TIM_TypeDef* TIMx, TIM_InitTypeDef *TIM_InitStruct)
     }
     else
     {
-        RCC_SYSCLKGetFreq(&RCC_ClocksStatus);
-        apbclock = RCC_ClocksStatus.FCLK_Frequency;
+        apbclock = SystemCoreClock;
         TIMx->LC = apbclock / (1000 / TIM_InitStruct->TIM_TimingTime); /* 1-1000ms */
     }
 
